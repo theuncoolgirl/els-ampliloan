@@ -212,7 +212,7 @@ Follow David's one-Planner/one-Builder workflow when supported. Do not assume Sl
 
 ## 9. Out of scope
 
-Real credit decisions, credit checks, payments, document storage, bank connections, production authentication, backend services, and genuine funding. No separate journeys per loan type. No Amplitude experiments or feature flags. No server SDK, forward proxy, warehouse-native Statsig implementation, warehouse integration, or production AI agent unless separately scoped. These may be discussed in a technical walkthrough but must not be presented as running features.
+Real credit decisions, credit checks, payments, document storage, bank connections, production authentication, backend services, and genuine funding. No separate journeys per loan type. No Amplitude experiments or feature flags. No server SDK, forward proxy, warehouse integration, or production AI agent unless separately scoped. These may be discussed in a technical walkthrough but must not be presented as running features.
 
 ## 10. Reference material
 

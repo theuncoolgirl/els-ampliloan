@@ -28,4 +28,4 @@ Reviewed 2026-11-11. These are build decisions informed by official documentatio
 - Static hosting cannot protect a secret or enforce real lending/auth rules. Use synthetic values only. Configure hash routing with verified Vite base. [Vite deployment](https://vite.dev/guide/static-deploy.html)
 
 ## Scope boundary
-No backend/server SDK, warehouse-native setup, Amplitude Experiment configuration, production data, real credit decisions, uploads or revenue. SDK loading, configured console assets, real receipt, and sufficient data for analysis are distinct readiness levels. A scripted demo is not evidence of causal lift or statistical significance.
+No backend/server SDK, Amplitude Experiment configuration, production data, real credit decisions, uploads or revenue. SDK loading, configured console assets, real receipt, and sufficient data for analysis are distinct readiness levels. A scripted demo is not evidence of causal lift or statistical significance.
