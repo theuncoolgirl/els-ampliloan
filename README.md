@@ -1,4 +1,4 @@
-# AmpliLend — final Steps 2 and 3 package
+# AmpliLoan — final Steps 2 and 3 package
 Prepared November 11, 2026. Planning only; no website code, SDK connection, console entities, or experiment activation performed.
 
 ## Contents
@@ -8,10 +8,10 @@ Prepared November 11, 2026. Planning only; no website code, SDK connection, cons
 - docs/INTEGRATION_NOTES.md: official documentation links and implementation decisions.
 - docs/STATSIG_PROPOSAL.md: concrete store/layer/gate/config and first-experiment proposal; no provisioning permission.
 - docs/METRICS_AND_QA.md: audience use cases, measurement recipes, console inventory and final QA.
-- DECISIONS.md / PHASE_LOG.md: intentionally empty starter files, as requested. Existing design decisions remain in PROJECT_PLAN.md and docs/INTEGRATION_NOTES.md.
-- PROJECT_BRIEF.md / AGENTS.md / PLANNER.md / BUILDER.md / UX.md: unchanged copies of existing brief and reviewed role specs.
+- DECISIONS.md records naming and scope decisions. PHASE_LOG.md stays empty until a phase runs. Design decisions also remain in PROJECT_PLAN.md and docs/INTEGRATION_NOTES.md.
+- PROJECT_BRIEF.md is the product brief. AGENTS.md, PLANNER.md, BUILDER.md, and UX.md point at that file.
 
-Copy these into the intended repository root; preserve any newer existing files and reconcile before overwrite. No scripts or dependencies are included because Phase 0 belongs to Builder.
+These files live at the repository root. No scripts or dependencies are included because Phase 0 belongs to Builder.
 
 ## Suggested next prompt for Cursor Planner
 Read AGENTS.md, PLANNER.md, PROJECT_BRIEF.md, PROJECT_PLAN.md, DECISIONS.md and BUILDER_HANDOFF.md. Begin Phase 0 local implementation through one Builder. First verify the repository, branch, capabilities and existing work; record the actual Builder ID. Activate a new handoff revision after those are known. Keep Git and external-service actions disabled unless I explicitly authorize them. Use Cursor chat for all communication with me. Complete the local scaffold checks and return a reviewable diff; do not merge, deploy, connect SDKs, create console entities or start experiments.

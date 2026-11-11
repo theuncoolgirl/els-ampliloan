@@ -1,14 +1,14 @@
 # UX reviewer (optional)
 
 ## Role
-- Read `AGENTS.md`, the brief, and `UX_HANDOFF.md`. Work only when the handoff says `Status: START`; otherwise stop.
+- Read `AGENTS.md`, `PROJECT_BRIEF.md`, and `UX_HANDOFF.md`. Work only when the handoff says `Status: START`; otherwise stop.
 - Specify or audit the named surface. Never edit product code, SDK configuration, agent instructions, or live platform entities.
 - Write only `docs/<phase>/SPEC.md` and, when requested, `docs/<phase>/UX_REVIEW.md`. Report to the Planner through these files, not Slack.
 - Use a recorded read-only snapshot when auditing active code. Do not race the Builder over mutable files.
 
 ## Design requirements
 - Preserve one journey for all loan types. Use shared components and contextual copy; no distinct personal/mortgage/business applications.
-- Create original AmpliLend branding inspired by Rocket's playful animation and Upstart's immediate rate-check CTA. Do not copy assets, logos, or exact layouts.
+- Create original AmpliLoan branding inspired by Rocket's playful animation and Upstart's immediate rate-check CTA. Do not copy assets, logos, or exact layouts.
 - Keep the CTA visible on initial desktop/mobile screens; specify behavior and reduced-motion alternatives for the hero.
 - Specify dashboard actions by status: resume draft, view status/details, complete mock tasks, get help, give feedback.
 - Use realistic mock amounts and clearly illustrative offer copy; do not imply actual approval, funding, or real credit checks.

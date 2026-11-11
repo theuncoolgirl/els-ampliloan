@@ -1,15 +1,15 @@
-# AmpliLend: Cursor Project Brief
+# AmpliLoan: Cursor Project Brief
 
 Owner: Erin Shields  
 Prepared: November 11, 2026  
-Working product name: AmpliLend  
+Product name: AmpliLoan  
 Target: ready by Thanksgiving, November 26, 2026
 
 ## 1. Project summary
 
 Build a polished, fictional lending website that demonstrates improving application conversion with Amplitude and Statsig. Serve personal-loan, mortgage, and small-business audiences through one shared questionnaire and application journey. Loan type changes content and mock offers, not the underlying flow or page architecture. Add a simple borrower dashboard for saved applications, status, loan details, and next steps.
 
-Use Rocket Mortgage as inspiration for a playful, polished visual style and animated hero. Use Upstart as inspiration for a prominent, immediately available “Check your rate” CTA that opens a guided questionnaire. Create original branding, copy, and assets; do not copy either company's identity. AmpliLend is a working name, not a final branding decision.
+Use Rocket Mortgage as inspiration for a playful, polished visual style and animated hero. Use Upstart as inspiration for a prominent, immediately available “Check your rate” CTA that opens a guided questionnaire. Create original branding, copy, and assets; do not copy either company's identity. The product name is AmpliLoan.
 
 The site must support both a business demo and a clear technical walkthrough of the Statsig implementation. Keep technical diagnostics in presenter-only controls, outside the borrower experience.
 

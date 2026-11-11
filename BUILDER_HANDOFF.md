@@ -15,7 +15,7 @@ Planner: Commit No; Push No; PR No; Merge No; Deploy No.
 Authorization source: none. External-service actions: none. SDK traffic: none. Population generation: none.
 
 ## Objective
-Create the static AmpliLend shell and a reviewable GitHub Pages deployment configuration. No SDK installation or business workflow implementation in this phase.
+Create the static AmpliLoan shell and a reviewable GitHub Pages deployment configuration. No SDK installation or business workflow implementation in this phase.
 
 ## Read first
 AGENTS.md → BUILDER.md → PROJECT_BRIEF.md → PROJECT_PLAN.md phase 0 → UX.md → this handoff. Consult docs/INTEGRATION_NOTES.md for deployment sources. Preserve existing unrelated code; inspect existing package tooling before selecting compatible pinned versions.
@@ -32,7 +32,7 @@ AGENTS.md → BUILDER.md → PROJECT_BRIEF.md → PROJECT_PLAN.md phase 0 → UX
 9. Append evidence for P0.1–P0.3 to docs/evidence/phase-0.md and PHASE_LOG.md. P0.4 is pending approved deployment. Provide diff or saved patch and SHA-256 if Git actions remain unauthorized. Log NEEDS_REVIEW and stop. Do not alter Status or issue yourself the next phase.
 
 ## Allowed paths
-package.json, package-lock.json, index.html, tsconfig*.json, vite.config.*, src/** for shell only, public/**, .github/workflows/** for Pages only, .gitignore, .env.example, docs/SETUP.md, docs/evidence/phase-0.md, PHASE_LOG.md. Exclude agent specs, brief, plan, handoff, decisions, event map, vendor SDKs and console entities. Existing unrelated files are not a license to rewrite them.
+package.json, package-lock.json, index.html, tsconfig*.json, vite.config.*, src/** for shell only, public/**, .github/workflows/** for Pages only, .gitignore, .env.example, docs/SETUP.md, docs/evidence/phase-0.md, PHASE_LOG.md. Exclude agent specs, `PROJECT_BRIEF.md`, the plan, handoff, decisions, event map, vendor SDKs and console entities. Existing unrelated files are not a license to rewrite them.
 
 ## Acceptance and stop behavior
 Use P0.1–P0.4 in PROJECT_PLAN.md verbatim; Builder gathers evidence, Planner verifies. Expected local result is a buildable, navigable shell with zero vendor traffic. A workflow file is not evidence of a deployment. Missing repo/branch/tool access must be logged BLOCKED; continue only independent authorized work. Only Planner communicates blockers to Erin. COMPLETE/BLOCKED/NEEDS_REVIEW revision cannot rerun from stale START. Await a revised handoff through the recorded control channel.

@@ -1,0 +1,707 @@
+schema_version: '1.0'
+status: planned; not installed or verified remotely
+ownership: Planner owns schema; Builder implements without renaming
+event_name_case: Title Case identical in both vendors
+forbidden_events:
+- Application Step Completed
+properties:
+  business_event_id:
+    type: string
+    description: UUID generated once per logical event; same in both sinks, Amplitude insert_id.
+  schema_version:
+    type: string
+    description: Constant 1.0.
+  traffic_type:
+    type: string
+    description: Preview is not emitted. live_demo only after telemetry authorization.
+    enum:
+    - live_demo
+    - synthetic_population
+  page_id:
+    type: string
+    description: Rendered logical surface.
+    enum:
+    - home
+    - application
+    - offers
+    - dashboard
+    - presenter
+  session_id:
+    type: string
+    description: App-owned session UUID; rotate after 30 minutes inactivity. Not vendor session_id override.
+  loan_type:
+    type: string
+    description: Immutable application loan; unknown only before selection.
+    enum:
+    - personal
+    - mortgage
+    - small_business
+    - unknown
+  application_id:
+    type: string
+    description: UUID persisted at Application Started; never vendor user ID.
+  application_status:
+    type: string
+    description: Status at event time.
+    enum:
+    - draft
+    - submitted
+    - under_review
+    - decision_ready
+  entry_point:
+    type: string
+    description: Allowlisted initiating location.
+    enum:
+    - hero
+    - header
+    - dashboard
+    - application
+    - offers
+    - help
+    - persona_control
+  step_id:
+    type: string
+    description: Shared application step.
+    enum:
+    - loan_details
+    - offers
+    - review
+  step_index:
+    type: integer
+    description: 'One-based: loan_details=1, offers=2, review=3.'
+  requested_amount:
+    type: number
+    description: Synthetic USD amount; finite positive, never revenue.
+  amount_band:
+    type: string
+    description: Common USD bands for slicing.
+    enum:
+    - under_25k
+    - 25k_to_under_100k
+    - 100k_to_under_500k
+    - 500k_plus
+  offer_id:
+    type: string
+    description: Allowlisted synthetic offer fixture ID.
+  term_months:
+    type: integer
+    description: Positive fixture term in months.
+  validation_error_code:
+    type: string
+    description: No field contents/messages.
+    enum:
+    - required_field
+    - invalid_amount
+    - missing_offer
+    - missing_consent
+  elapsed_seconds:
+    type: integer
+    description: Nonnegative wall-clock seconds since application createdAt, including away time.
+  task_id:
+    type: string
+    description: Allowlisted mock task identifier.
+    enum:
+    - verify_details
+    - review_documents
+    - confirm_next_steps
+  help_topic:
+    type: string
+    description: Allowlisted support topic.
+    enum:
+    - application
+    - offers
+    - status
+    - general
+  identity_method:
+    type: string
+    description: Synthetic fixture flow.
+    enum:
+    - demo_signup
+    - demo_signin
+    - demo_signout
+  first_touch_source:
+    type: string
+    description: Allowlisted campaign fixture value; unknown if unavailable; never unrestricted URL/query content.
+  first_touch_medium:
+    type: string
+    description: Allowlisted campaign fixture value; unknown if unavailable; never unrestricted URL/query content.
+  first_touch_campaign:
+    type: string
+    description: Allowlisted campaign fixture value; unknown if unavailable; never unrestricted URL/query content.
+  first_touch_channel:
+    type: string
+    description: Allowlisted campaign fixture value; unknown if unavailable; never unrestricted URL/query content.
+  session_touch_source:
+    type: string
+    description: Allowlisted campaign fixture value; unknown if unavailable; never unrestricted URL/query content.
+  session_touch_medium:
+    type: string
+    description: Allowlisted campaign fixture value; unknown if unavailable; never unrestricted URL/query content.
+  session_touch_campaign:
+    type: string
+    description: Allowlisted campaign fixture value; unknown if unavailable; never unrestricted URL/query content.
+  session_touch_channel:
+    type: string
+    description: Allowlisted campaign fixture value; unknown if unavailable; never unrestricted URL/query content.
+user_properties:
+  customer_relationship:
+    type: string
+    enum:
+    - new
+    - returning
+    - existing
+    update: set before dependent event/evaluation
+    amplitude: user property
+    statsig: custom.customer_relationship
+  borrowing_experience:
+    type: string
+    enum:
+    - first_time
+    - experienced
+    update: set before dependent event/evaluation
+    amplitude: user property
+    statsig: custom.borrowing_experience
+  employment_type:
+    type: string
+    enum:
+    - employed
+    - self_employed
+    - other
+    - not_provided
+    update: set before dependent event/evaluation
+    amplitude: user property
+    statsig: custom.employment_type
+  preferred_language:
+    type: string
+    enum:
+    - en
+    update: set before dependent event/evaluation
+    amplitude: user property
+    statsig: custom.preferred_language
+  acquisition_channel_first_touch:
+    type: string
+    enum:
+    - paid_search
+    - email
+    - partner
+    - direct
+    - unknown
+    update: setOnce on first attributed session
+    amplitude: user property
+    statsig: custom.acquisition_channel_first_touch
+  journey_stage:
+    type: string
+    enum:
+    - visitor
+    - applying
+    - comparing
+    - reviewing
+    - submitted
+    - dashboard
+    update: set before dependent event/evaluation
+    amplitude: user property
+    statsig: custom.journey_stage
+  active_loan_type:
+    type: string
+    enum:
+    - personal
+    - mortgage
+    - small_business
+    - unknown
+    update: set before dependent event/evaluation
+    amplitude: user property
+    statsig: custom.active_loan_type
+  active_application_status:
+    type: string
+    enum:
+    - none
+    - draft
+    - submitted
+    - under_review
+    - decision_ready
+    update: set before dependent event/evaluation
+    amplitude: user property
+    statsig: custom.active_application_status
+  demo_persona:
+    type: string
+    enum:
+    - first_time_personal
+    - returning_mortgage
+    - business_owner
+    - existing_customer
+    - unassigned
+    update: set before dependent event/evaluation
+    amplitude: user property
+    statsig: custom.demo_persona
+  traffic_type:
+    type: string
+    enum:
+    - live_demo
+    - synthetic_population
+    update: set before dependent event/evaluation
+    amplitude: user property
+    statsig: custom.traffic_type
+  has_saved_application:
+    type: boolean
+    update: derive from current profile drafts before events
+    amplitude: user property
+    statsig: custom.has_saved_application
+  applications_submitted_count:
+    type: integer
+    minimum: 0
+    update: derive from persisted unique submitted application IDs; do not increment on rerender
+    amplitude: user property
+    statsig: custom.applications_submitted_count
+identity:
+  stable_id: app-owned browser UUID -> Amplitude deviceId and Statsig customIDs.stableID; retained on login
+  known_id: synthetic profile UUID -> Amplitude userId and Statsig userID
+  anonymous: no literal anonymous shared user ID; omit known ID
+  experiment_unit: Stable ID; verify matching console metric unit
+  logout: emit Signed Out first; clear known identity and active application; rotate stable ID in both tools
+  reset_application: retain identity and attribution; new application ID
+  reset_new_user: clear profile/applications/attribution; new stable ID
+mapping:
+  amplitude: track exact event name with typed properties; business_event_id also BaseEvent insert_id; record client
+    occurrence time
+  statsig: logEvent exact name; value from statsig_value when defined, otherwise omit; metadata all scalar properties
+    stringified; null omitted; no assumed dedup by metadata
+  profile: Amplitude Identify preserves declared types; Statsig custom preserves declared types (metadata string
+    conversion applies only to events)
+  technical_events: SDK automatic exposures/replay/page/click telemetry excluded from parity of curated business
+    events
+invariants:
+- All required properties present, non-null, correct declared type/enum. Optional absent is omitted, not empty or
+  null.
+- loan_type unknown allowed only Rate Check Started, Help Requested and optional identity context before selection.
+- All application events carry immutable real selected loan type and application_id.
+- Help Requested with application_id must also include application_status and selected loan_type.
+- Identity event context omitted after reset; never attach old application to a new profile.
+- Application Submitted application_status is submitted; persist transition before dispatch.
+- No arbitrary form values, URLs, free text, PII, or document contents in events/replay.
+- No principal/revenue event or unload abandonment.
+- Preview mode prevents evaluations and event sends before adapters run.
+- Metadata IDs support reconciliation, not a guarantee of exact-once delivery.
+attribution:
+  capture: First eligible landing before router query changes; allowlisted source/medium/campaign fixtures only.
+  first_touch: Persist per browser/profile lifecycle, set once; retain across login; reset only new user.
+  session_touch: Capture each app session (30m inactivity); retain across in-session route navigation; direct on
+    session with no recognized attribution.
+  vendor_native: Keep Amplitude built-in marketing attribution; custom fields form cross-platform comparison contract,
+    not vendor attribution replacement.
+events:
+- name: Rate Check Started
+  trigger: Explicit Check your rate activation; repeat clicks blocked while navigating. unknown allowed before selection.
+  implementation_location: src/pages/Home.tsx
+  required_properties:
+  - business_event_id
+  - schema_version
+  - traffic_type
+  - page_id
+  - session_id
+  - first_touch_source
+  - first_touch_medium
+  - first_touch_campaign
+  - first_touch_channel
+  - session_touch_source
+  - session_touch_medium
+  - session_touch_campaign
+  - session_touch_channel
+  - loan_type
+  - entry_point
+  optional_properties: []
+  statsig_value: null
+  revenue: false
+- name: Loan Type Selected
+  trigger: Committed initial choice, or explicit change creating a new flow; not every render.
+  implementation_location: src/pages/Application.tsx
+  required_properties:
+  - business_event_id
+  - schema_version
+  - traffic_type
+  - page_id
+  - session_id
+  - first_touch_source
+  - first_touch_medium
+  - first_touch_campaign
+  - first_touch_channel
+  - session_touch_source
+  - session_touch_medium
+  - session_touch_campaign
+  - session_touch_channel
+  - loan_type
+  - entry_point
+  optional_properties: []
+  statsig_value: null
+  revenue: false
+- name: Application Started
+  trigger: Create and persist new application after loan choice; once per application ID.
+  implementation_location: src/state/application.ts
+  required_properties:
+  - business_event_id
+  - schema_version
+  - traffic_type
+  - page_id
+  - session_id
+  - first_touch_source
+  - first_touch_medium
+  - first_touch_campaign
+  - first_touch_channel
+  - session_touch_source
+  - session_touch_medium
+  - session_touch_campaign
+  - session_touch_channel
+  - loan_type
+  - application_id
+  - application_status
+  - entry_point
+  - step_id
+  - step_index
+  optional_properties: []
+  statsig_value: null
+  revenue: false
+- name: Application Step Viewed
+  trigger: Step becomes active and visible; once per actual navigation, including backward navigation; not rerenders.
+  implementation_location: src/pages/Application.tsx
+  required_properties:
+  - business_event_id
+  - schema_version
+  - traffic_type
+  - page_id
+  - session_id
+  - first_touch_source
+  - first_touch_medium
+  - first_touch_campaign
+  - first_touch_channel
+  - session_touch_source
+  - session_touch_medium
+  - session_touch_campaign
+  - session_touch_channel
+  - loan_type
+  - application_id
+  - application_status
+  - step_id
+  - step_index
+  optional_properties: []
+  statsig_value: null
+  revenue: false
+- name: Application Validation Failed
+  trigger: Blocked Continue/Submit attempt; one summary event per attempt using first allowlisted error.
+  implementation_location: src/state/application.ts
+  required_properties:
+  - business_event_id
+  - schema_version
+  - traffic_type
+  - page_id
+  - session_id
+  - first_touch_source
+  - first_touch_medium
+  - first_touch_campaign
+  - first_touch_channel
+  - session_touch_source
+  - session_touch_medium
+  - session_touch_campaign
+  - session_touch_channel
+  - loan_type
+  - application_id
+  - application_status
+  - step_id
+  - step_index
+  - validation_error_code
+  optional_properties: []
+  statsig_value: null
+  revenue: false
+- name: Application Saved
+  trigger: Explicit save succeeds locally; not autosave/reload.
+  implementation_location: src/state/application.ts
+  required_properties:
+  - business_event_id
+  - schema_version
+  - traffic_type
+  - page_id
+  - session_id
+  - first_touch_source
+  - first_touch_medium
+  - first_touch_campaign
+  - first_touch_channel
+  - session_touch_source
+  - session_touch_medium
+  - session_touch_campaign
+  - session_touch_channel
+  - loan_type
+  - application_id
+  - application_status
+  - step_id
+  - step_index
+  optional_properties: []
+  statsig_value: null
+  revenue: false
+- name: Application Resumed
+  trigger: Explicit resume of previously saved draft; once per resume action.
+  implementation_location: src/pages/Dashboard.tsx
+  required_properties:
+  - business_event_id
+  - schema_version
+  - traffic_type
+  - page_id
+  - session_id
+  - first_touch_source
+  - first_touch_medium
+  - first_touch_campaign
+  - first_touch_channel
+  - session_touch_source
+  - session_touch_medium
+  - session_touch_campaign
+  - session_touch_channel
+  - loan_type
+  - application_id
+  - application_status
+  - step_id
+  - step_index
+  - entry_point
+  optional_properties: []
+  statsig_value: null
+  revenue: false
+- name: Offers Viewed
+  trigger: Offers for current application rendered; not background fetch or rerender.
+  implementation_location: src/pages/Offers.tsx
+  required_properties:
+  - business_event_id
+  - schema_version
+  - traffic_type
+  - page_id
+  - session_id
+  - first_touch_source
+  - first_touch_medium
+  - first_touch_campaign
+  - first_touch_channel
+  - session_touch_source
+  - session_touch_medium
+  - session_touch_campaign
+  - session_touch_channel
+  - loan_type
+  - application_id
+  - application_status
+  - requested_amount
+  - amount_band
+  optional_properties: []
+  statsig_value: null
+  revenue: false
+- name: Offer Selected
+  trigger: User commits a specific fixture offer; changing selection is a new event.
+  implementation_location: src/pages/Offers.tsx
+  required_properties:
+  - business_event_id
+  - schema_version
+  - traffic_type
+  - page_id
+  - session_id
+  - first_touch_source
+  - first_touch_medium
+  - first_touch_campaign
+  - first_touch_channel
+  - session_touch_source
+  - session_touch_medium
+  - session_touch_campaign
+  - session_touch_channel
+  - loan_type
+  - application_id
+  - application_status
+  - offer_id
+  - term_months
+  - requested_amount
+  - amount_band
+  optional_properties: []
+  statsig_value: null
+  revenue: false
+- name: Application Submitted
+  trigger: Valid review accepted; persisted draft-to-submitted transition exactly once per ID; never per step.
+  implementation_location: src/state/application.ts
+  required_properties:
+  - business_event_id
+  - schema_version
+  - traffic_type
+  - page_id
+  - session_id
+  - first_touch_source
+  - first_touch_medium
+  - first_touch_campaign
+  - first_touch_channel
+  - session_touch_source
+  - session_touch_medium
+  - session_touch_campaign
+  - session_touch_channel
+  - loan_type
+  - application_id
+  - application_status
+  - offer_id
+  - term_months
+  - requested_amount
+  - amount_band
+  - elapsed_seconds
+  optional_properties: []
+  statsig_value: elapsed_seconds
+  revenue: false
+- name: Application Status Viewed
+  trigger: Status card becomes visible on dashboard visit for selected application.
+  implementation_location: src/pages/Dashboard.tsx
+  required_properties:
+  - business_event_id
+  - schema_version
+  - traffic_type
+  - page_id
+  - session_id
+  - first_touch_source
+  - first_touch_medium
+  - first_touch_campaign
+  - first_touch_channel
+  - session_touch_source
+  - session_touch_medium
+  - session_touch_campaign
+  - session_touch_channel
+  - loan_type
+  - application_id
+  - application_status
+  optional_properties: []
+  statsig_value: null
+  revenue: false
+- name: Loan Details Viewed
+  trigger: Explicit details panel opened for application.
+  implementation_location: src/pages/Dashboard.tsx
+  required_properties:
+  - business_event_id
+  - schema_version
+  - traffic_type
+  - page_id
+  - session_id
+  - first_touch_source
+  - first_touch_medium
+  - first_touch_campaign
+  - first_touch_channel
+  - session_touch_source
+  - session_touch_medium
+  - session_touch_campaign
+  - session_touch_channel
+  - loan_type
+  - application_id
+  - application_status
+  optional_properties: []
+  statsig_value: null
+  revenue: false
+- name: Application Task Completed
+  trigger: Mock task transitions incomplete to complete; toggling display does not fire.
+  implementation_location: src/state/application.ts
+  required_properties:
+  - business_event_id
+  - schema_version
+  - traffic_type
+  - page_id
+  - session_id
+  - first_touch_source
+  - first_touch_medium
+  - first_touch_campaign
+  - first_touch_channel
+  - session_touch_source
+  - session_touch_medium
+  - session_touch_campaign
+  - session_touch_channel
+  - loan_type
+  - application_id
+  - application_status
+  - task_id
+  optional_properties: []
+  statsig_value: null
+  revenue: false
+- name: Help Requested
+  trigger: Explicit opening of support/help; not automatic guide display. If app context exists include ID/status.
+  implementation_location: src/components/Help.tsx
+  required_properties:
+  - business_event_id
+  - schema_version
+  - traffic_type
+  - page_id
+  - session_id
+  - first_touch_source
+  - first_touch_medium
+  - first_touch_campaign
+  - first_touch_channel
+  - session_touch_source
+  - session_touch_medium
+  - session_touch_campaign
+  - session_touch_channel
+  - loan_type
+  - help_topic
+  - entry_point
+  optional_properties:
+  - application_id
+  - application_status
+  statsig_value: null
+  revenue: false
+- name: Sign Up Completed
+  trigger: After new synthetic identity and traits set.
+  implementation_location: src/identity/profile.ts
+  required_properties:
+  - business_event_id
+  - schema_version
+  - traffic_type
+  - page_id
+  - session_id
+  - first_touch_source
+  - first_touch_medium
+  - first_touch_campaign
+  - first_touch_channel
+  - session_touch_source
+  - session_touch_medium
+  - session_touch_campaign
+  - session_touch_channel
+  - identity_method
+  optional_properties:
+  - loan_type
+  - application_id
+  statsig_value: null
+  revenue: false
+- name: Signed In
+  trigger: After returning synthetic identity and traits set.
+  implementation_location: src/identity/profile.ts
+  required_properties:
+  - business_event_id
+  - schema_version
+  - traffic_type
+  - page_id
+  - session_id
+  - first_touch_source
+  - first_touch_medium
+  - first_touch_campaign
+  - first_touch_channel
+  - session_touch_source
+  - session_touch_medium
+  - session_touch_campaign
+  - session_touch_channel
+  - identity_method
+  optional_properties:
+  - loan_type
+  - application_id
+  statsig_value: null
+  revenue: false
+- name: Signed Out
+  trigger: Under old identity before reset; then clear known identity and rotate stable ID.
+  implementation_location: src/identity/profile.ts
+  required_properties:
+  - business_event_id
+  - schema_version
+  - traffic_type
+  - page_id
+  - session_id
+  - first_touch_source
+  - first_touch_medium
+  - first_touch_campaign
+  - first_touch_channel
+  - session_touch_source
+  - session_touch_medium
+  - session_touch_campaign
+  - session_touch_channel
+  - identity_method
+  optional_properties:
+  - loan_type
+  - application_id
+  statsig_value: null
+  revenue: false
