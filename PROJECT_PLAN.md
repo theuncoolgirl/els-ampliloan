@@ -1,0 +1,102 @@
+# AmpliLend — phase plan
+Revision 1 · Prepared 2026-11-11 · Implementation not started
+
+## Outcome and scope
+Build a static, synthetic lending demo that connects acquisition to application conversion, diagnosis, intervention, and a Statsig experiment. Personal loans, mortgages, and small-business lending share the same application components and states. Loan type changes copy, mock amounts, and offers. A simple dashboard shows status, details, resume, mock tasks, and help.
+
+The approved brief is PROJECT_BRIEF.md; reviewed agent rules are AGENTS.md, PLANNER.md, BUILDER.md, and UX.md. This plan makes them executable; it does not grant permission to write to GitHub or either vendor. The event contract is docs/custom-events.yml. Integration decisions and sources are docs/INTEGRATION_NOTES.md. Proposed service entities are docs/STATSIG_PROPOSAL.md.
+
+## Startup record
+- Coordination: Cursor chat; manual resume unless actual orchestration capability is verified.
+- Approver: Erin Shields. Approver identity: verified in direct Cursor conversation at activation; currently unset.
+- Repository / branch / deployed URL: unset; do not invent or create automatically.
+- Builder ID/link: unset. Start or reuse one Builder only after implementation instruction.
+- Available GitHub, Amplitude, Statsig, browser QA, and delegation capabilities: not yet checked in Cursor.
+- Amplitude organization: EE sandbox 446257; exact demo project ID/key, region, replay and engagement entitlement unverified.
+- Statsig project ID/client key/environment: unset. Verify demo-only project before service actions.
+- Desired readiness: before Thanksgiving, November 26, 2026. Proposed checkpoints: P0 Nov 12; P1 Nov 16; P2 Nov 18; P3 Nov 20; P4 Nov 23; P5 Nov 24; Nov 25 buffer. These are planning targets, not historical confirmations of Becca's deadline or scheduled work.
+
+## Permissions — applies separately to every phase
+| Role | Commit | Push | PR | Merge | Deploy |
+|---|---|---|---|---|---|
+| Builder | No | No | No | No | No |
+| Planner | No | No | No | No | No |
+Authorization source: none for implementation/Git/service mutations in this planning request. Authorized branch: unset. Local implementation also awaits Erin's instruction to begin. Revise the applicable handoff with the actual source of any permission; do not infer it from this plan. Builder never merges or deploys. Existing scoped authorization may be reused; no repetitive approval requests.
+
+External categories are separate: local implementation; draft entity creation; publication/experiment activation; population traffic. Each defaults to none. A local simulator is not a remote SDK success. Planner review PASS is not human merge approval. Record exact PR/head SHA and whether the approved merge also deploys. If no Git rights, review the saved patch + SHA-256; a live criterion remains pending.
+
+## Evidence and checks
+Builder implements and records evidence; Planner verifies it and accepts/rejects. Each ordinary phase runs `npm run typecheck`, `npm run build`, and its one focused smoke below. Add only the named targeted correctness checks. Save concise results in PHASE_LOG.md and detailed evidence in docs/evidence/phase-N.md. Future commands are requirements for Builder to implement, not claims they exist or passed today. No full suite/screenshots until P5.
+
+Shared UI acceptance, applied to the changed surface in each focused smoke: 390×844 and 1440×900; no horizontal overflow; Tab/Shift+Tab/Enter/Space can complete that surface with visible focus; reduced-motion preference removes nonessential animated movement. Stable `data-demo` attributes are unique per rendered page. Hash routes under the verified Pages base support direct load and refresh; route list is below. Record observed results, not merely a checklist.
+
+## Phase 0 · revision 1 · static scaffold and Pages path
+**Objective:** an accessible application shell that builds and can be served from GitHub Pages. Depends on repo/branch/capability discovery and implementation instruction.
+**Allowed:** package/lock/config files, index.html, src shell, public assets, .github/workflows Pages workflow, .gitignore, .env.example, docs/SETUP.md, docs/evidence/phase-0.md, PHASE_LOG.md. Exclude SDKs, real credentials, loan state logic, console entities, and other planning files.
+**Steps:** follow BUILDER_HANDOFF.md. React + TypeScript + Vite; npm lockfile; hash routing for static refresh safety. Routes `/`, `/apply`, `/offers`, `/dashboard`, `/presenter` rendered as `/#/...` under the correct base. Home Check your rate enters `/apply`; other surfaces explicitly say demo scaffold until implemented. Original visual shell and reduced-motion hero; no borrowed assets.
+**Risks:** wrong repository base, unavailable Pages permission, hidden workflow deployment, speculative package APIs.
+| ID | Verifier / steps | Expected result / evidence |
+|---|---|---|
+| P0.1 | Builder runs typecheck + production build; Planner reads exits | Both exit 0; resolved tool versions and lockfile in phase-0 evidence |
+| P0.2 | Builder runs focused home → apply smoke with shared UI checks; Planner inspects log | CTA navigates, keyboard focus moves to route heading, reduced motion respected, unique home-cta/application-root anchors; no SDK network traffic |
+| P0.3 | Builder previews production build at configured base and directly loads/refreshed hash dashboard URL | Assets and shell render without 404; route/base URLs and console results recorded |
+| P0.4 | Planner after separately approved merge/deploy observes Actions and fresh live home/apply visit | Real deployment run + URL recorded, fresh visit works. Pending until authorized; local P0.1–3 can pass without this |
+
+## Phase 1 · revision 1 · shared journey and dashboard
+**Objective:** functional synthetic borrower experience. Depends on P0 completion, or explicit Planner decision to permit local P1 while deployment remains blocked; do not mark P0 complete in that case.
+**Allowed:** src pages/components/state/fixtures/styles, focused flow tests, docs/evidence/phase-1.md, PHASE_LOG.md. Exclude vendor SDKs, tracking map changes, Git workflow changes.
+**Steps:** one state machine: type → details → offers → review → submitted; dashboard draft/submitted/under_review/decision_ready. Use mock amount bands/offers, review validation, local save/resume, simulated sign-in, and mock document-task toggles. Dashboard statuses advance only through labeled presenter scenarios. No real loan eligibility or file upload. Reserve instrumentation call sites/guide anchors; no invented completion events.
+**Risks:** three diverging flows, accidental real financial inputs, double submission, fixture loss after reload.
+| ID | Verifier / steps | Expected result / evidence |
+|---|---|---|
+| P1.1 | Builder typecheck/build; Planner reviews | Exit 0 and bounded diff |
+| P1.2 | Builder focused personal-loan application → save/reload/resume → submit → dashboard smoke, shared UI checks | Same application ID survives reload; valid submission advances once; status/details/task/help controls work; application-step/offers-root/submit-application/dashboard-status/help-entry anchors stable |
+| P1.3 | Builder targeted state-machine checks for all 3 loan fixtures and rapid double-submit | One shared state graph; valid fixtures complete; one transition and one submission record per ID; invalid review cannot submit |
+| P1.4 | Planner inspects fixture/persistence and changed code | Synthetic-only fields; clear reset controls; no remote auth/upload/credit requests; loan type locked after application creation, changing it requires explicit new application |
+
+## Phase 2 · revision 1 · Amplitude and shared telemetry
+**Objective:** real analytics, identity, marketing context, replay, engagement readiness. Depends on P1 and verified Amplitude project/region/key + explicit demo telemetry permission. Missing project permits local adapter work only.
+**Allowed:** src/integrations, src/telemetry, src/identity, mapped page call sites, package/lock, .env.example, targeted telemetry tests, docs/SETUP.md, docs/evidence/phase-2.md, PHASE_LOG.md. No Statsig console changes or Amplitude Experiment calls.
+**Steps:** implement YAML contract; single Unified initializer; identity before events; bounded attribution; typed properties; replay with synthetic input masking; anchor readiness for Guides/Surveys. Statsig sink is explicitly disabled until P3, not silently mocked as delivered.
+**Risks:** duplicate initialization/page capture, wrong identity, unmasked inputs, ambiguous delivery vs queue acceptance, project entitlement absent.
+| ID | Verifier / steps | Expected result / evidence |
+|---|---|---|
+| P2.1 | Builder typecheck/build; Planner reviews | Exit 0; one Unified entry point, no standalone duplicate browser SDK initialization |
+| P2.2 | Builder focused tagged landing → anonymous start → mock sign-in → submission; Planner verifies payload evidence | First-touch survives login/reload, current session attribution documented, shared profile updated before business event; Amplitude project receives named events with correct IDs/types |
+| P2.3 | Builder targeted event/identity tests | All 17 names validate; submission transition produces one event; no Step Completed; missing IDs/invalid enum rejected; signed-out/new user cannot inherit known identity |
+| P2.4 | Planner reviews one actual replay plus SDK network inspection | Synthetic journey playback available and fields masked; no Amplitude Experiment fetch/evaluation activity. Entitlement/delivery unavailable = BLOCKED, not pass |
+
+## Phase 3 · revision 1 · Statsig technical implementation
+**Objective:** gated/configured/parameterized UI with correct assignment and outcomes. Depends on P2 contract, verified Statsig demo project/key, and specific telemetry permission. Proposed entity table needs Erin's Go before draft provisioning.
+**Allowed:** src/integrations/statsig, src/telemetry Statsig adapter, page parameter bindings, presenter diagnostics, package/lock, targeted exposure tests, docs/SETUP.md, docs/evidence/phase-3.md, PHASE_LOG.md. Console actions only enumerated in activated handoff; no experiment starts.
+**Steps:** verify installed client APIs; one client; shared stable ID; await profile updates; per-page lazy parameters; standalone support gate/config; typed fallbacks; separate preview overrides. Create approved store/layer/gate/config drafts only if actually authorized; record exact IDs and environment.
+**Risks:** exposure caused by hidden reads/diagnostics, changed assignment on login, stale profile async race, absent parameter bindings, confusing overrides with randomized evidence.
+| ID | Verifier / steps | Expected result / evidence |
+|---|---|---|
+| P3.1 | Builder typecheck/build and focused live-config application smoke; Planner verifies | Typed defaults render; real evaluated values visible only with actual verified bindings; no experiment activation |
+| P3.2 | Builder targeted identity/exposure tests | Stable unit unchanged on login; profile changes awaited; stale async response ignored; opening diagnostics adds zero evaluations; unused page parameter adds zero exposure; repeated render behavior documented from actual SDK |
+| P3.3 | Planner compares one consented synthetic submission across vendor payloads | Same event ID/name/application/loan/unit; Amp typed values vs Statsig string metadata; numeric Statsig value correctly mapped; console receipt recorded separately |
+| P3.4 | Builder simulates blocked SDK and invalid/missing parameters; Planner reviews | UI usable with defaults, bounded initialization wait, visibly fallback in presenter; no cached value for a different identity; preview sends neither business outcomes nor exposure calls |
+
+## Phase 4 · revision 1 · console assets and demo scenarios
+**Objective:** demonstrate attribution → conversion friction → targeted assistance → Statsig experiment configuration. Depends on P2/P3 and individually authorized console drafts/publication/activation/data actions.
+**Allowed:** console assets listed in revised handoff; docs/DEMO_SCRIPT.md, docs/CONSOLE_SETUP.md, bounded fixture runner if separately authorized, docs/evidence/phase-4.md, PHASE_LOG.md. No implicit production changes.
+**Steps:** create acquisition/funnel/segmentation/retention views; replay links; draft anchored help guide, friction survey, dashboard resource center. Configure Statsig exposure-unit metrics and one application-layer experiment in draft. Prepare 4 synthetic personas and separate preview/live-demo/population modes. Treat heatmaps as conditional until enabled with sufficient real browser capture.
+**Risks:** permissions/entitlements, cohort latency, survey changes during a test, fabricated significance, synthetic traffic contaminating a live demo.
+| ID | Verifier / steps | Expected result / evidence |
+|---|---|---|
+| P4.1 | Builder typecheck/build if code changed; otherwise record N/A; Planner reviews concrete entity inventory | IDs/URLs/project/state of every created asset; no undocumented publications or starts |
+| P4.2 | Planner verifies funnel and metric definitions against docs/METRICS_AND_QA.md | Same outcome, unit, exposure/eligibility, window/timezone and traffic filter recorded; no claim dashboards must numerically match without reconciliation |
+| P4.3 | Builder focused targeted-guide/survey scenario if publication authorized; Planner verifies | Correct synthetic persona sees anchored content; excluded persona does not; response visible remotely. Draft preview alone labeled draft, publication criterion pending |
+| P4.4 | Planner inspects proposed experiment and bounded data-run recipe before activation | Variant values, unit, target, allocation, metrics, stop/rollback, max users/events and environment stated; separate Erin approval recorded before activation/traffic; no significance claims from scripted data |
+
+## Phase 5 · revision 1 · final verification and handoff
+**Objective:** prove readiness and document exact limitations. Depends on P0–P4 required live criteria and approved demo configuration; blocked optional heatmaps may remain explicit limitation, core replay/engagement/Statsig cannot silently be waived.
+**Allowed:** focused repairs to implemented paths, final tests, docs/evidence/phase-5.md, docs/DEMO_SCRIPT.md, docs/SETUP.md, PHASE_LOG.md. Each service action still needs recorded authority.
+**Risks:** local success mistaken for live, consented traffic mixing with previews, reset/multi-tab races, remote configuration drift.
+| ID | Verifier / steps | Expected result / evidence |
+|---|---|---|
+| P5.1 | Builder runs typecheck/build + full matrix in docs/METRICS_AND_QA.md; Planner reviews each actual result | Every required row PASS with evidence or explicit FAIL/BLOCKED; real screenshots allowed here for synthetic UI only |
+| P5.2 | Planner inspects deployed build/SDK versions/config inventory and exact reviewed head | Live URL and run recorded; no management secrets or unused Amp Experiment activity; each readiness area separately marked |
+| P5.3 | Planner performs demo script from fresh identity | Complete business narrative and technical source walkthrough; links to charts/replay/configs; distinguish assigned vs preview and scripted vs observed data |
+| P5.4 | Planner presents final limitations and operating instructions to Erin | Reset/run/stop/reconfigure instructions, asset owner/project, current experiment state, known blockers and rollback path; no unfinished must-show labeled complete |
