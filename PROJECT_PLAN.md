@@ -1,4 +1,4 @@
-# AmpliLend — phase plan
+# AmpliLoan — phase plan
 Revision 1 · Prepared 2026-11-11 · Implementation not started
 
 ## Outcome and scope

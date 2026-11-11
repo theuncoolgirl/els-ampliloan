@@ -1,4 +1,4 @@
-# AmpliLend agent index
+# AmpliLoan agent index
 
 Read `PROJECT_BRIEF.md` before any project task. Follow Erin's explicit current instructions over these files; record material scope changes in `DECISIONS.md`. Report conflicts with the brief instead of silently changing the product.
 

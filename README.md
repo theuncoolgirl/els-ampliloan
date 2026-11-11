@@ -1,4 +1,4 @@
-# AmpliLend — final Steps 2 and 3 package
+# AmpliLoan — final Steps 2 and 3 package
 Prepared November 11, 2026. Planning only; no website code, SDK connection, console entities, or experiment activation performed.
 
 ## Contents
@@ -8,7 +8,7 @@ Prepared November 11, 2026. Planning only; no website code, SDK connection, cons
 - docs/INTEGRATION_NOTES.md: official documentation links and implementation decisions.
 - docs/STATSIG_PROPOSAL.md: concrete store/layer/gate/config and first-experiment proposal; no provisioning permission.
 - docs/METRICS_AND_QA.md: audience use cases, measurement recipes, console inventory and final QA.
-- DECISIONS.md / PHASE_LOG.md: intentionally empty starter files, as requested. Existing design decisions remain in PROJECT_PLAN.md and docs/INTEGRATION_NOTES.md.
+- DECISIONS.md records the product-name decision. PHASE_LOG.md stays empty until a phase runs. Design decisions also remain in PROJECT_PLAN.md and docs/INTEGRATION_NOTES.md.
 - PROJECT_BRIEF.md / AGENTS.md / PLANNER.md / BUILDER.md / UX.md: unchanged copies of existing brief and reviewed role specs.
 
 Copy these into the intended repository root; preserve any newer existing files and reconcile before overwrite. No scripts or dependencies are included because Phase 0 belongs to Builder.

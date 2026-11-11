@@ -8,7 +8,7 @@
 
 ## Design requirements
 - Preserve one journey for all loan types. Use shared components and contextual copy; no distinct personal/mortgage/business applications.
-- Create original AmpliLend branding inspired by Rocket's playful animation and Upstart's immediate rate-check CTA. Do not copy assets, logos, or exact layouts.
+- Create original AmpliLoan branding inspired by Rocket's playful animation and Upstart's immediate rate-check CTA. Do not copy assets, logos, or exact layouts.
 - Keep the CTA visible on initial desktop/mobile screens; specify behavior and reduced-motion alternatives for the hero.
 - Specify dashboard actions by status: resume draft, view status/details, complete mock tasks, get help, give feedback.
 - Use realistic mock amounts and clearly illustrative offer copy; do not imply actual approval, funding, or real credit checks.

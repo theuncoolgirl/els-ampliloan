@@ -15,7 +15,7 @@ Planner: Commit No; Push No; PR No; Merge No; Deploy No.
 Authorization source: none. External-service actions: none. SDK traffic: none. Population generation: none.
 
 ## Objective
-Create the static AmpliLend shell and a reviewable GitHub Pages deployment configuration. No SDK installation or business workflow implementation in this phase.
+Create the static AmpliLoan shell and a reviewable GitHub Pages deployment configuration. No SDK installation or business workflow implementation in this phase.
 
 ## Read first
 AGENTS.md → BUILDER.md → PROJECT_BRIEF.md → PROJECT_PLAN.md phase 0 → UX.md → this handoff. Consult docs/INTEGRATION_NOTES.md for deployment sources. Preserve existing unrelated code; inspect existing package tooling before selecting compatible pinned versions.
