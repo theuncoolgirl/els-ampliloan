@@ -35,3 +35,14 @@ Update behavior (revision 3.1)
 - Layers created in revision 3.3 (all unit `stableID`, `isImplicitLayer` false): `ampliloan_home_layer` (hero_headline, cta_label), `ampliloan_application_layer` (show_reassurance false, progress_style "steps"), `ampliloan_offers_layer` (show_comparison_hint false), `ampliloan_dashboard_layer` (show_next_steps true).
 - A route that mounts while a user update is running is held until `settled()` (bounded at 2000 ms) so that first reads are not pinned to defaults (added in revision 3.3; offline-tested only).
 - Application-store parameters are read only when the resolved user's `active_loan_type` matches the current application; otherwise the default with reason `timeout` is returned (`settled()` bounds a wait at 2000 ms).
+
+## Cloud project (revision 4C.2, current)
+
+Project `AmpliLoan [Cloud]`, ID `6oe5DaLQIx5XnKfBrG0JnT` (https://staging.console.statsig.com/6oe5DaLQIx5XnKfBrG0JnT/settings). Created 2026-11-12 23:04:44-55Z through `https://statsigapi.net/console/v1`; every entity verified by GET. Same names, types, defaults and store-to-layer references as the table above.
+- Layers (idType `stableID`, ID equals name): `ampliloan_home_layer`, `ampliloan_application_layer`, `ampliloan_offers_layer`, `ampliloan_dashboard_layer`.
+- Parameter stores: `ampliloan_home` (3y4tImqDP2JzeEDhFJLymz), `ampliloan_application` (3BNzAoluZw18gDrl7wAUHG), `ampliloan_offers` (3CwtSBdqA5pWY8mhj727p7), `ampliloan_dashboard` (3EIFykZ3LVvIyES8xd5eWS).
+- Gate `ampliloan_contextual_help` (idType `stableID`) with one rule `first_time_borrowers` (ID `3H1GVhuDB1LYeb6bsFCS3R`: custom field `borrowing_experience` any of `first_time`, pass 100%).
+- Dynamic config `ampliloan_support_content` (idType `stableID`, default `{"heading":"Help","body":"","max_items":5}`, no rules).
+- No experiment, metric, or other entity. The old project below is superseded and untouched; the client key in the build must belong to this project.
+
+Old project `363sCqDdACZXt4M88ZqiKa` (`AmpliLoan [WHN]`): SUPERSEDED. The text above this section describes its state.
