@@ -55,3 +55,50 @@ main { padding: 0 var(--space-3); max-width: 1200px; margin: 0 auto; min-height:
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .rise polyline { stroke-dashoffset: 0; }
 }
+
+/* Phase 1 journey */
+button, .button { font: inherit; cursor: pointer; border: 2px solid var(--c-primary); background: var(--c-surface); color: var(--c-primary-dark); border-radius: 999px; padding: 0.6rem 1.2rem; font-weight: 600; text-decoration: none; display: inline-block; }
+button.primary, .button.primary { background: var(--c-primary); color: #fff; }
+button:disabled { opacity: 0.6; cursor: progress; }
+.link-button { border: 0; background: none; padding: 0; border-radius: 0; color: var(--c-ink); }
+.actions { display: flex; flex-wrap: wrap; gap: var(--space-1); margin: var(--space-3) 0 var(--space-1); }
+.muted, .hint { color: var(--c-muted); }
+.hint { font-size: 0.9rem; margin: 0.25rem 0 0; }
+.field { margin-bottom: var(--space-3); max-width: 28rem; }
+.field label { display: block; font-weight: 600; margin-bottom: 0.25rem; }
+input[type='number'], select { font: inherit; padding: 0.6rem; width: 100%; border: 2px solid #9fb0c8; border-radius: 10px; background: #fff; }
+[aria-invalid='true'] { border-color: #b00020; }
+.field-error { color: #b00020; font-weight: 600; margin: 0.25rem 0 0; }
+.error-summary { border: 3px solid #b00020; background: #fff5f6; padding: var(--space-2); border-radius: var(--radius); max-width: 34rem; margin: var(--space-2) 0; }
+.error-summary h2 { margin: 0 0 0.5rem; font-size: 1.1rem; }
+.error-summary a { color: #b00020; }
+fieldset { border: 1px solid #c9d6ea; border-radius: var(--radius); background: var(--c-surface); padding: var(--space-2); margin: var(--space-2) 0; min-width: 0; }
+legend { font-weight: 700; padding: 0 0.4rem; }
+.choice { display: flex; gap: 0.75rem; align-items: flex-start; padding: 0.6rem 0; cursor: pointer; }
+.choice input { margin-top: 0.3rem; width: 1.2rem; height: 1.2rem; }
+.stepper { display: flex; flex-wrap: wrap; gap: var(--space-2); list-style: none; padding: 0; margin: 0 0 var(--space-2); color: var(--c-muted); }
+.stepper [aria-current='step'] { color: var(--c-ink); font-weight: 700; }
+.banner { background: #fff7e0; border: 1px solid var(--c-warm); border-radius: var(--radius); padding: 0.75rem 1rem; }
+.notice { display: flex; gap: var(--space-2); align-items: center; justify-content: space-between; background: #fff7e0; border-bottom: 1px solid var(--c-warm); padding: 0.75rem var(--space-3); }
+.offers { display: grid; gap: var(--space-2); }
+.offer-card { display: flex; gap: 0.75rem; border: 2px solid #c9d6ea; border-radius: var(--radius); padding: var(--space-2); background: #fff; cursor: pointer; }
+.offer-card.selected { border-color: var(--c-primary); background: #eef4ff; }
+.offer-body { display: grid; gap: 0.2rem; }
+.payment { font-weight: 700; }
+.card { background: var(--c-surface); border: 1px solid #c9d6ea; border-radius: var(--radius); padding: var(--space-3); max-width: 44rem; }
+.card h2 { margin-top: 0; }
+.badge { display: inline-block; padding: 0.15rem 0.7rem; border-radius: 999px; background: #e3edff; font-weight: 700; }
+.badge-decision_ready { background: #dffaf5; }
+.timeline { display: flex; flex-wrap: wrap; gap: var(--space-2); list-style: none; padding: 0; }
+.timeline li { padding: 0.3rem 0.8rem; border-radius: 999px; border: 2px solid #c9d6ea; color: var(--c-muted); }
+.timeline li.reached { border-color: var(--c-accent); color: var(--c-ink); font-weight: 600; }
+.summary { margin: var(--space-2) 0; }
+.summary div { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.35rem 0; border-bottom: 1px solid #e3e9f4; }
+.summary dt { font-weight: 700; min-width: 9rem; }
+.summary dd { margin: 0; overflow-wrap: anywhere; }
+.confirm { border: 2px dashed var(--c-warm); border-radius: var(--radius); padding: var(--space-2); margin: var(--space-2) 0; display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.confirm p { flex-basis: 100%; margin: 0; }
+.help-panel { max-width: min(36rem, 92vw); max-height: 85vh; border: 2px solid var(--c-primary); border-radius: var(--radius); padding: var(--space-3); }
+.help-panel::backdrop { background: rgba(14, 26, 43, 0.5); }
+.help-head { display: flex; justify-content: space-between; align-items: center; }
+.help-head h2 { margin: 0; }

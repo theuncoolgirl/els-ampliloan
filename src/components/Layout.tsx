@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { href, type RoutePath } from '../router';
+import { useSnapshot, store } from '../state/useStore';
 
 const NAV: { path: RoutePath; label: string }[] = [
   { path: '/', label: 'Home' },
@@ -8,7 +9,7 @@ const NAV: { path: RoutePath; label: string }[] = [
   { path: '/dashboard', label: 'Dashboard' },
 ];
 
-export function Header({ route }: { route: RoutePath }) {
+export function Header({ route, onHelp }: { route: RoutePath; onHelp: () => void }) {
   return (
     <header className="site-header">
       <a className="brand" href={href('/')}>
@@ -24,9 +25,27 @@ export function Header({ route }: { route: RoutePath }) {
               </a>
             </li>
           ))}
+          <li>
+            <button type="button" className="link-button" data-demo="help-entry" onClick={onHelp}>
+              Help
+            </button>
+          </li>
         </ul>
       </nav>
     </header>
+  );
+}
+
+export function Notice() {
+  const { notice } = useSnapshot();
+  if (!notice) return null;
+  return (
+    <div className="notice" role="status">
+      <span>{notice}</span>
+      <button type="button" onClick={() => store.dismissNotice()}>
+        Dismiss
+      </button>
+    </div>
   );
 }
 
