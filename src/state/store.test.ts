@@ -161,6 +161,17 @@ describe('persistence and owners', () => {
     expect(store.getSnapshot().active!.loanType).toBe('personal');
   });
 
+  it('sign-in from an anonymous browser brings the draft only to a profile with no active application', () => {
+    store.createApplication('personal');
+    const id = store.getSnapshot().active!.applicationId;
+    store.signIn('profile_a');
+    expect(store.getSnapshot().active!.applicationId).toBe(id);
+    store.signOut();
+    store.createApplication('mortgage');
+    store.signIn('profile_a');
+    expect(store.getSnapshot().active!.applicationId).toBe(id);
+  });
+
   it('sign-up keeps the anonymous draft with the new profile', () => {
     store.createApplication('personal');
     const id = store.getSnapshot().active!.applicationId;

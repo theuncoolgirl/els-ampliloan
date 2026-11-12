@@ -356,6 +356,15 @@ export const createStore = (storage: StorageLike, hooks: StoreHooks = {}) => {
     signIn(profileId?: string) {
       const p = read();
       const id = profileId ?? p.lastProfileId ?? 'sim_profile_default';
+      if (!p.profileId) {
+        const anonKey = ownerKeyOf(p);
+        const anon = owner(p);
+        const target = p.owners[`profile:${id}`] ?? emptyOwner();
+        if (anon.active && !target.active) {
+          p.owners[`profile:${id}`] = { ...target, active: anon.active };
+          p.owners[anonKey] = { ...anon, active: null };
+        }
+      }
       p.profileId = id;
       p.lastProfileId = id;
       p.persona = PROFILE_PERSONAS[id] ?? null;
