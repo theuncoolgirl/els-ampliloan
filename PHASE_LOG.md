@@ -81,3 +81,17 @@
 - Deviations and known limitations: the 60 s minimum was missed by 4 s; the run cap is spent.
 - Blocker and exact decision/configuration needed, if any: Planner decides whether the replay is sufficient or authorizes another run.
 - Next: stopped; awaiting Planner review or revised handoff.
+
+## 2026-11-12T20:30Z | Phase 3 | Revision 2 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase3-statsig-360f; head SHA in the final report
+- Objective and implementation summary: `@statsig/js-client` behind `src/integrations/statsig.ts` (lazy single client, local mode with no key, 2000 ms bounded wait, generation-token identity sync, typed never-throwing accessors with source and fallback reason), `pageParameters.ts` (lazy typed page parameters, once-per-generation setup failures), page bindings for home, application, offers, dashboard, standalone gate and dynamic config, Statsig telemetry adapter behind the dispatcher, presenter Preview with banner, extended presenter diagnostics, tests.
+- Files changed: src/** (integrations, telemetry, presenter, components, pages, styles, tests), package.json, package-lock.json, docs/STATSIG_INVENTORY.md, docs/SETUP.md, docs/evidence/phase-3.md, PHASE_LOG.md. `.env.example` already listed `VITE_STATSIG_CLIENT_KEY` (unchanged).
+- Git actions performed; draft PR link if any: logical commits pushed to the branch; draft PR attempted with base main (see final report; if the PR tool only showed an unsubmitted form, `gh pr list` is the check).
+- External actions performed (project/entity names or IDs; no secrets): none. No Statsig or Amplitude requests (capture shows only 127.0.0.1:4180), no console, no Statsig API, no keys.
+- Definition-of-done results: offline checks PASS (typecheck, build, 111 tests, keyboard-only smoke with 30 checks, preview run, zero vendor requests). Live and console items NOT STARTED or NOT VERIFIED by design for this revision.
+- Checks: typecheck exit 0; build exit 0; npm test exit 0 (111 passed).
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-3.md.
+- Deviations and known limitations: the specified defaults change three visible Phase 2 defaults (hero headline, help heading and body, FAQ count 3 instead of 5); `__configuration` is an internal SDK field; the SDK default tier as reported by the server is not verified.
+- Blocker and exact decision/configuration needed, if any: Planner to confirm the three default changes are intended; console provisioning and a keyed live run need a later authorization.
+- Next: stopped; awaiting Planner review or revised handoff.
