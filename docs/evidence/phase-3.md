@@ -38,3 +38,15 @@ NOT VERIFIED. No console access was used. All entities are `not provisioned` (se
 
 ### Data readiness
 NOT STARTED. No exposures, events, or assignments exist in Statsig.
+
+# Revision 2.1 (supersedes the revision 2 deviation notes)
+Still code-only: both vendor keys unset in every command (`env -u` or `unset`), no console, no Statsig API, no live telemetry.
+
+- Defaults corrected per the Planner: `hero_headline` is "A clearer path to the loan you need"; `ampliloan_support_content` defaults are heading "Help", body empty (the body line renders only when non-empty), `max_items` 5 (clamp 1 to 5; non-integers use 5). The "default behavior differences" and "defaults changed three Phase 2 values" notes in revision 2 no longer apply. One residual difference from Phase 2: the old static line "Local sample content for this demo." under the help heading is gone, because the corrected default body is empty.
+- `__configuration` wrapped: the adapter reports `unavailable` if the field is absent, renamed, not an object, or its getter throws; the facade then returns the default with reason `error` and records no setup failure. Tests cover all four cases and the facade fallback. Known fragility recorded in `docs/STATSIG_INVENTORY.md`.
+- Environment tier: unset; Statsig's default tier is NOT VERIFIED until a live revision.
+- Offers page shared `Stepper`: with the default the rendered markup is identical to Phase 2 (asserted in the smoke: exact `<ol class="stepper" aria-label="Progress">` with "Step 2 of 3: Offers" as `aria-current`).
+- Checks: typecheck exit 0; build exit 0; `npm test` 114 passed (3 new: shipped-defaults test, two `__configuration` tests; old-value assertions updated).
+- Keyboard-only default smoke and preview smoke on the production build (two runs, 0 failures; output in `/tmp/smoke-output-2.1.txt`): home headline reads "A clearer path to the loan you need"; help panel heading "Help" with 5 FAQs and no body line; anchors once per page; preview overrides change the UI with the exact banner and send nothing; preview off restores the shipped copy.
+- Network capture across both browser contexts: 29 requests, all to `127.0.0.1:4180`; zero to any Statsig or Amplitude host.
+- Console, live telemetry, data readiness: unchanged, NOT VERIFIED or NOT STARTED.

@@ -6,7 +6,7 @@ export const PROGRESS_STYLES = ['steps', 'bar'] as const;
 export type ProgressStyle = (typeof PROGRESS_STYLES)[number];
 
 export const PAGE_SPECS = {
-  home: { store: 'ampliloan_home', layer: 'ampliloan_home_layer', params: { hero_headline: 'Your next chapter starts here', cta_label: 'Check your rate' } },
+  home: { store: 'ampliloan_home', layer: 'ampliloan_home_layer', params: { hero_headline: 'A clearer path to the loan you need', cta_label: 'Check your rate' } },
   application: { store: 'ampliloan_application', layer: 'ampliloan_application_layer', params: { show_reassurance: false, progress_style: 'steps' as ProgressStyle } },
   offers: { store: 'ampliloan_offers', layer: 'ampliloan_offers_layer', params: { show_comparison_hint: false } },
   dashboard: { store: 'ampliloan_dashboard', layer: 'ampliloan_dashboard_layer', params: { show_next_steps: true } },
@@ -40,7 +40,7 @@ export const createPageParams = (service: StatsigService) => ({
     const validMax = typeof mi === 'number' && Number.isInteger(mi);
     return {
       heading: typeof v.heading === 'string' && v.heading ? v.heading : DEFAULT_SUPPORT.heading,
-      body: typeof v.body === 'string' && v.body ? v.body : DEFAULT_SUPPORT.body,
+      body: typeof v.body === 'string' ? v.body : DEFAULT_SUPPORT.body,
       maxItems: validMax ? Math.min(5, Math.max(1, mi as number)) : DEFAULT_SUPPORT.maxItems,
       source: r.source,
       reason: r.reason,
@@ -48,4 +48,4 @@ export const createPageParams = (service: StatsigService) => ({
   },
 });
 
-export const DEFAULT_SUPPORT = { heading: 'Help and answers', body: 'Browse common questions about your sample application.', maxItems: 3 };
+export const DEFAULT_SUPPORT = { heading: 'Help', body: '', maxItems: 5 };

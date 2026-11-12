@@ -95,3 +95,17 @@
 - Deviations and known limitations: the specified defaults change three visible Phase 2 defaults (hero headline, help heading and body, FAQ count 3 instead of 5); `__configuration` is an internal SDK field; the SDK default tier as reported by the server is not verified.
 - Blocker and exact decision/configuration needed, if any: Planner to confirm the three default changes are intended; console provisioning and a keyed live run need a later authorization.
 - Next: stopped; awaiting Planner review or revised handoff.
+
+## 2026-11-12T20:25Z | Phase 3 | Revision 2.1 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase3-statsig-360f; head SHA in the final report; draft PR #15
+- Objective and implementation summary: corrected defaults (shipped hero headline; support content heading "Help", empty body line not rendered, max_items 5), wrapped the internal `__configuration` read with an `error` fallback, tests, inventory and evidence updates.
+- Files changed: src/integrations/pageParameters.ts, statsig.ts, statsig.test.ts, src/components/HelpPanel.tsx, docs/STATSIG_INVENTORY.md, docs/evidence/phase-3.md, PHASE_LOG.md
+- Git actions performed; draft PR link if any: commit pushed to the same branch; PR #15 exists.
+- External actions performed (project/entity names or IDs; no secrets): none. Capture shows only 127.0.0.1:4180 (29 requests); zero Statsig or Amplitude requests.
+- Definition-of-done results: offline P3.1 PASS (default and preview smokes, two runs); P3.2 fake-client tests PASS (114). Console and live items NOT STARTED or NOT VERIFIED by design.
+- Checks: typecheck exit 0; build exit 0; npm test exit 0 (114 passed).
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-3.md, Revision 2.1.
+- Deviations and known limitations: supersedes revision 2 notes on defaults and `__configuration`. Residual: the old static help line "Local sample content for this demo." no longer shows, since the corrected default body is empty; SDK default tier NOT VERIFIED.
+- Blocker and exact decision/configuration needed, if any: none
+- Next: stopped; awaiting Planner review.

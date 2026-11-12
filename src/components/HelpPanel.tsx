@@ -45,7 +45,7 @@ export function HelpPanel({ open, onClose }: { open: boolean; onClose: () => voi
           Close
         </button>
       </div>
-      <p className="muted">{content.body}</p>
+      {content.body !== '' && <p className="muted">{content.body}</p>}
       <h3>Browse by topic</h3>
       {TOPICS.map(([id, title, body]) => (
         <section key={id} data-topic={id}>

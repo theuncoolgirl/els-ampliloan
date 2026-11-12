@@ -1,10 +1,13 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-const vendor = vi.hoisted(() => ({ constructed: 0 }));
+const vendor = vi.hoisted(() => ({ constructed: 0, store: null as unknown }));
 vi.mock('@statsig/js-client', () => ({
   StatsigClient: class {
     constructor() {
       vendor.constructed += 1;
+    }
+    getParameterStore() {
+      return vendor.store;
     }
   },
 }));
@@ -15,7 +18,7 @@ import { createPreview } from '../presenter/preview';
 import { createStore, type StorageLike } from '../state/store';
 import { createStatsigSink, toStatsigMetadata } from '../telemetry/statsigSink';
 import { createPageParams } from './pageParameters';
-import { createStatsigService, userFromProfile, type ParamConfig, type StatsigLike, type StatsigUserObject } from './statsig';
+import { createRealClient, createStatsigService, userFromProfile, type ParamConfig, type StatsigLike, type StatsigUserObject } from './statsig';
 
 const memory = (): StorageLike => {
   const m = new Map<string, string>();
@@ -200,7 +203,7 @@ describe('lazy reads and fallbacks', () => {
     expect(app.get('show_reassurance')).toMatchObject({ value: false, reason: 'type_mismatch' });
     s.service.boundary();
     expect(app.get('show_reassurance').reason).toBe('type_mismatch');
-    expect(s.params.getPageParams('home').get('hero_headline')).toMatchObject({ value: 'Your next chapter starts here', reason: 'missing_binding' });
+    expect(s.params.getPageParams('home').get('hero_headline')).toMatchObject({ value: 'A clearer path to the loan you need', reason: 'missing_binding' });
     const failures = s.service.diagnostics().setupFailures;
     expect(failures.map((x) => x.reason).sort()).toEqual(['missing_binding', 'type_mismatch']);
   });
@@ -224,8 +227,8 @@ describe('lazy reads and fallbacks', () => {
     expect(await read(0)).toBe(1);
     expect(await read(99)).toBe(5);
     expect(await read(4)).toBe(4);
-    expect(await read(2.5)).toBe(3);
-    expect(await read('4')).toBe(3);
+    expect(await read(2.5)).toBe(5);
+    expect(await read('4')).toBe(5);
   });
 
   it('keeps a visible value for the whole navigation', async () => {
@@ -235,6 +238,43 @@ describe('lazy reads and fallbacks', () => {
     expect(first.source).toBe('default');
     await flush(s);
     expect(s.params.getPageParams('home').get('cta_label')).toBe(first);
+  });
+});
+
+describe('shipped defaults', () => {
+  it('match the Phase 2 copy', () => {
+    const f = fakeClient();
+    const s = setup('', f);
+    const home = s.params.getPageParams('home');
+    expect(home.get('hero_headline').value).toBe('A clearer path to the loan you need');
+    expect(home.get('cta_label').value).toBe('Check your rate');
+    expect(s.params.supportContent()).toMatchObject({ heading: 'Help', body: '', maxItems: 5 });
+    expect(s.params.getPageParams('application').get('progress_style').value).toBe('steps');
+    expect(s.params.getPageParams('dashboard').get('show_next_steps').value).toBe(true);
+  });
+});
+
+describe('internal __configuration field', () => {
+  const key = (store: unknown) => {
+    vendor.store = store;
+    const real = createRealClient('k', { customIDs: { stableID: 'x' }, custom: {} });
+    return real.getParameterStore('ampliloan_home').configuration;
+  };
+  it('reports unavailable without throwing when absent, not an object, or throwing', () => {
+    expect(key({ get: () => 'x' })).toBe('unavailable');
+    expect(key({ __configuration: 'oops' })).toBe('unavailable');
+    expect(key({ get __configuration() { throw new Error('renamed'); } })).toBe('unavailable');
+    expect(key({ __configuration: null })).toBeNull();
+    expect(key({ __configuration: { a: { param_type: 'string' } } })).toEqual({ a: { param_type: 'string' } });
+  });
+  it('falls back to default with reason error and no setup failure', async () => {
+    const f = fakeClient();
+    f.client.getParameterStore = () => ({ get: (_k, fb) => fb, configuration: 'unavailable' });
+    const s = setup('k', f);
+    s.service.syncProfile();
+    await flush(s);
+    expect(s.params.getPageParams('home').get('cta_label')).toMatchObject({ value: 'Check your rate', source: 'default', reason: 'error' });
+    expect(s.service.diagnostics().setupFailures).toEqual([]);
   });
 });
 

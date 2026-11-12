@@ -24,11 +24,23 @@ export interface ParamConfig {
 export interface StatsigLike {
   initializeAsync(): Promise<unknown>;
   updateUserAsync(user: StatsigUserObject): Promise<unknown>;
-  getParameterStore(name: string): { get<T extends string | boolean>(key: string, fallback: T): T; configuration: Record<string, ParamConfig> | null };
+  getParameterStore(name: string): { get<T extends string | boolean>(key: string, fallback: T): T; configuration: Record<string, ParamConfig> | null | 'unavailable' };
   getGate(name: string): boolean;
   getConfig(name: string): Record<string, unknown> | null;
   logEvent(name: string, metadata: Record<string, string>): void;
 }
+
+/** `__configuration` is an internal SDK field: if it is absent, renamed, or not an object, report 'unavailable' instead of throwing. */
+const readConfiguration = (store: unknown): Record<string, ParamConfig> | null | 'unavailable' => {
+  try {
+    if (typeof store !== 'object' || store === null || !('__configuration' in store)) return 'unavailable';
+    const c = (store as { __configuration: unknown }).__configuration;
+    if (c === null) return null;
+    return typeof c === 'object' ? (c as Record<string, ParamConfig>) : 'unavailable';
+  } catch {
+    return 'unavailable';
+  }
+};
 
 /** The only place that constructs the vendor client. */
 export const createRealClient = (key: string, user: StatsigUserObject): StatsigLike => {
@@ -40,7 +52,7 @@ export const createRealClient = (key: string, user: StatsigUserObject): StatsigL
       const s = c.getParameterStore(name);
       return {
         get: (k, fb) => s.get(k, fb) as typeof fb,
-        configuration: (s.__configuration as unknown as Record<string, ParamConfig> | null) ?? null,
+        configuration: readConfiguration(s),
       };
     },
     getGate: (name) => c.getFeatureGate(name).value,
@@ -254,6 +266,7 @@ export const createStatsigService = (deps: StatsigDeps) => {
       return resolve<T>(label, label, def, 'param', store, key, (c) => {
         const s = c.getParameterStore(store);
         const cfg = s.configuration;
+        if (cfg === 'unavailable') return { value: def, source: 'default', reason: 'error' };
         if (!cfg || !(key in cfg)) {
           fail(label, 'missing_binding');
           return { value: def, source: 'default', reason: 'missing_binding' };
