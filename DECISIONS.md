@@ -235,3 +235,9 @@ Erin, Cursor chat, 3:44 PM ET: added the Statsig Console API key as the Cursor s
 - Planner scope reading: the 10 entities (4 layers, 4 stores, gate, config) plus the one gate rule previously approved, so the new gate behaves like the old one. No experiment, metrics, or other writes. One local live check with the new client key; no deploy.
 - Risk recorded: the console is on a staging host. The Console API base and the SDK's network hosts may differ from production; the Builder stops and reports instead of changing source.
 - The live site keeps using the old project until Erin updates the GitHub Actions secret `VITE_STATSIG_CLIENT_KEY` and the deploy is re-run (a secret change alone does not trigger the Pages workflow). Planner Deploy stays No; Erin re-runs or grants it.
+
+## 2026-11-12 — Revision 4C.2 result
+
+- Builder head `d26d747` (draft PR #22, docs only): 10 entities and the one gate rule created in the Cloud project; Builder GETs matched; live check on a local build with the new client key: all six parameters, the gate (true for first_time_personal), and the config from `statsig`, no setup failures, hosts `featureassets.org` and `prodregistryv2.org`.
+- NOT independently verified by the Planner: the Statsig MCP is bound to the old project `363sCqDdACZXt4M88ZqiKa`, so it cannot read the Cloud project. The Builder also could not read a project ID from the API and inferred the project from the key seeing an empty project. Erin to confirm the entities are visible in the Cloud project's console (layers, param stores, gates, dynamic configs) before the live site is switched.
+- Live site still uses the old project. Switching needs Erin to update the GitHub Actions secret `VITE_STATSIG_CLIENT_KEY` and re-run the deploy.
