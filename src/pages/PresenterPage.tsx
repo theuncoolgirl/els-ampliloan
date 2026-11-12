@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { PERSONA_IDS, STATUS_LABELS, type PersonaId } from '../state/fixtures';
 import { shortReference } from '../state/model';
 import { store, useSnapshot } from '../state/useStore';
+import { Diagnostics } from '../presenter/Diagnostics';
 
 const PERSONA_LABELS: Record<PersonaId, string> = {
   first_time_personal: 'First-time personal borrower (no application)',
@@ -26,7 +27,7 @@ export function PresenterPage() {
         <legend>Persona</legend>
         {PERSONA_IDS.map((id) => (
           <label key={id} className="choice">
-            <input type="radio" name="persona" value={id} checked={persona === id} onChange={() => setPersona(id)} />
+            <input data-amp-mask type="radio" name="persona" value={id} checked={persona === id} onChange={() => setPersona(id)} />
             <span>{PERSONA_LABELS[id]}</span>
           </label>
         ))}
@@ -77,6 +78,7 @@ export function PresenterPage() {
         <div><dt>Status</dt><dd>{a ? STATUS_LABELS[a.status] : 'None'}</dd></div>
         <div><dt>Step</dt><dd>{a ? a.lastStepId : 'None'}</dd></div>
       </dl>
+      <Diagnostics />
     </section>
   );
 }

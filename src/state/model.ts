@@ -6,6 +6,7 @@ import {
   type AmountBand,
   type ErrorCode,
   type LoanType,
+  type PersonaId,
   type StepId,
   type Status,
   type TaskId,
@@ -36,6 +37,7 @@ export interface Persisted {
   profileId: string | null;
   lastProfileId: string | null;
   intent: LoanType | null;
+  persona?: PersonaId | null;
   owners: Record<string, OwnerData>;
 }
 

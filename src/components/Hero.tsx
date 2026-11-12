@@ -1,4 +1,6 @@
 import { href } from '../router';
+import { guardNavigatingClick } from '../telemetry/navigation';
+import { telemetry } from '../telemetry/runtime';
 
 export function Hero() {
   return (
@@ -8,7 +10,7 @@ export function Hero() {
           A clearer path to the loan you need
         </h1>
         <p className="lede">See illustrative options in about two minutes. Same simple journey for personal, home, and small business loans.</p>
-        <a className="cta" href={href('/apply')} data-demo="home-cta">
+        <a className="cta" href={href('/apply')} data-demo="home-cta" onClick={() => guardNavigatingClick(() => telemetry.rateCheckStarted('hero'))}>
           Check your rate
         </a>
         <p className="disclaimer">Demo with synthetic data. No real loans, rates, or credit checks.</p>

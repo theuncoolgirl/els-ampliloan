@@ -129,6 +129,14 @@ describe('amount bands', () => {
 });
 
 describe('persistence and owners', () => {
+  it('persists the anonymous ID on first read so it never changes before the first write', () => {
+    const first = store.getSnapshot().anonymousId;
+    expect(createStore(storage).getSnapshot().anonymousId).toBe(first);
+    store.createApplication('personal');
+    expect(store.getSnapshot().anonymousId).toBe(first);
+    expect(createStore(storage).getSnapshot().anonymousId).toBe(first);
+  });
+
   it.each(['not json', '{"schemaVersion":99}', JSON.stringify({ schemaVersion: 1, owners: 5 })])(
     'recovers from corrupt storage: %s',
     (raw) => {
@@ -159,6 +167,17 @@ describe('persistence and owners', () => {
     expect(store.getSnapshot().active).toBeNull();
     store.signIn('profile_a');
     expect(store.getSnapshot().active!.loanType).toBe('personal');
+  });
+
+  it('sign-in from an anonymous browser brings the draft only to a profile with no active application', () => {
+    store.createApplication('personal');
+    const id = store.getSnapshot().active!.applicationId;
+    store.signIn('profile_a');
+    expect(store.getSnapshot().active!.applicationId).toBe(id);
+    store.signOut();
+    store.createApplication('mortgage');
+    store.signIn('profile_a');
+    expect(store.getSnapshot().active!.applicationId).toBe(id);
   });
 
   it('sign-up keeps the anonymous draft with the new profile', () => {

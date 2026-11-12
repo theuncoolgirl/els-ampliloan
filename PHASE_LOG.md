@@ -39,3 +39,45 @@
 - Deviations and known limitations: persona and sign-in controls not driven in browser; focus ring appearance not measured; double submit tested sequentially at store level plus UI busy guard. Merging changes src/, so it deploys the site.
 - Blocker and exact decision/configuration needed, if any: none
 - Next: stopped; awaiting Planner review or revised handoff.
+
+## 2026-11-12T19:45Z | Phase 2 | Revision 2 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase2-amplitude-360f; head SHA in the final report
+- Objective and implementation summary: `@amplitude/unified` (one initAll, 2000 ms bounded wait), identity/attribution layer, typed 17-event contract validator, single dispatcher, disabled Statsig sink, call sites, presenter diagnostics, Pages build env for the Amplitude key and zone, tests.
+- Files changed: src/** (integrations, identity, telemetry, presenter, state hooks, pages), package.json, package-lock.json, .github/workflows/pages.yml (build env only), docs/SETUP.md, docs/evidence/phase-2.md, PHASE_LOG.md
+- Git actions performed; draft PR link if any: branch from origin/main, logical commits, push. The PR tool only showed an unsubmitted form (base main, draft); `gh pr list --head cursor/phase2-amplitude-360f` returned no PR, so none exists yet.
+- External actions performed (project/entity names or IDs; no secrets): 3 scripted journeys (A, B, C) sent real events to Amplitude project 905260 (US), `traffic_type=live_demo`. Device IDs 1a02072e-4a3e-4cac-974c-24e7c741bd1b, ebed5497-020b-43cc-bdc2-062c81e50996, fccdc6c7-61a6-4f0d-bab7-9c0da793ff59; user `sim_profile_default`; Amplitude session 1794511318959; app session 85a9b6ad-9ea0-44d2-a1aa-06048f3f54d9; window 2026-11-12 19:21:58-19:22:17 UTC. No console changes, no Statsig, no Experiment.
+- Definition-of-done results: P2.1 PASS; P2.2 PARTIAL (events and identity payloads captured; stable-ID defect in first two events, fixed afterwards, live re-run not done because the 3-journey cap was used; ingestion not confirmed); P2.3 PASS (94 tests); P2.4 BLOCKED for Builder (replay requests sent, playback and masking not viewed; no Experiment requests observed).
+- Checks: typecheck exit 0; build exit 0; npm test exit 0 (94 passed); local-mode keyboard regression run clean with anchors once per page; key present in bundle as build-time value only.
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-2.md.
+- Deviations and known limitations: engagement allowed origins not exposed by typings; sign-in carries an anonymous draft; contract discrepancies listed in evidence.
+- Blocker and exact decision/configuration needed, if any: Planner decision whether to authorize one clean live re-run to replace the pre-fix capture, and to review replay playback.
+- Next: stopped; awaiting Planner review or revised handoff.
+
+## 2026-11-12T19:35Z | Phase 2 | Revision 3 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier revisions)
+- Branch and head SHA (or no commit): cursor/phase2-amplitude-360f; head SHA in the final report; PR #12 (opened by the Planner)
+- Objective and implementation summary: keep and verify the anonymous-ID fix, add explicit `data-amp-mask` on typed and choice inputs, one clean live re-run, supersede the P2.2 and P2.4 notes.
+- Files changed: src/pages/ApplyPage.tsx, OffersPage.tsx, DashboardPage.tsx, PresenterPage.tsx (masking attributes only), docs/evidence/phase-2.md, PHASE_LOG.md
+- Git actions performed; draft PR link if any: commits pushed to the same branch; PR #12 already exists.
+- External actions performed (project/entity names or IDs; no secrets): exactly one live run (journeys A, B, C) to Amplitude project 905260 (US), traffic_type live_demo. Device IDs f6d67c0f-6f3c-4731-ae39-4e6c334286f5 (before sign-out) and 78e596ac-306a-45e9-a744-b97759583792 (after); user sim_profile_default; Amplitude session 1794511713129; app session 21d9d1a9-8c3a-4d2b-8160-d342f36c5121; window 2026-11-12 19:28:32 to 19:28:50 UTC. Typed amount 18250. A keyless local dry run (zero vendor requests) preceded it.
+- Definition-of-done results: P2.2 live capture clean: one device before sign-out, one new after, first event carries the final pre-sign-out device, insert_id equals business_event_id for all 19 events; ingestion not confirmed by me. P2.4: replay requests sent, masking not claimed, for Planner verification. P2.1 and P2.3 unchanged PASS.
+- Checks: typecheck exit 0; build exit 0; npm test exit 0 (94 passed).
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-2.md Revision 3.
+- Deviations and known limitations: none new. The live-run cap for this revision is spent.
+- Blocker and exact decision/configuration needed, if any: none
+- Next: stopped; awaiting Planner review or revised handoff.
+
+## 2026-11-12T19:45Z | Phase 2 | Revision 4 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier revisions)
+- Branch and head SHA (or no commit): cursor/phase2-amplitude-360f; head SHA in the final report; PR #12
+- Objective and implementation summary: one paced live run to produce a replay showing typed input on the details step. No product code changed.
+- Files changed: docs/evidence/phase-2.md, PHASE_LOG.md
+- Git actions performed; draft PR link if any: commit pushed to the same branch; PR #12 exists.
+- External actions performed (project/entity names or IDs; no secrets): exactly one live run to Amplitude project 905260 (US), traffic_type live_demo. Device 9c9b7d2a-469b-4085-9acf-54f8690ba952; Amplitude session 1794512230294; app session ef99e2d9-0d48-49c3-a5ec-39b83c67e2f4; window 2026-11-12 19:37:10 to 19:38:06 UTC; typed 18250 then 21500.
+- Definition-of-done results: P2.4 evidence run captured (11 business events, 6 replay uploads); masking not claimed, for Planner and Erin to verify in the replay. Deviation: total run 56 s, below the requested 60 s; details step about 11 s; last replay upload observed at 19:37:39 though the journey ran to 19:37:50.
+- Checks: typecheck exit 0; build exit 0 (unchanged code; npm test not re-run since no code changed).
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-2.md Revision 4.
+- Deviations and known limitations: the 60 s minimum was missed by 4 s; the run cap is spent.
+- Blocker and exact decision/configuration needed, if any: Planner decides whether the replay is sufficient or authorizes another run.
+- Next: stopped; awaiting Planner review or revised handoff.

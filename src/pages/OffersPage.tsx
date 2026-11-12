@@ -4,17 +4,24 @@ import { href, navigate } from '../router';
 import { LOAN_FIXTURES, offersFor } from '../state/fixtures';
 import { formatUsd, monthlyPayment } from '../state/model';
 import { store, useSnapshot } from '../state/useStore';
+import { guardNavigatingClick, useNavigationEvent } from '../telemetry/navigation';
+import { telemetry } from '../telemetry/runtime';
 
 export function OffersPage() {
   const { active } = useSnapshot();
   const [errors, setErrors] = useState<FieldError[]>([]);
+  const viewable = !!active && active.status === 'draft';
+  useNavigationEvent('offers-view', () => {
+    telemetry.stepViewed('offers');
+    telemetry.offersViewed();
+  }, viewable);
 
   if (!active) {
     return (
       <section className="page" data-demo="offers-root">
         <h1 tabIndex={-1}>Offers</h1>
         <p>Start your application first.</p>
-        <a className="button primary" href={href('/apply')}>Check your rate</a>
+        <a className="button primary" href={href('/apply')} onClick={() => guardNavigatingClick(() => telemetry.rateCheckStarted('offers'))}>Check your rate</a>
       </section>
     );
   }
@@ -25,6 +32,7 @@ export function OffersPage() {
   const next = () => {
     if (!active.selectedOfferId) {
       setErrors([{ field: 'offer-group', message: 'Choose an offer to continue.' }]);
+      telemetry.validationFailed('offers', 'missing_offer');
       return;
     }
     store.saveDraft({ lastStepId: 'review' });
@@ -46,6 +54,7 @@ export function OffersPage() {
         {offersFor(active.loanType).map((o) => (
           <label key={o.id} className={`offer-card${active.selectedOfferId === o.id ? ' selected' : ''}`} data-offer-id={o.id}>
             <input
+              data-amp-mask
               type="radio"
               name="offer"
               value={o.id}
