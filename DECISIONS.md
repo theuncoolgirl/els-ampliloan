@@ -96,3 +96,9 @@ Erin, Cursor chat, 1:02 PM ET: "Start phase 1". Handoff written on `cursor/plann
 - Scope is unchanged. Tightening: fixed constants from `docs/custom-events.yml`; `vitest` allowed as the only new dev dependency; shared profile traits and stable-ID handling are out of Phase 1 and belong to Phase 2.
 - The Phase 1 PR touches `src/`, so merging it deploys the site. The approval request will say so.
 - **Open conflict for Erin before Phase 2:** `PROJECT_BRIEF.md` (lines 67-69) and `docs/custom-events.yml` disagree on profile trait values. `customer_relationship`: brief `prospect`, `existing_customer`; contract `new`, `returning`, `existing`. `borrowing_experience`: brief `first_time`, `experienced`, `unknown`; contract `first_time`, `experienced` only. `employment_type`: brief `employed`, `self_employed`, `business_owner`, `unknown`; contract `employed`, `self_employed`, `other`, `not_provided`. Phase 1 does not implement these traits, so it is not blocked. The Planner will ask Erin to choose before the Phase 2 handoff and will not change either document silently.
+
+## 2026-11-12 — Profile traits: brief wins
+
+Erin, Cursor chat, 1:39 PM ET: "use the profile traits from the brief". This resolves the open conflict above in favor of `PROJECT_BRIEF.md`.
+- `docs/custom-events.yml` updated: `customer_relationship` = `prospect`, `existing_customer`; `borrowing_experience` = `first_time`, `experienced`, `unknown`; `employment_type` = `employed`, `self_employed`, `business_owner`, `unknown`.
+- Any other text in the docs that still names the old values (`new`, `returning`, `existing`, `other`, `not_provided`) should be fixed in the Phase 2 handoff pass. The open conflict is closed.

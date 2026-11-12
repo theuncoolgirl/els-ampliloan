@@ -147,9 +147,8 @@ user_properties:
   customer_relationship:
     type: string
     enum:
-    - new
-    - returning
-    - existing
+    - prospect
+    - existing_customer
     update: set before dependent event/evaluation
     amplitude: user property
     statsig: custom.customer_relationship
@@ -158,6 +157,7 @@ user_properties:
     enum:
     - first_time
     - experienced
+    - unknown
     update: set before dependent event/evaluation
     amplitude: user property
     statsig: custom.borrowing_experience
@@ -166,8 +166,8 @@ user_properties:
     enum:
     - employed
     - self_employed
-    - other
-    - not_provided
+    - business_owner
+    - unknown
     update: set before dependent event/evaluation
     amplitude: user property
     statsig: custom.employment_type
