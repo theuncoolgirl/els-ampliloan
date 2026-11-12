@@ -1,7 +1,8 @@
 # Builder handoff — Phase 0 follow-up
-Status: START
+Status: IDLE
 Phase: 0
-Revision: 3
+Revision: 3 (closed; reviewed)
+Review: PASS for the revision 3 diff against Builder head 585d99169a6c3fa0459d4b2c43b8e172d5cad7b9 (branch `cursor/pages-path-filter-360f`, draft PR #7). The live part of P0.5 stays pending until Erin approves the merges. Details in DECISIONS.md.
 Owner: Planner
 Builder ID/link: see PROJECT_PLAN.md (same Builder as revision 2; resume it, do not replace it)
 Repository / authorized branch: theuncoolgirl/els-ampliloan. Read this handoff from branch `cursor/planner-pages-filter-360f` (`git fetch origin cursor/planner-pages-filter-360f`). Create your own branch `cursor/pages-path-filter-360f` from `origin/main`. Never commit to `main`.

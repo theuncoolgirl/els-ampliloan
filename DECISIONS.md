@@ -66,6 +66,15 @@ Erin, Cursor chat, 11:09 ET: "yes, let's make that update going forward re limit
 - Changing a GitHub Actions secret or variable does not trigger a deploy; a later phase needs a listed-path change to publish it. No `workflow_dispatch` was added.
 - Approval log gap: Erin's chat approval of PR #5 head `535c716` (11:03 ET, merge commit `797e26f`) is recorded here. It deployed unintentionally for the reason above.
 
+## 2026-11-12 — Review of Phase 0 revision 3: PASS (diff), live proof pending
+
+Reviewed Builder head `585d99169a6c3fa0459d4b2c43b8e172d5cad7b9` (branch `cursor/pages-path-filter-360f`, draft [PR #7](https://github.com/theuncoolgirl/els-ampliloan/pull/7), base `main`).
+
+- The diff touches only `.github/workflows/pages.yml`, `docs/SETUP.md`, `docs/evidence/phase-0.md`, and `PHASE_LOG.md`. The workflow change adds only the `paths:` filter and one comment; permissions, steps, action versions, and triggers are otherwise unchanged, and there is no `workflow_dispatch`.
+- The Planner re-ran the YAML parse: `on.push.branches` is `[main]`, `on.push.paths` is `src/**`, `public/**`, `index.html`, `package.json`, `package-lock.json`, `tsconfig*.json`, `vite.config.*`, `.github/workflows/pages.yml`. No workflow linter is installed, so no linter result exists. The Builder reports typecheck and build exit 0; the Planner did not re-run them because no site file changed.
+- Discrepancy: the Builder's `PHASE_LOG.md` entry says a draft PR was opened. None existed; the Planner opened #7. Builder evidence was not edited.
+- Merging #7 changes `pages.yml`, which is in the filter, so it deploys once. Then [PR #6](https://github.com/theuncoolgirl/els-ampliloan/pull/6) (planning records) should create no run; that is the live proof for P0.5.
+
 ## 2026-11-12 — Git rights confirmed for Phase 0 and later phases
 
 Erin, Cursor chat, 11:02 ET: "yes push and PR rights are okay for this and future phases". This confirms the Planner's earlier reading of "Commit: Yes, Merge: No".
