@@ -241,3 +241,8 @@ Erin, Cursor chat, 3:44 PM ET: added the Statsig Console API key as the Cursor s
 - Builder head `d26d747` (draft PR #22, docs only): 10 entities and the one gate rule created in the Cloud project; Builder GETs matched; live check on a local build with the new client key: all six parameters, the gate (true for first_time_personal), and the config from `statsig`, no setup failures, hosts `featureassets.org` and `prodregistryv2.org`.
 - NOT independently verified by the Planner: the Statsig MCP is bound to the old project `363sCqDdACZXt4M88ZqiKa`, so it cannot read the Cloud project. The Builder also could not read a project ID from the API and inferred the project from the key seeing an empty project. Erin to confirm the entities are visible in the Cloud project's console (layers, param stores, gates, dynamic configs) before the live site is switched.
 - Live site still uses the old project. Switching needs Erin to update the GitHub Actions secret `VITE_STATSIG_CLIENT_KEY` and re-run the deploy.
+
+## 2026-11-12 — Cohorts provisioned and created
+
+- Erin, 6:07 PM ET: cohorts are provisioned; approved PR #19 (head `26085ae`, marked ready, merged). The cohorts Erin saw in the audiences list belong to another project (appId 837233); none were AmpliLoan's.
+- Planner created the three 4A cohorts under the existing 4A Go and verified them by read-back (IDs and definitions in `docs/AMPLITUDE_ASSETS.md`). Earlier IDs were void. Gap row for cohorts marked resolved.
