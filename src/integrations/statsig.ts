@@ -329,6 +329,9 @@ export const createStatsigService = (deps: StatsigDeps) => {
       ]);
     },
 
+    /** True while a user update is running or queued. */
+    updating: (): boolean => live && (inflight !== null || microPending),
+
     /** Resolves when no update is pending, or after the bounded wait. */
     settled(): Promise<void> {
       return new Promise<void>((resolve) => {
@@ -410,7 +413,7 @@ export const createStatsigService = (deps: StatsigDeps) => {
           waitResult,
           environment: 'SDK default (no tier set by the app)',
           generation: idGen,
-          traitUpdatePending: live && traitUpdatePending(),
+          traitUpdatePending: live && (inflight !== null || microPending),
           snapshots: [...snapshots.values()],
           setupFailures: [...failures.values()],
           preview: !!deps.preview?.active(),

@@ -153,3 +153,35 @@ Journey B (blocked hosts, Amplitude key unset), UTC 2026-11-12 20:49:30 to 20:49
 
 ## Data readiness
 NOT VERIFIED. SDK receipt is not the same as results availability. This project is warehouse-native; no warehouse, metric, exposure, or results check was made. No experiment exists.
+
+# Revision 3.3
+
+Keys present (yes/no only): `VITE_STATSIG_CONSOLE_KEY` yes, `VITE_STATSIG_CLIENT_KEY` yes, `VITE_AMPLITUDE_API_KEY` yes. Every npm, vite, build, preview and test command ran with the console key removed. After the final builds, `dist/` and the live build output contained 0 files with the full console key and 0 files with its first 9 characters.
+
+## Console
+Project `AmpliLoan [WHN]` (363sCqDdACZXt4M88ZqiKa). All calls returned 2xx; times are 2026-11-12 UTC 20:53:32 to 20:53:37. Gate and config were not touched. No DELETE, rules, experiments, or key endpoints.
+- `GET /layers?limit=100` 200 and `GET /param_stores?limit=100` 200: none of the 8 existed.
+- For each layer: `POST /layers` 201, `PATCH /layers/{id}` 200 (body: `parameters` with `name`, `type`, `defaultValue` only), `GET /layers/{id}` 200. `ampliloan_home_layer` (hero_headline string, cta_label string), `ampliloan_application_layer` (show_reassurance boolean false, progress_style string "steps"), `ampliloan_offers_layer` (show_comparison_hint boolean false), `ampliloan_dashboard_layer` (show_next_steps boolean true). Each GET showed `idType` `stableID`, `isImplicitLayer` false, and the table's names, types, and defaults. The layer ID equals its name.
+- For each store: `POST /param_stores` 201 (name, displayName, description), `POST /param_stores/{name}` 201 ("Param Store updated successfully"; the documented update call for stores is a POST, with `parameters` entries `ref_type` `layer`, `name`, `param_type`, `layer_name`, `param_name`), `GET /param_stores/{name}` 200. IDs: `ampliloan_home` YWTl4E33mPmYJjhrjXG3l, `ampliloan_application` ZDMfK0Fowz7wohsxrIOkQ, `ampliloan_offers` 10fQQK8ElPNovUraM6AgVS, `ampliloan_dashboard` 1169qA5ZoX8l5ubZIlGQeW. Every GET matched the table, each parameter referencing the same-named layer parameter.
+- No review or pending state was reported for any entity. The script lived in /tmp and was deleted.
+
+## SDK
+One live journey (cap 1), production build with client and Amplitude keys, console key removed, keyboard-only, UTC 2026-11-12 20:54:35 to 20:55:06. Tagged landing, personal loan, help panel opened once on the details step, typed amount 18250, offers, select, review, save, resume, simulated sign-in, consent, submit, dashboard, presenter diagnostics held 10 s, 15 s flush. Stable ID 495d128d-b0a1-4bf3-a3cc-507c2e1a58ce (Amplitude `device_id`), Statsig session caaa0060-4d4e-4291-a443-c9d8b80b0eb6, Amplitude session 1794516875594, user `sim_profile_default` after sign-in. The stable ID was unchanged at sign-in; `userID` appeared only from sign-in. Initialize payload: `customIDs.stableID`, 20 `custom` keys, no `statsigEnvironment` (the app sets no tier, none reported; default tier remains NOT VERIFIED). 8 initialize requests, all answered 200 by `featureassets.org`; 8 event posts to `prodregistryv2.org`, all 204. No other Statsig host.
+- Initialize response: `layer_configs` 4 entries, `param_stores` 4 entries, `dynamic_configs` 1 (the support config); `feature_gates` empty (the gate is still absent from the client payload; known and accepted by the Planner, not changed).
+- Values and sources (presenter, end of journey): `hero_headline` and `cta_label` `statsig` with the shipped values; `show_reassurance` false and `progress_style` "steps" `statsig`; `ampliloan_support_content` read when the panel opened (`statsig`; the panel showed the heading "Help"); `show_comparison_hint` `default (timeout)`; `show_next_steps` `default (timeout)`; `ampliloan_contextual_help` `default (timeout)`. No `missing_binding` anywhere. The three `timeout` values were each first read while a trait update (loan type, amount, or submission) was still in flight, and the per-navigation cache then kept the default for the whole page. The gate, being read on the details step straight after the loan type change, hit the same condition; whether the gate is served at all is not established, because it is not in the payload.
+- Exposures (Statsig log): `layer_exposure` for `hero_headline` and `cta_label` (once each, rule `default`, empty allocated experiment); `config_exposure` for `ampliloan_support_content` once; `layer_exposure` for `show_reassurance` and `progress_style` twice each (once at resume, once after sign-in, which is a new identity). No exposure for `show_comparison_hint`, `show_next_steps`, or the gate (defaults served, only `non_exposed_checks`). Repeated renders of the same parameter within one navigation added none. Parameters not rendered produced none. Opening presenter diagnostics added only `statsig::diagnostics` events, no exposure or non-exposed check.
+- Trait-only change versus values for the same identity: diagnostics showed "Trait update pending: Yes (same-identity values served as stale_traits)" at open and "No" 10 s later; the home values never reverted to defaults across trait updates.
+
+## UI
+Home showed "A clearer path to the loan you need" and "Check your rate" from Statsig. The help panel opened and rendered. No visible variation exists (layers serve defaults), so UI cannot distinguish defaults from Statsig; the presenter's source column does. Minor: the diagnostics snapshot for the config shows `[object Object]` instead of its value (cosmetic, not changed).
+
+## Offline changes (revision 3.3, offline-tested only)
+- Presenter fix: `traitUpdatePending` now reports only a running or queued update, so fallback and failed updates no longer show "Pending: Yes". Test added. 
+- Binding fix: a route that mounts while a user update is running is held (blank main area, bounded at 2000 ms) until the update settles, so first reads of offers, dashboard, and gate values are not pinned to defaults. Added `updating()` and a test. This fix was written after the single allowed journey, so it has NOT been verified live; verifying it needs one more journey.
+- Checks: typecheck exit 0, build exit 0, npm test exit 0 (127 passed).
+
+## Telemetry
+`Application Submitted` business_event_id 32d2eda4-8a9e-4424-88f4-2992549358f5 is present in both the Statsig log batch (all-string metadata, no value) and the Amplitude `/2/httpapi` payload (`loan_type` personal, `device_id` equals the stable ID, `user_id` sim_profile_default). Ingestion is for the Planner to confirm through the read-only MCPs.
+
+## Data readiness
+NOT VERIFIED. SDK receipt is not results availability. This project is warehouse-native; no warehouse, metric, exposure, or results check was made. No experiment exists.

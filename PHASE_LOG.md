@@ -151,3 +151,17 @@
 - Deviations and known limitations: layers and stores not created; gate absent from the client payload (cause undetermined); config not read in the UI during the journey; reasons `timeout` for gate and non-store reads.
 - Blocker and exact decision/configuration needed, if any: authorize PATCH (or PUT) for the 4 layers and 4 parameter stores so parameters can be defined after the POST, or have a console user add them; check why the gate is not served (status "In Progress").
 - Next: stopped; awaiting Planner review.
+
+## 2026-11-12T21:10Z | Phase 3 | Revision 3.3 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase3-statsig-360f; head SHA in the final report; draft PR #15
+- Objective and implementation summary: create and define the 4 layers and 4 parameter stores through the Console API, small presenter fix, one live journey.
+- Files changed: src/integrations/statsig.ts, statsig.test.ts, src/App.tsx, docs/STATSIG_INVENTORY.md, docs/evidence/phase-3.md, PHASE_LOG.md
+- Git actions performed; draft PR link if any: commits pushed to the same branch; PR #15 exists.
+- External actions performed (project/entity names or IDs; no secrets): Console API, project `AmpliLoan [WHN]`: 2 list GETs; POST /layers x4 (201), PATCH /layers/{id} x4 (200), POST /param_stores x4 (201), POST /param_stores/{name} x4 (201, documented update call), GET of each (200). Store IDs YWTl4E33mPmYJjhrjXG3l, ZDMfK0Fowz7wohsxrIOkQ, 10fQQK8ElPNovUraM6AgVS, 1169qA5ZoX8l5ubZIlGQeW; layer IDs equal their names. Gate and config untouched. One live journey 20:54:35-20:55:06 UTC, stable ID 495d128d-b0a1-4bf3-a3cc-507c2e1a58ce, user sim_profile_default.
+- Definition-of-done results: entities PASS. P3.1 PARTIAL: four parameters (home x2, application x2) and the config served by Statsig; offers and dashboard parameters and the gate returned default (timeout) because of first reads during an in-flight update; gate absent from payload. P3.2 PASS for observed behavior (layer and config exposures once per identity, none for unused or defaults, none from diagnostics). P3.3 recorded for Planner verification.
+- Checks: typecheck exit 0; build exit 0; npm test exit 0 (127 passed); dist has 0 occurrences of the console key.
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-3.md, Revision 3.3.
+- Deviations and known limitations: the route-hold fix (src/App.tsx, in its own commit) is not verified live because the journey cap is 1; one more journey is needed to confirm offers and dashboard values. The param store update uses the documented `POST /param_stores/{name}` (no PATCH or PUT exists for stores). Gate not served to clients.
+- Blocker and exact decision/configuration needed, if any: authorize one more live journey to verify the route-hold fix, or drop that commit.
+- Next: stopped; awaiting Planner review.

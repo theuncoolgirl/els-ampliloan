@@ -309,6 +309,33 @@ describe('trait-only updates', () => {
     expect(s.params.getPageParams('home').get('cta_label')).toMatchObject({ value: 'Go', source: 'statsig', reason: 'error', staleTraits: true });
   });
 
+  it('reports an update in flight through updating() so a route can wait for it', async () => {
+    const f = fakeClient(cfg());
+    const s = await ready(f);
+    expect(s.service.updating()).toBe(false);
+    f.hold();
+    traitChange(s);
+    await tick();
+    expect(s.service.updating()).toBe(true);
+    f.updates[0].resolve();
+    await tick();
+    expect(s.service.updating()).toBe(false);
+  });
+
+  it('does not report a pending trait update in fallback or after a failed update', async () => {
+    const f = fakeClient(cfg());
+    f.client.initializeAsync = () => Promise.resolve({ success: false });
+    const s = setup('k', f);
+    await s.service.start();
+    expect(s.service.diagnostics()).toMatchObject({ mode: 'fallback', traitUpdatePending: false });
+    const g = fakeClient(cfg());
+    const s2 = await ready(g);
+    g.client.updateUserAsync = () => Promise.resolve({ success: false });
+    traitChange(s2);
+    await flush(s2);
+    expect(s2.service.diagnostics().traitUpdatePending).toBe(false);
+  });
+
   it('requires active_loan_type to be resolved before an application parameter read, with a bounded fallback', async () => {
     vi.useFakeTimers();
     const f = fakeClient(cfg());
