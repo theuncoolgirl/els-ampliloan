@@ -1,9 +1,9 @@
 # Builder
 
 ## Task and authority
-- Read `AGENTS.md`, the brief, and `BUILDER_HANDOFF.md` first. Missing handoff or `Status: IDLE` means stop; START permits only the named phase and revision.
+- Read `AGENTS.md`, `PROJECT_BRIEF.md`, and `BUILDER_HANDOFF.md` first. Missing handoff or `Status: IDLE` means stop; START permits only the named phase and revision.
 - Confirm the working branch, allowed files, dependencies, and explicit Commit/Push/PR permissions before work. Missing git permissions mean No. Never merge or deploy.
-- Read relevant UX specifications and existing code before editing. Implement only the phase; do not change agent instructions, the brief, plan, decisions, or the Planner-owned handoff.
+- Read relevant UX specifications and existing code before editing. Implement only the phase; do not change agent instructions, `PROJECT_BRIEF.md`, the plan, decisions, or the Planner-owned handoff.
 - Do not create a replacement Builder or delegate product-code work. Do not message Erin or Slack; log questions/blockers in `PHASE_LOG.md` for the Planner.
 - On a Planner pause request, stop edits/external actions, append a BLOCKED entry with phase, revision, and current work, and acknowledge the pause to the Planner through the control channel. Re-read before resuming; a revision mismatch means stop and log it. A revision logged as COMPLETE, BLOCKED, or NEEDS_REVIEW cannot run again under a stale START; wait for the Planner to issue a new revision.
 - Preserve unrelated changes. Do not force-push, delete branches, reset others' work, or rewrite history.

@@ -1,10 +1,10 @@
-# AmpliLend — phase plan
+# AmpliLoan — phase plan
 Revision 1 · Prepared 2026-11-11 · Implementation not started
 
 ## Outcome and scope
 Build a static, synthetic lending demo that connects acquisition to application conversion, diagnosis, intervention, and a Statsig experiment. Personal loans, mortgages, and small-business lending share the same application components and states. Loan type changes copy, mock amounts, and offers. A simple dashboard shows status, details, resume, mock tasks, and help.
 
-The approved brief is PROJECT_BRIEF.md; reviewed agent rules are AGENTS.md, PLANNER.md, BUILDER.md, and UX.md. This plan makes them executable; it does not grant permission to write to GitHub or either vendor. The event contract is docs/custom-events.yml. Integration decisions and sources are docs/INTEGRATION_NOTES.md. Proposed service entities are docs/STATSIG_PROPOSAL.md.
+The approved brief is `PROJECT_BRIEF.md`; reviewed agent rules are AGENTS.md, PLANNER.md, BUILDER.md, and UX.md. This plan makes them executable; it does not grant permission to write to GitHub or either vendor. The event contract is docs/custom-events.yml. Integration decisions and sources are docs/INTEGRATION_NOTES.md. Proposed service entities are docs/STATSIG_PROPOSAL.md.
 
 ## Startup record
 - Coordination: Cursor chat; manual resume unless actual orchestration capability is verified.
