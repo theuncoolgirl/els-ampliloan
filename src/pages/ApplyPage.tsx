@@ -18,6 +18,8 @@ import {
   type Application,
 } from '../state/model';
 import { store, useSnapshot } from '../state/useStore';
+import { useNavigationEvent } from '../telemetry/navigation';
+import { telemetry } from '../telemetry/runtime';
 
 const amountMessage = (t: LoanType) => {
   const f = LOAN_FIXTURES[t];
@@ -61,6 +63,7 @@ function Chooser({
       setErrors([{ field: 'loan-type', message: 'Choose a loan type.' }]);
       return;
     }
+    telemetry.loanTypeSelected(choice);
     if (hasActive) store.startNewApplication(choice);
     else store.createApplication(choice);
     onDone();
@@ -98,6 +101,7 @@ function Chooser({
 function ResumeGate({ app, onNew }: { app: Application; onNew: () => void }) {
   const [confirming, setConfirming] = useState(false);
   const resume = () => {
+    telemetry.resumed('application');
     if (app.lastStepId === 'offers') navigate('/offers');
     else navigate('/apply', app.lastStepId === 'review' ? 'review' : 'details');
   };
@@ -131,6 +135,7 @@ function DetailsStep({ app }: { app: Application }) {
   const num = amount.trim() === '' ? null : Number(amount);
   const parsed = num !== null && Number.isFinite(num) ? num : null;
   const err = (id: string) => errors.find((e) => e.field === id);
+  useNavigationEvent('step:loan_details', () => telemetry.stepViewed('loan_details'));
 
   const save = (lastStepId: 'loan_details' | 'offers') =>
     store.saveDraft({ requestedAmount: parsed, purposeId: purpose || null, lastStepId });
@@ -138,6 +143,7 @@ function DetailsStep({ app }: { app: Application }) {
   const next = () => {
     const code = validateDetails({ loanType: app.loanType, requestedAmount: parsed, purposeId: purpose || null });
     if (code) {
+      telemetry.validationFailed('loan_details', code);
       setErrors([
         code === 'invalid_amount'
           ? { field: 'requested-amount', message: amountMessage(app.loanType) }
@@ -192,7 +198,7 @@ function DetailsStep({ app }: { app: Application }) {
             {err('purpose') && <p className="field-error" id={errorId('purpose')}>{err('purpose')!.message}</p>}
           </div>
           <div className="actions">
-            <button type="button" onClick={() => { save('loan_details'); setSaved(true); }}>Save draft</button>
+            <button type="button" onClick={() => { if (save('loan_details').ok) { setSaved(true); telemetry.saved('loan_details'); } }}>Save draft</button>
             <button type="submit" className="primary">Next</button>
           </div>
           <p role="status" className="muted">{saved ? 'Draft saved on this browser.' : ''}</p>
@@ -210,11 +216,13 @@ function ReviewStep({ app }: { app: Application }) {
   const f = LOAN_FIXTURES[app.loanType];
   const offer = findOffer(app.selectedOfferId);
   const purpose = f.purposes.find((p) => p.id === app.purposeId);
+  useNavigationEvent('step:review', () => telemetry.stepViewed('review'));
 
   const submit = () => {
     if (busy) return;
     const pre = validateDetails(app);
     if (pre) {
+      telemetry.validationFailed('review', pre);
       setErrors([{ field: 'review-summary', message: pre === 'invalid_amount' ? amountMessage(app.loanType) : 'Choose a purpose.' }]);
       return;
     }
@@ -223,6 +231,7 @@ function ReviewStep({ app }: { app: Application }) {
       const r = store.submit({ consent });
       setBusy(false);
       if (!r.ok) {
+        if (r.code === 'missing_consent' || r.code === 'missing_offer' || r.code === 'invalid_amount' || r.code === 'required_field') telemetry.validationFailed('review', r.code);
         if (r.code === 'missing_consent') setErrors([{ field: 'consent', message: 'Confirm to submit.' }]);
         else if (r.code === 'missing_offer') setErrors([{ field: 'review-summary', message: 'Choose an offer to continue.' }]);
       }
@@ -266,7 +275,7 @@ function ReviewStep({ app }: { app: Application }) {
           </div>
           <div className="actions">
             <a className="button" href={href('/offers')}>Back</a>
-            <button type="button" onClick={() => { store.saveDraft({ lastStepId: 'review' }); setSaved(true); }}>Save draft</button>
+            <button type="button" onClick={() => { if (store.saveDraft({ lastStepId: 'review' }).ok) { setSaved(true); telemetry.saved('review'); } }}>Save draft</button>
             <button type="submit" className="primary" data-demo="submit-application" disabled={busy} aria-busy={busy}>
               {busy ? 'Submitting' : 'Submit'}
             </button>

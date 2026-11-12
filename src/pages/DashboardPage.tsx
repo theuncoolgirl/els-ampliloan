@@ -17,6 +17,8 @@ import {
   type Application,
 } from '../state/model';
 import { store, useSnapshot } from '../state/useStore';
+import { guardNavigatingClick, useNavigationEvent } from '../telemetry/navigation';
+import { telemetry } from '../telemetry/runtime';
 
 const NEXT_ACTION: Record<Status, string> = {
   draft: 'Resume your application',
@@ -27,6 +29,7 @@ const NEXT_ACTION: Record<Status, string> = {
 
 export function DashboardPage() {
   const { active, history } = useSnapshot();
+  useNavigationEvent('status-view', () => telemetry.statusViewed(), !!active);
   return (
     <section className="page" data-demo="dashboard-root">
       <h1 tabIndex={-1}>Dashboard</h1>
@@ -35,7 +38,7 @@ export function DashboardPage() {
       ) : (
         <div className="card">
           <p>You have no application yet.</p>
-          <a className="button primary" href={href('/apply')}>Check your rate</a>
+          <a className="button primary" href={href('/apply')} onClick={() => guardNavigatingClick(() => telemetry.rateCheckStarted('dashboard'))}>Check your rate</a>
         </div>
       )}
       {history.length > 0 && (
@@ -60,6 +63,7 @@ function ApplicationCard({ app }: { app: Application }) {
   const offer = findOffer(app.selectedOfferId);
   const tasks = tasksAvailable(app.status);
   const resume = () => {
+    telemetry.resumed('dashboard');
     if (app.lastStepId === 'offers') navigate('/offers');
     else navigate('/apply', app.lastStepId === 'review' ? 'review' : 'details');
   };
@@ -96,7 +100,7 @@ function ApplicationCard({ app }: { app: Application }) {
           ))}
         </fieldset>
       )}
-      <details>
+      <details onToggle={(e) => { if ((e.currentTarget as HTMLDetailsElement).open) telemetry.detailsViewed(); }}>
         <summary>Loan details</summary>
         <dl className="summary">
           <div><dt>Reference</dt><dd>{shortReference(app.applicationId)}</dd></div>

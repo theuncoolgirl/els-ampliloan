@@ -7,6 +7,7 @@ import { ApplyPage } from './pages/ApplyPage';
 import { OffersPage } from './pages/OffersPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { PresenterPage } from './pages/PresenterPage';
+import { telemetry } from './telemetry/runtime';
 
 export function App() {
   const loc = useLocation();
@@ -51,7 +52,7 @@ export function App() {
       >
         Skip to content
       </a>
-      <Header route={loc.path} onHelp={() => setHelp(true)} />
+      <Header route={loc.path} onHelp={() => { telemetry.helpRequested('header'); setHelp(true); }} />
       <Notice />
       <Main>{page}</Main>
       <Footer />
