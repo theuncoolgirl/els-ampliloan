@@ -20,14 +20,14 @@ Project 905260, org 446257 (US). Created 2026-11-12 ~5:36-5:38 PM ET by the Plan
 
 The two funnels use different units (users from Rate Check Started versus applications from Application Started) and are not expected to match.
 
-## Cohorts: NOT VERIFIED
-The create call returned IDs and a size of 1 for each, but reading them back by ID, listing, and searching all return "not found", so their existence and definitions are unconfirmed. They were not recreated, to avoid duplicates.
-| Intended cohort | Returned ID | Definition |
-|---|---|---|
-| Started application, not submitted (30d) | ioj44xe2 | Application Started >= 1 in 30 days AND NOT Application Submitted |
-| Viewed offers, did not select (30d) | bnuw8dwc | Offers Viewed >= 1 AND NOT Offer Selected |
-| Returned to a saved application (30d) | 14yez3z5 | Application Saved >= 1 AND Application Resumed >= 1 |
-Check in the Amplitude audiences list for names starting "AmpliLoan"; if absent, they need to be created in the UI or the tool path investigated.
+## Cohorts (verified by read-back 2026-11-12 ~6:10 PM ET)
+The first create calls (about 5:36 PM ET) did persist; the cohorts only became visible after Erin provisioned cohorts. A second set was created by mistake at ~6:08 PM ET and Erin archived it. Use these (active, dynamic type, owned by Erin, unpublished):
+| Cohort | ID | Definition (rolling 30 days) | Size when read |
+|---|---|---|---|
+| AmpliLoan - Started application, not submitted (30d) | ioj44xe2 | Application Started >= 1 AND NOT Application Submitted >= 1 | 1 |
+| AmpliLoan - Viewed offers, did not select (30d) | bnuw8dwc | Offers Viewed >= 1 AND NOT Offer Selected >= 1 | 1 |
+| AmpliLoan - Returned to a saved application (30d) | 14yez3z5 | Application Saved >= 1 AND Application Resumed >= 1 | 1 |
+Archived duplicates (do not use): `lzv2xsg3`, `dxcan1gy`, `mgb3031z`. Cohorts are not on the dashboard (the dashboard tool has no cohort tile).
 
 ## Known limits
 - `Application Task Completed` has not been received yet, so no dashboard-task chart exists; the event does not exist in the project taxonomy until a task is completed.
