@@ -1,12 +1,16 @@
-import { useEffect, useRef } from 'react';
-import { useRoute } from './router';
-import { Footer, Header, Main } from './components/Layout';
+import { useEffect, useRef, useState } from 'react';
+import { useLocation } from './router';
+import { Footer, Header, Main, Notice } from './components/Layout';
 import { Hero } from './components/Hero';
-import { ScaffoldPage } from './components/ScaffoldPage';
+import { HelpPanel } from './components/HelpPanel';
+import { ApplyPage } from './pages/ApplyPage';
+import { OffersPage } from './pages/OffersPage';
+import { DashboardPage } from './pages/DashboardPage';
+import { PresenterPage } from './pages/PresenterPage';
 
 export function App() {
-  const route = useRoute();
-  const h1 = useRef<HTMLHeadingElement>(null);
+  const loc = useLocation();
+  const [help, setHelp] = useState(false);
   const first = useRef(true);
 
   useEffect(() => {
@@ -14,35 +18,44 @@ export function App() {
       first.current = false;
       return;
     }
-    h1.current?.focus();
-  }, [route]);
+    document.querySelector<HTMLElement>('main h1')?.focus();
+  }, [loc.key]);
 
   let page;
-  switch (route) {
+  switch (loc.path) {
     case '/apply':
-      page = <ScaffoldPage ref={h1} title="Apply" anchor="application-root" />;
+      page = <ApplyPage step={loc.step} />;
       break;
     case '/offers':
-      page = <ScaffoldPage ref={h1} title="Offers" anchor="offers-root" />;
+      page = <OffersPage />;
       break;
     case '/dashboard':
-      page = <ScaffoldPage ref={h1} title="Dashboard" anchor="dashboard-root" />;
+      page = <DashboardPage />;
       break;
     case '/presenter':
-      page = <ScaffoldPage ref={h1} title="Demo controls" anchor="presenter-root" />;
+      page = <PresenterPage />;
       break;
     default:
-      page = <Hero ref={h1} />;
+      page = <Hero />;
   }
 
   return (
     <>
-      <a className="skip" href="#main" onClick={(e) => { e.preventDefault(); h1.current?.focus(); }}>
+      <a
+        className="skip"
+        href="#main"
+        onClick={(e) => {
+          e.preventDefault();
+          document.querySelector<HTMLElement>('main h1')?.focus();
+        }}
+      >
         Skip to content
       </a>
-      <Header route={route} />
+      <Header route={loc.path} onHelp={() => setHelp(true)} />
+      <Notice />
       <Main>{page}</Main>
       <Footer />
+      <HelpPanel open={help} onClose={() => setHelp(false)} />
     </>
   );
 }

@@ -11,3 +11,6 @@
 - Steps: `npm ci`, `npm run build`, then `actions/configure-pages@v6`, `actions/upload-pages-artifact@v5`, `actions/deploy-pages@v5` (latest majors per each action's GitHub releases at 2026-11-12; `actions/checkout@v7`, `actions/setup-node@v7`). No secrets.
 - Merging a listed-path change to `main` triggers a deploy to https://erinshields.dev/els-ampliloan/. Pages source must be GitHub Actions (already set).
 - Vite `base` is `/els-ampliloan/`; routes are hash-based so deep links need no server rewrite.
+
+## Tests
+`npm test` runs the state-module unit tests (vitest, node environment, `src/**/*.test.ts`).

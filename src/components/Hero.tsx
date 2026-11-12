@@ -1,11 +1,10 @@
-import { forwardRef } from 'react';
 import { href } from '../router';
 
-export const Hero = forwardRef<HTMLHeadingElement>(function Hero(_props, ref) {
+export function Hero() {
   return (
     <section className="hero">
       <div className="hero-copy">
-        <h1 ref={ref} tabIndex={-1}>
+        <h1 tabIndex={-1}>
           A clearer path to the loan you need
         </h1>
         <p className="lede">See illustrative options in about two minutes. Same simple journey for personal, home, and small business loans.</p>
@@ -24,4 +23,4 @@ export const Hero = forwardRef<HTMLHeadingElement>(function Hero(_props, ref) {
       </div>
     </section>
   );
-});
+}
