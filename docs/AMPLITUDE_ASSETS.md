@@ -20,14 +20,14 @@ Project 905260, org 446257 (US). Created 2026-11-12 ~5:36-5:38 PM ET by the Plan
 
 The two funnels use different units (users from Rate Check Started versus applications from Application Started) and are not expected to match.
 
-## Cohorts (created 2026-11-12 ~6:08 PM ET after Erin provisioned cohorts; read back and verified)
-The three earlier IDs (`ioj44xe2`, `bnuw8dwc`, `14yez3z5`) never existed and are void.
-| Cohort | ID | Definition (rolling 30 days) | Size at creation |
+## Cohorts (verified by read-back 2026-11-12 ~6:10 PM ET)
+The first create calls (about 5:36 PM ET) did persist; the cohorts only became visible after Erin provisioned cohorts. A second set was created by mistake at ~6:08 PM ET and Erin archived it. Use these (active, dynamic type, owned by Erin, unpublished):
+| Cohort | ID | Definition (rolling 30 days) | Size when read |
 |---|---|---|---|
-| AmpliLoan - Started application, not submitted (30d) | lzv2xsg3 | Application Started >= 1 AND NOT Application Submitted >= 1 | 3 |
-| AmpliLoan - Viewed offers, did not select (30d) | dxcan1gy | Offers Viewed >= 1 AND NOT Offer Selected >= 1 | 1 |
-| AmpliLoan - Returned to a saved application (30d) | mgb3031z | Application Saved >= 1 AND Application Resumed >= 1 | 1 |
-Dynamic (type redshift), owned by Erin, unpublished. Not yet added to the dashboard (the dashboard tool has no cohort tile).
+| AmpliLoan - Started application, not submitted (30d) | ioj44xe2 | Application Started >= 1 AND NOT Application Submitted >= 1 | 1 |
+| AmpliLoan - Viewed offers, did not select (30d) | bnuw8dwc | Offers Viewed >= 1 AND NOT Offer Selected >= 1 | 1 |
+| AmpliLoan - Returned to a saved application (30d) | 14yez3z5 | Application Saved >= 1 AND Application Resumed >= 1 | 1 |
+Archived duplicates (do not use): `lzv2xsg3`, `dxcan1gy`, `mgb3031z`. Cohorts are not on the dashboard (the dashboard tool has no cohort tile).
 
 ## Known limits
 - `Application Task Completed` has not been received yet, so no dashboard-task chart exists; the event does not exist in the project taxonomy until a task is completed.

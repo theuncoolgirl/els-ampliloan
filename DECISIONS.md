@@ -245,4 +245,4 @@ Erin, Cursor chat, 3:44 PM ET: added the Statsig Console API key as the Cursor s
 ## 2026-11-12 — Cohorts provisioned and created
 
 - Erin, 6:07 PM ET: cohorts are provisioned; approved PR #19 (head `26085ae`, marked ready, merged). The cohorts Erin saw in the audiences list belong to another project (appId 837233); none were AmpliLoan's.
-- Planner created the three 4A cohorts under the existing 4A Go and verified them by read-back (IDs and definitions in `docs/AMPLITUDE_ASSETS.md`). Earlier IDs were void. Gap row for cohorts marked resolved.
+- Correction (6:10 PM ET): the first three cohorts (`ioj44xe2`, `bnuw8dwc`, `14yez3z5`) did exist; they were invisible until provisioning. The Planner mistakenly created a second set (`lzv2xsg3`, `dxcan1gy`, `mgb3031z`), which Erin archived at 6:09 PM ET. Erin: the cohorts in the account now are the ones to use. Active IDs are in `docs/AMPLITUDE_ASSETS.md`. Lesson: a not-found read before provisioning is not proof of absence.
