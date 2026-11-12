@@ -31,7 +31,7 @@
 - Branch and head SHA (or no commit): cursor/phase1-journey-360f; head SHA in the final report
 - Objective and implementation summary: synthetic shared journey (type, details, offers, review, submit, dashboard), local state module under src/state with localStorage `ampliloan.v1`, simulated sign-in/up/out, mock offers, tasks, help dialog, presenter personas. No SDK, no network, no instrumentation.
 - Files changed: src/** (state, pages, components, styles, router), package.json, package-lock.json, vite.config.ts (test config), docs/SETUP.md, docs/evidence/phase-1.md, PHASE_LOG.md
-- Git actions performed; draft PR link if any: branch from origin/main, commits, push. The PR tool may show only an unsubmitted form; see the final report for whether a PR exists (confirmed with `gh pr list`).
+- Git actions performed; draft PR link if any: branch from origin/main, commits, push. The PR tool only showed an unsubmitted form (base main, draft); `gh pr list --head cursor/phase1-journey-360f` returned no PR, so none exists yet.
 - External actions performed (project/entity names or IDs; no secrets): none
 - Definition-of-done results: P1.1 PASS; P1.2 PASS; P1.3 PASS (25 tests); P1.4 for Planner inspection. Details in docs/evidence/phase-1.md
 - Checks: npm run typecheck exit 0; npm run build exit 0; npm test exit 0 (25 passed); Chrome keyboard-only smoke at 390x844, 1440x900, and 390x844 reduced motion passed; dashboard direct load and refresh pass with and without saved state; no console errors; no non-localhost requests.
