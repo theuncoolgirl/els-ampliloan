@@ -24,6 +24,19 @@ Erin, Cursor chat, 10:22 ET: act as Planner, start one Builder on `BUILDER_HANDO
 - `PLANNER.md` records the Slack channel ID at Erin's explicit direction.
 - No Slack user named PLANNER exists. The token is matched as text, and the subscription cannot filter by mention, so the Planner filters.
 
+## 2026-11-12 — Phase 0 review: PASS (P0.1–P0.3), P0.4 pending
+
+Reviewed Builder head `33e51b2f16b36ddf4e106ed1c6687cad10eaa8b6` (branch `cursor/phase0-shell-360f`, draft [PR #4](https://github.com/theuncoolgirl/els-ampliloan/pull/4), base `cursor/planner-phase0-start-360f`).
+
+- Diff touches only allowed paths. No SDK imports, no Amplitude or Statsig references in `src/` or `dist/`, `.env.example` holds names only, `.gitignore` excludes `.env`, `.env.local`, `.env.*.local`.
+- P0.1: the Planner re-ran `npm ci`, `npm run typecheck`, `npm run build` (node 22.23.4, npm 10.9.9); all exit 0.
+- P0.3: the Planner served the build with `vite preview`; `/els-ampliloan/`, `/els-ampliloan/#/dashboard`, the favicon, and both hashed assets returned 200. The preview at `/` returns 302.
+- P0.2: accepted from the Builder's logged Chrome run (390×844 and 1440×900, normal and reduced motion) and source inspection (CTA, `h1` focus on route change, `data-demo` anchors, `prefers-reduced-motion` rule). The Planner did not re-run the browser smoke.
+- Workflow `pages.yml` triggers only on push to `main`; the action majors (`checkout` v7, `setup-node` v7, `configure-pages` v6, `upload-pages-artifact` v5, `deploy-pages` v5) match the latest releases checked on 2026-11-12. The workflow has not run.
+- Limitations: one scripted smoke run, Chrome only; focus after a direct load of `/#/dashboard` stays on `body`; dependencies use caret ranges with a committed lockfile.
+- Discrepancy: the Builder's `PHASE_LOG.md` entry says a draft PR was opened and the SHA is "in PR/final report". No PR existed; the Planner opened #4. Builder evidence was not edited.
+- Merge: not performed. Needs Erin's named Approve for each PR (see PROJECT_PLAN.md). Merging #4 into `main` deploys the site.
+
 ## Processed Slack messages
 
 Top-level directives from Erin are logged here by message timestamp. None processed yet.
