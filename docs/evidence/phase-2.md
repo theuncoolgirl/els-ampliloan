@@ -1,4 +1,6 @@
-# Phase 2 evidence (revision 2)
+# Phase 2 evidence (revision 2, updated by revision 3)
+
+The P2.2 and P2.4 notes in the revision 2 sections below are superseded by "Revision 3" at the end of this file.
 
 No secret value appears in this file. Network captures were redacted (the API key appears only as `[REDACTED]`; it was never printed).
 
@@ -20,7 +22,8 @@ node v22.23.4, npm 10.9.9, Linux. Branch `cursor/phase2-amplitude-360f` from `or
 ## P2.3 PASS (unit tests, fake adapters, no network)
 `src/telemetry/telemetry.test.ts`: all 17 event names validate; every required property missing, null, or invalid enum is rejected for every event; `Application Step Completed` and unknown properties are rejected; `loan_type unknown` only where the contract allows; one `Application Submitted` per application ID with rapid double submit and a second store on shared storage; invalid review emits no Submitted; profile identify is recorded before the dependent track; Signed Out is sent under the old device and user IDs and the next event carries a new device ID and no user ID; new-user reset clears known ID, application and attribution; application reset keeps identity and attribution with a new application ID; invalid events are dropped and counted and Statsig declines are counted; personas (fixed-profile persona emits only `Signed In`, anonymous personas emit nothing); no URL or free text in properties; attribution allowlist maps unknown to `unknown`; first touch survives reload and sign-in, session touch and app session ID reset after 30 minutes; local adapter sends nothing (vendor mock never called).
 
-## P2.2 evidence: real project 905260, US, `traffic_type=live_demo` (3 runs: A, B, C in one browser context)
+## SUPERSEDED (revision 2 run) P2.2 evidence: real project 905260, US, `traffic_type=live_demo` (3 runs: A, B, C in one browser context)
+Superseded by the revision 3 run below. Kept for the record with its IDs.
 Production build with the key, served by `npm run preview` on localhost, headless Chrome, keyboard driven. UTC windows: A 19:21:58-19:22:09, B 19:22:09-19:22:12, C 19:22:12-19:22:17 on 2026-11-12.
 - Amplitude `session_id` (SDK-owned): 1794511318959 for all runs. App-owned session ID (event property `session_id`): 85a9b6ad-9ea0-44d2-a1aa-06048f3f54d9. Known ID (synthetic): `sim_profile_default`.
 - Device IDs: ebed5497-020b-43cc-bdc2-062c81e50996 (first 2 events of A only, see defect), 1a02072e-4a3e-4cac-974c-24e7c741bd1b (rest of A, B, and the old identity in C), fccdc6c7-61a6-4f0d-bab7-9c0da793ff59 (after sign-out in C).
@@ -54,3 +57,29 @@ Local-mode (no key, zero vendor requests) keyboard run after the fix: home, choo
 - Offer Selected, Offers Viewed need a requested amount; if absent the event is dropped and counted rather than invented.
 - Autocapture technical events (page view, element clicks) were captured but not inspected for URL contents.
 - Local mode shows delivery state `local`, not `queued/accepted/failed`.
+
+
+## Revision 3 (supersedes the revision 2 P2.2 and P2.4 notes)
+
+### Task 1: anonymous ID fix kept
+The store change is one block in `read()` in `src/state/store.ts`: when no state exists, the fresh state (with its `anonymousId`) is persisted immediately, so the ID cannot change between the first read and later writes. No other Phase 1 behavior changed. Unit test `persists the anonymous ID on first read so it never changes before the first write` covers it (new store instances and a write between reads all see the same ID).
+
+### Task 2: explicit masking of typed values
+Replay masking is now explicit in addition to the config selectors. Per the installed `@amplitude/session-replay-dom-privacy` (README and `policy.js`, used by `@amplitude/session-replay-browser`): `privacyConfig.maskSelector` and the element attribute `data-amp-mask` (or class `amp-mask`) mask inputs; "explicit masking on an element or ancestor wins"; `defaultMaskLevel: 'medium'` masks all inputs by default; typings in `@amplitude/plugin-session-replay-browser` `SessionReplayPrivacyConfig` (`defaultMaskLevel`, `maskSelector`, `unmaskSelector`). The revision 2 config already used `maskSelector` for `input, select, textarea, [type=checkbox], [type=radio]`; revision 3 adds `data-amp-mask` directly on the amount field, the purpose select, the consent checkbox, the loan-type and offer radios, dashboard task checkboxes, and persona radios. No option name needed to change.
+
+### Task 3: checks
+`npm run typecheck` exit 0; `npm run build` exit 0; `npm test` exit 0 (94 tests).
+
+### Task 4-6: one clean live re-run (project 905260, US, `traffic_type=live_demo`)
+Fresh browser context (empty storage), production build via `npm run preview`, keyboard driven, no personas used (presenter page used only for the simulated sign-in and sign-out buttons). Journey A: tagged landing `?utm_source=google&utm_medium=cpc&utm_campaign=spring_rates#/` -> personal loan -> TYPED amount **18250** (field value read back as 18250) and a purpose -> offers -> select -> review -> save -> reload -> resume -> simulated sign-in -> submit -> dashboard. B: reload after sign-in. C: sign-out then one rate check.
+- UTC window: 2026-11-12 19:28:32.992 to 19:28:50.862 (A 19:28:32-19:28:43, B 19:28:43-19:28:45, C 19:28:45-19:28:50).
+- Amplitude session ID: 1794511713129 (all events). App session ID (event property): 21d9d1a9-8c3a-4d2b-8160-d342f36c5121.
+- Device IDs seen on business events: exactly one before sign-out, f6d67c0f-6f3c-4731-ae39-4e6c334286f5 (A, B, and the Signed Out event, 18 events), and exactly one new after sign-out, 78e596ac-306a-45e9-a744-b97759583792 (the Rate Check Started after sign-out). The first event of the run (Rate Check Started) already carries f6d67c0f. This resolves the revision 2 defect (that run is superseded).
+- User IDs: none while anonymous (12 events in A); `sim_profile_default` from Signed In onward (A 4, B 1, Signed Out 1); none after sign-out.
+- 19 business events, `insert_id` equals `business_event_id` for all 19. Counts: Application Step Viewed 6, Rate Check Started 2, Application Status Viewed 2, and one each of Loan Type Selected, Application Started, Offers Viewed, Offer Selected, Application Saved, Application Resumed, Signed In, Application Submitted, Signed Out. Offers Viewed, Offer Selected, and Application Submitted carry requested_amount 18250 and amount_band `under_25k`. First touch `paid_search` on every event.
+- Hosts contacted: `api2.amplitude.com` (9 POSTs), `api-sr.amplitude.com` (3 replay POSTs: replay requests WERE sent), `sr-client-cfg.amplitude.com` (14 config GETs), `gs.amplitude.com` and `cdn.amplitude.com` (engagement SDK). No Experiment or flag host contacted. Console errors: none.
+- Request bodies were captured with the key redacted; no secret is stored in this file.
+- Queue acceptance is not ingestion: the capture proves the browser sent the events; ingestion in the project is for the Planner to confirm by device ID `f6d67c0f-6f3c-4731-ae39-4e6c334286f5` and window above.
+
+### P2.4 (replay masking)
+Not claimed. The typed amount to look for in the replay is 18250 (Amplitude session 1794511713129, device f6d67c0f-6f3c-4731-ae39-4e6c334286f5); the Planner verifies whether it is masked. Replay requests were sent.

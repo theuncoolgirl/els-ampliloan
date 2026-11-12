@@ -53,3 +53,17 @@
 - Deviations and known limitations: engagement allowed origins not exposed by typings; sign-in carries an anonymous draft; contract discrepancies listed in evidence.
 - Blocker and exact decision/configuration needed, if any: Planner decision whether to authorize one clean live re-run to replace the pre-fix capture, and to review replay playback.
 - Next: stopped; awaiting Planner review or revised handoff.
+
+## 2026-11-12T19:35Z | Phase 2 | Revision 3 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier revisions)
+- Branch and head SHA (or no commit): cursor/phase2-amplitude-360f; head SHA in the final report; PR #12 (opened by the Planner)
+- Objective and implementation summary: keep and verify the anonymous-ID fix, add explicit `data-amp-mask` on typed and choice inputs, one clean live re-run, supersede the P2.2 and P2.4 notes.
+- Files changed: src/pages/ApplyPage.tsx, OffersPage.tsx, DashboardPage.tsx, PresenterPage.tsx (masking attributes only), docs/evidence/phase-2.md, PHASE_LOG.md
+- Git actions performed; draft PR link if any: commits pushed to the same branch; PR #12 already exists.
+- External actions performed (project/entity names or IDs; no secrets): exactly one live run (journeys A, B, C) to Amplitude project 905260 (US), traffic_type live_demo. Device IDs f6d67c0f-6f3c-4731-ae39-4e6c334286f5 (before sign-out) and 78e596ac-306a-45e9-a744-b97759583792 (after); user sim_profile_default; Amplitude session 1794511713129; app session 21d9d1a9-8c3a-4d2b-8160-d342f36c5121; window 2026-11-12 19:28:32 to 19:28:50 UTC. Typed amount 18250. A keyless local dry run (zero vendor requests) preceded it.
+- Definition-of-done results: P2.2 live capture clean: one device before sign-out, one new after, first event carries the final pre-sign-out device, insert_id equals business_event_id for all 19 events; ingestion not confirmed by me. P2.4: replay requests sent, masking not claimed, for Planner verification. P2.1 and P2.3 unchanged PASS.
+- Checks: typecheck exit 0; build exit 0; npm test exit 0 (94 passed).
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-2.md Revision 3.
+- Deviations and known limitations: none new. The live-run cap for this revision is spent.
+- Blocker and exact decision/configuration needed, if any: none
+- Next: stopped; awaiting Planner review or revised handoff.
