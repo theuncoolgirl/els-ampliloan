@@ -67,3 +67,17 @@
 - Deviations and known limitations: none new. The live-run cap for this revision is spent.
 - Blocker and exact decision/configuration needed, if any: none
 - Next: stopped; awaiting Planner review or revised handoff.
+
+## 2026-11-12T19:45Z | Phase 2 | Revision 4 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier revisions)
+- Branch and head SHA (or no commit): cursor/phase2-amplitude-360f; head SHA in the final report; PR #12
+- Objective and implementation summary: one paced live run to produce a replay showing typed input on the details step. No product code changed.
+- Files changed: docs/evidence/phase-2.md, PHASE_LOG.md
+- Git actions performed; draft PR link if any: commit pushed to the same branch; PR #12 exists.
+- External actions performed (project/entity names or IDs; no secrets): exactly one live run to Amplitude project 905260 (US), traffic_type live_demo. Device 9c9b7d2a-469b-4085-9acf-54f8690ba952; Amplitude session 1794512230294; app session ef99e2d9-0d48-49c3-a5ec-39b83c67e2f4; window 2026-11-12 19:37:10 to 19:38:06 UTC; typed 18250 then 21500.
+- Definition-of-done results: P2.4 evidence run captured (11 business events, 6 replay uploads); masking not claimed, for Planner and Erin to verify in the replay. Deviation: total run 56 s, below the requested 60 s; details step about 11 s; last replay upload observed at 19:37:39 though the journey ran to 19:37:50.
+- Checks: typecheck exit 0; build exit 0 (unchanged code; npm test not re-run since no code changed).
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-2.md Revision 4.
+- Deviations and known limitations: the 60 s minimum was missed by 4 s; the run cap is spent.
+- Blocker and exact decision/configuration needed, if any: Planner decides whether the replay is sufficient or authorizes another run.
+- Next: stopped; awaiting Planner review or revised handoff.

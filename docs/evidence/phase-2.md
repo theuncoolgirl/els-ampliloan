@@ -83,3 +83,16 @@ Fresh browser context (empty storage), production build via `npm run preview`, k
 
 ### P2.4 (replay masking)
 Not claimed. The typed amount to look for in the replay is 18250 (Amplitude session 1794511713129, device f6d67c0f-6f3c-4731-ae39-4e6c334286f5); the Planner verifies whether it is masked. Replay requests were sent.
+
+## Revision 4 (paced run for replay masking evidence)
+No product code was changed (task 1: no masking defect found by me; masking claims remain for the Planner and Erin). `npm run typecheck` exit 0 and `npm run build` exit 0 on the unchanged head `259a1b5`.
+
+One live run, project 905260 (US), `traffic_type=live_demo`, production build via `npm run preview`, fresh browser context with empty storage, no mid-journey reload, no presenter page, mouse and keyboard paced like a person: tagged landing, 3 s pause, click CTA, personal, continue; on the details step typed `18250` one character at a time with 200 ms between keys, 2 s pause, replaced it with `21500` the same way, 2 s pause, chose a purpose, 2 s pause, Next; offers 4 s then selected an offer; review 3 s, ticked consent, 2 s, submitted; dashboard about 3 s then opened the Loan details panel (confirmed open) and stayed 6 s; then waited 16 s before closing the browser context.
+- Typed values: **18250**, then **21500** (field read back each time). Offers Viewed, Offer Selected and Application Submitted carry requested_amount 21500.
+- UTC window: 2026-11-12 19:37:10.112 to 19:38:06.416 (journey ended 19:37:50.403, then the 16 s wait).
+- Device ID: 9c9b7d2a-469b-4085-9acf-54f8690ba952 (the only one; no user ID, anonymous throughout). Amplitude session ID: 1794512230294. App session ID: ef99e2d9-0d48-49c3-a5ec-39b83c67e2f4.
+- Business events: 11, `insert_id` equals `business_event_id` for all 11. Counts: Application Step Viewed 3, and one each of Rate Check Started, Loan Type Selected, Application Started, Offers Viewed, Offer Selected, Application Submitted, Application Status Viewed, Loan Details Viewed. Technical events observed: session_start 1, Page Viewed 1, Element Clicked 12, Element Changed 5, Viewport Content Updated 7, identify 7, Engagement Booted 1.
+- Replay upload requests (POST to `api-sr.amplitude.com`): 6, at 19:37:14, :16, :20, :26, :32, :39 (UTC). No upload request was observed after 19:37:39, although the journey continued to 19:37:50 and the context stayed open until 19:38:06. I do not know whether the last part (offers to dashboard) was flushed; the Planner should check the replay's end.
+- Hosts: `api2.amplitude.com`, `api-sr.amplitude.com`, `sr-client-cfg.amplitude.com`, `gs.amplitude.com`, `cdn.amplitude.com`. No Experiment or flag host. Console errors: none. No secret is stored in this file.
+- DEVIATION: the handoff asks for a total of at least 60 s. The run measured 56 s from script start to context close (details step about 11 s, which meets the 8 s minimum, and the final wait 16 s). The run cap of one is spent, so I did not repeat it. Because of this, the replay may be shorter than 60 s and the P2.4 acceptance of at least 45 s depends on what the replay actually contains.
+- Masking is not claimed. The values to look for in the replay are 18250 and 21500 on the details step (Amplitude session 1794512230294, device 9c9b7d2a-469b-4085-9acf-54f8690ba952).
