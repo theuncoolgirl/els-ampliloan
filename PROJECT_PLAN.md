@@ -7,21 +7,21 @@ Build a static, synthetic lending demo that connects acquisition to application 
 The approved brief is `PROJECT_BRIEF.md`; reviewed agent rules are AGENTS.md, PLANNER.md, BUILDER.md, and UX.md. This plan makes them executable; it does not grant permission to write to GitHub or either vendor. The event contract is docs/custom-events.yml. Integration decisions and sources are docs/INTEGRATION_NOTES.md. Proposed service entities are docs/STATSIG_PROPOSAL.md.
 
 ## Startup record
-- Coordination: Cursor chat; manual resume unless actual orchestration capability is verified.
-- Approver: Erin Shields. Approver identity: verified in direct Cursor conversation at activation; currently unset.
-- Repository / branch / deployed URL: unset; do not invent or create automatically.
-- Builder ID/link: unset. Start or reuse one Builder only after implementation instruction.
-- Available GitHub, Amplitude, Statsig, browser QA, and delegation capabilities: not yet checked in Cursor.
-- Amplitude organization: EE sandbox 446257; exact demo project ID/key, region, replay and engagement entitlement unverified.
-- Statsig project ID/client key/environment: unset. Verify demo-only project before service actions.
+- Coordination: Slack, private channel #els-ampliloan-build (ID C0CGWLH05FC), designated by Erin; Cursor chat is the fallback. Slack channel: C0CGWLH05FC. Subscription: top-level messages only. The Planner acts only on messages from Erin that mention the text token `@PLANNER`; no Slack user named PLANNER exists, so the mention is matched by text and does not notify anyone. Resume is manual unless a subscription notification actually arrives.
+- Approver: Erin Shields. Approver identity: Slack user U07RNCNMAP6 (creator and only human member of the channel). Cursor-chat identity is the workspace user who gave the 2026-11-12 10:22 ET instruction; it is not independently proven beyond that.
+- Repository / branch / deployed URL: theuncoolgirl/els-ampliloan; `main` at dd6e35c when planned; planning branch `cursor/planner-phase0-start-360f`; live URL https://erinshields.dev/els-ampliloan/ (Pages source GitHub Actions; no workflow yet, returns 404).
+- Builder ID/link: unset until launch is recorded below.
+- Capabilities checked 2026-11-12: GitHub MCP reads work and merge through it is denied (403), the `gh` CLI can merge; Amplitude MCP reads; Statsig MCP is read-only; Slack MCP reads and posts; cloud subagent launch via Cursor Task. Browser QA automation: unverified; the Builder logs what is installed.
+- Amplitude organization: EE sandbox 446257; project AmpliLoan 905260; region US (Erin, 2026-11-12). API key is the Cursor secret `VITE_AMPLITUDE_API_KEY`. Replay and engagement entitlement unverified; project timezone blank.
+- Statsig project: AmpliLoan [WHN] 363sCqDdACZXt4M88ZqiKa (warehouse-native; allowed by DECISIONS.md). Client key is the Cursor secret `VITE_STATSIG_CLIENT_KEY`. Environment: SDK default (Erin, 2026-11-12); verify against the installed SDK in P3. The MCP connection cannot write.
 - Desired readiness: before Thanksgiving, November 26, 2026. Proposed checkpoints: P0 Nov 12; P1 Nov 16; P2 Nov 18; P3 Nov 20; P4 Nov 23; P5 Nov 24; Nov 25 buffer. These are planning targets, not historical confirmations of Becca's deadline or scheduled work.
 
 ## Permissions — applies separately to every phase
 | Role | Commit | Push | PR | Merge | Deploy |
 |---|---|---|---|---|---|
-| Builder | No | No | No | No | No |
-| Planner | No | No | No | No | No |
-Authorization source: none for implementation/Git/service mutations in this planning request. Authorized branch: unset. Local implementation also awaits Erin's instruction to begin. Revise the applicable handoff with the actual source of any permission; do not infer it from this plan. Builder never merges or deploys. Existing scoped authorization may be reused; no repetitive approval requests.
+| Builder (Phase 0) | Yes | Yes, own branch only | Yes, draft | No | No |
+| Planner (Phase 0) | Yes | Yes, planning branches only | Yes | No, until named Approve | No |
+Authorization source for Phase 0: Erin, Cursor chat, 2026-11-12 10:22 ET ("Commit: Yes, Merge: No"; no merge to `main` without her named Approve in Slack). Push and draft-PR scope is the Planner's minimal reading needed to deliver a reviewable branch; Erin can narrow it. Later phases default to No until their handoff cites a new instruction. Named Approve: a top-level #els-ampliloan-build message from U07RNCNMAP6 mentioning `@PLANNER` that names one PR number and head SHA. Revise the applicable handoff with the actual source of any permission; do not infer it from this plan. Builder never merges or deploys. Existing scoped authorization may be reused; no repetitive approval requests.
 
 External categories are separate: local implementation; draft entity creation; publication/experiment activation; population traffic. Each defaults to none. A local simulator is not a remote SDK success. Planner review PASS is not human merge approval. Record exact PR/head SHA and whether the approved merge also deploys. If no Git rights, review the saved patch + SHA-256; a live criterion remains pending.
 
@@ -30,11 +30,11 @@ Builder implements and records evidence; Planner verifies it and accepts/rejects
 
 Shared UI acceptance, applied to the changed surface in each focused smoke: 390×844 and 1440×900; no horizontal overflow; Tab/Shift+Tab/Enter/Space can complete that surface with visible focus; reduced-motion preference removes nonessential animated movement. Stable `data-demo` attributes are unique per rendered page. Hash routes under the verified Pages base support direct load and refresh; route list is below. Record observed results, not merely a checklist.
 
-## Phase 0 · revision 1 · static scaffold and Pages path
+## Phase 0 · revision 2 · static scaffold and Pages path
 **Objective:** an accessible application shell that builds and can be served from GitHub Pages. Depends on repo/branch/capability discovery and implementation instruction.
 **Allowed:** package/lock/config files, index.html, src shell, public assets, .github/workflows Pages workflow, .gitignore, .env.example, docs/SETUP.md, docs/evidence/phase-0.md, PHASE_LOG.md. Exclude SDKs, real credentials, loan state logic, console entities, and other planning files.
-**Steps:** follow BUILDER_HANDOFF.md. React + TypeScript + Vite; npm lockfile; hash routing for static refresh safety. Routes `/`, `/apply`, `/offers`, `/dashboard`, `/presenter` rendered as `/#/...` under the correct base. Home Check your rate enters `/apply`; other surfaces explicitly say demo scaffold until implemented. Original visual shell and reduced-motion hero; no borrowed assets.
-**Risks:** wrong repository base, unavailable Pages permission, hidden workflow deployment, speculative package APIs.
+**Steps:** follow BUILDER_HANDOFF.md. React + TypeScript + Vite; npm lockfile; hash routing for static refresh safety. Routes `/`, `/apply`, `/offers`, `/dashboard`, `/presenter` rendered as `/#/...` under the base `/els-ampliloan/`. Home Check your rate enters `/apply`; other surfaces explicitly say demo scaffold until implemented. Original visual shell and reduced-motion hero; no borrowed assets. The Pages workflow triggers only on push to `main`.
+**Risks:** wrong repository base, unavailable Pages permission, hidden workflow deployment (merging the workflow to `main` deploys; disclose it in the approval request), speculative package APIs, no browser automation available for the smoke (log BLOCKED).
 | ID | Verifier / steps | Expected result / evidence |
 |---|---|---|
 | P0.1 | Builder runs typecheck + production build; Planner reads exits | Both exit 0; resolved tool versions and lockfile in phase-0 evidence |
