@@ -199,3 +199,10 @@ Erin, Cursor chat, 3:44 PM ET: added the Statsig Console API key as the Cursor s
 
 - Erin, 5:26 PM ET: approved PR #16 (head `5f79bfd`, merged as `b07c391`, planning records only) and said "start phase 4".
 - Planner decision: "start phase 4" is read as authorization to plan and split Phase 4, not as a Go for any console write. The handoff stays IDLE; slices 4A–4E in `PROJECT_PLAN.md` each need a named Go, and publishing or activating anything needs its own approval. Existing console assets are never edited or deleted.
+
+## 2026-11-12 — Phase 4 slice 4A executed
+
+- Erin, 5:35 PM ET: approved PR #17 (head `66d120c`, merged as `18f32e6`) and "GO 4a". Scope used: create charts, cohorts, and one dashboard in project 905260, nothing existing touched, nothing published.
+- Created: dashboard `do8wdk80` and 7 charts (IDs in `docs/AMPLITUDE_ASSETS.md`). A first dashboard attempt failed after promoting the charts; the saved chart IDs were reused, so no duplicate charts exist (the first attempt used a cohort tile the tool does not support; the second a mis-summed row width).
+- Cohorts: 3 create calls returned IDs but reads, list, and search cannot find them; recorded as NOT VERIFIED and not recreated.
+- Limits: no Application Task Completed chart (event never received); assets are in Erin's personal space and unpublished; data is test-sized. No Guides, Surveys, replay changes, or data seeding were done.
