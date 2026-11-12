@@ -331,6 +331,7 @@ describe('failure modes', () => {
     expect(done).toBe(true);
     expect(s.params.getPageParams('home').get('cta_label')).toMatchObject({ source: 'default', value: 'Check your rate' });
     expect(s.service.diagnostics()).toMatchObject({ mode: 'fallback', initState: 'timed_out' });
+    expect(s.service.diagnostics().waitResult).toMatch(/timed out after 2000 ms/);
   });
 
   it('shows fallback with an error reason when the SDK host is blocked', async () => {
@@ -340,6 +341,31 @@ describe('failure modes', () => {
     await s.service.start();
     expect(s.params.getPageParams('home').get('cta_label')).toMatchObject({ source: 'default', reason: 'error' });
     expect(s.service.diagnostics()).toMatchObject({ mode: 'fallback', initState: 'failed' });
+  });
+});
+
+describe('SDK failure reported through the resolved result', () => {
+  it('treats a resolved success:false initialization as fallback with reason error', async () => {
+    const f = fakeClient({ ampliloan_home: { cta_label: { param_type: 'string', value: 'Go' } } });
+    f.client.initializeAsync = () => Promise.resolve({ success: false, error: new Error('network') });
+    const s = setup('k', f);
+    await s.service.start();
+    expect(s.params.getPageParams('home').get('cta_label')).toMatchObject({ source: 'default', reason: 'error' });
+    expect(s.service.diagnostics()).toMatchObject({ mode: 'fallback', initState: 'failed' });
+    expect(s.service.diagnostics().waitResult).toMatch(/failed/);
+  });
+
+  it('treats a failed user update as fallback and never serves the previous identity', async () => {
+    const f = fakeClient({ ampliloan_home: { cta_label: { param_type: 'string', value: 'Go' } } });
+    const s = setup('k', f);
+    s.service.syncProfile();
+    await flush(s);
+    f.client.updateUserAsync = () => Promise.resolve({ success: false });
+    s.store.signIn();
+    s.service.syncProfile();
+    await flush(s);
+    s.service.boundary();
+    expect(s.params.getPageParams('home').get('cta_label')).toMatchObject({ source: 'default', reason: 'error' });
   });
 });
 

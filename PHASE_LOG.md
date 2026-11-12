@@ -109,3 +109,17 @@
 - Deviations and known limitations: supersedes revision 2 notes on defaults and `__configuration`. Residual: the old static help line "Local sample content for this demo." no longer shows, since the corrected default body is empty; SDK default tier NOT VERIFIED.
 - Blocker and exact decision/configuration needed, if any: none
 - Next: stopped; awaiting Planner review.
+
+## 2026-11-12T20:40Z | Phase 3 | Revision 3 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase3-statsig-360f; head SHA in the final report; draft PR #15
+- Objective and implementation summary: console entities (BLOCKED), Pages env line for the Statsig key (done), live-mode fixes, live Run A, fallback Run B, evidence.
+- Files changed: .github/workflows/pages.yml (one env line), src/integrations/statsig.ts, statsig.test.ts, docs/SETUP.md, docs/STATSIG_INVENTORY.md, docs/evidence/phase-3.md, PHASE_LOG.md
+- Git actions performed; draft PR link if any: commits pushed to the same branch; PR #15 exists.
+- External actions performed (project/entity names or IDs; no secrets): console login attempt only, no entity created (BLOCKED: org requires SSO). Live Run A to Statsig and Amplitude, window 2026-11-12 20:23:12-20:23:41 UTC, stable ID a109bc66-5915-4a1e-9398-7ba8b6a96d59, user sim_profile_default, Amplitude session 1794514992286. Two earlier Run B attempts unintentionally reached Statsig through a fallback host I had not blocked (one also sent Amplitude events), so the cap of 2 journeys was exceeded; a third Run B had all Statsig hosts blocked and sent nothing.
+- Definition-of-done results: P3.1 live binding BLOCKED (no entities). P3.2 documented real-SDK behavior PARTIAL (init payload, success:false semantics, non_exposed_checks; exposure behavior with real entities not verified). P3.3 payload comparison recorded for Planner to verify. P3.4 fallback PASS in browser and tests (bounded wait, fallback with reason error, no cross-identity values).
+- Checks: typecheck exit 0; build exit 0; npm test exit 0 (116 passed).
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-3.md, Revision 3.
+- Deviations and known limitations: cap exceeded as above; console blocked; volatile traits in the Statsig user cause `timeout` fallbacks after state changes; Statsig default tier NOT VERIFIED; warehouse results not checked.
+- Blocker and exact decision/configuration needed, if any: console access that does not need SSO (or an SSO-capable member to create the listed entities); Planner decision on keeping volatile traits out of the evaluation user.
+- Next: stopped; awaiting Planner review.

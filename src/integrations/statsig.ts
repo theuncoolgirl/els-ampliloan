@@ -123,6 +123,8 @@ export interface StatsigDeps {
   waitMs?: number;
 }
 
+const succeeded = (r: unknown) => !(typeof r === 'object' && r !== null && 'success' in r && (r as { success: unknown }).success === false);
+
 const show = (v: unknown) => (typeof v === 'string' ? JSON.stringify(v) : String(v));
 
 export const createStatsigService = (deps: StatsigDeps) => {
@@ -134,6 +136,8 @@ export const createStatsigService = (deps: StatsigDeps) => {
   let generation = 0;
   let readyGeneration = -1;
   let userSig = '';
+  let failedGeneration = -1;
+  let waitSettled = false;
   let chain: Promise<void> = Promise.resolve();
   let navCache = new Map<string, Resolved<unknown>>();
   let snapshots = new Map<string, StatsigSnapshotEntry>();
@@ -169,18 +173,27 @@ export const createStatsigService = (deps: StatsigDeps) => {
       client = deps.makeClient(user);
       const c = client;
       enqueue(async () => {
-        await c.initializeAsync();
-        if (gen === generation) readyGeneration = gen;
-        initState = 'ready';
+        const ok = succeeded(await c.initializeAsync());
+        if (ok) {
+          if (gen === generation) readyGeneration = gen;
+          initState = 'ready';
+        } else {
+          failedGeneration = gen;
+          initState = 'failed';
+        }
         changed();
       });
       return;
     }
     const c = client;
     enqueue(async () => {
-      await c.updateUserAsync(user);
-      if (gen === generation) {
+      const ok = succeeded(await c.updateUserAsync(user));
+      if (!ok) {
+        failedGeneration = gen;
+        changed();
+      } else if (gen === generation) {
         readyGeneration = gen;
+        initState = 'ready';
         changed();
       }
     });
@@ -198,7 +211,7 @@ export const createStatsigService = (deps: StatsigDeps) => {
     failures.set(name, { name, reason });
   };
 
-  const fallbackReason = (): Reason => (initState === 'failed' ? 'error' : 'timeout');
+  const fallbackReason = (): Reason => (initState === 'failed' || failedGeneration === generation ? 'error' : 'timeout');
 
   const resolve = <T,>(cacheKey: string, label: string, def: T, previewKind: 'param' | 'gate' | 'config', previewName: string, previewKey: string | undefined, read: (c: StatsigLike) => Resolved<T>): Resolved<T> => {
     if (deps.preview?.active()) {
@@ -237,11 +250,14 @@ export const createStatsigService = (deps: StatsigDeps) => {
       const started = Date.now();
       return Promise.race([
         chain.then(() => {
-          waitResult = `initialized in ${Date.now() - started} ms`;
+          if (waitSettled) return;
+          waitSettled = true;
+          waitResult = initState === 'failed' ? `initialization failed after ${Date.now() - started} ms; UI continued on defaults` : `initialized in ${Date.now() - started} ms`;
           changed();
         }),
         new Promise<void>((resolve) =>
           setTimeout(() => {
+            waitSettled = true;
             if (initState === 'initializing') {
               initState = 'timed_out';
               waitResult = `timed out after ${waitMs} ms; UI continued on defaults`;
