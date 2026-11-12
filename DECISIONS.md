@@ -246,3 +246,15 @@ Erin, Cursor chat, 3:44 PM ET: added the Statsig Console API key as the Cursor s
 
 - Erin, 6:07 PM ET: cohorts are provisioned; approved PR #19 (head `26085ae`, marked ready, merged). The cohorts Erin saw in the audiences list belong to another project (appId 837233); none were AmpliLoan's.
 - Correction (6:10 PM ET): the first three cohorts (`ioj44xe2`, `bnuw8dwc`, `14yez3z5`) did exist; they were invisible until provisioning. The Planner mistakenly created a second set (`lzv2xsg3`, `dxcan1gy`, `mgb3031z`), which Erin archived at 6:09 PM ET. Erin: the cohorts in the account now are the ones to use. Active IDs are in `docs/AMPLITUDE_ASSETS.md`. Lesson: a not-found read before provisioning is not proof of absence.
+
+## 2026-11-12 — PR #22, deploy, and experiment setup (6:11 PM ET)
+
+- Erin approved PR #22 at head `d26d747`; it then had doc merge conflicts with main (additive sections). The Planner merged main into the Builder branch keeping both sections; the head is now `1b9c682`, so the approval no longer matches and a new approval is needed.
+- Deploy Go: the Planner's token cannot re-run the Pages workflow ("Resource not accessible by integration"), and the workflow has no manual trigger. Erin re-runs the latest "Deploy to GitHub Pages" run in Actions; the build uses the new `VITE_STATSIG_CLIENT_KEY`. The Planner then verifies the live site against the Cloud project.
+- Go for metrics and the experiment in the Cloud project (revision 4C.3): four event-based metrics and one draft experiment, NOT started. Starting it needs a separate named approval from Erin.
+
+## 2026-11-12 — Revision 4C.3 result
+
+- Builder head `31c4684` (draft PR #23, docs only). Created in `AmpliLoan [Cloud]`: four metrics (`ampliloan_application_submitted_users` primary, `ampliloan_application_saved_users` and `ampliloan_offer_selected_users` secondary, `ampliloan_validation_failed_count` guardrail, which the API files under secondary metrics; no `Application Validation Failed` event received yet) and experiment `ampliloan_application_reassurance_v1` (layer `ampliloan_application_layer`, Stable ID, control/treatment 50/50, status `setup`, not started, layer defaults unchanged).
+- One call outside the handoff: a PATCH on the just-created experiment to attach metrics, after the first create ran without metrics because of failed metric calls (nothing else was touched). Planner accepts it as within the spirit of the grant; recorded as a deviation.
+- Not verified by the Planner: the Statsig MCP is bound to the old project, so nothing in the Cloud project was independently read. Metric rollup window is the API default (undecided). Starting the experiment needs Erin's named approval.
