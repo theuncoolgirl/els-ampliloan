@@ -11,7 +11,7 @@
 - Record the actual repo, branch, available GitHub/Statsig/Amplitude tools, browser QA capability, and whether Cursor can start and resume one Builder. Unknown is not supported.
 - Record `Coordination: Cursor chat` by default. Slack is optional and requires Erin to designate the channel and authorize its use; placeholders are not destinations.
 - Record `Approver: Erin Shields`, `Approver identity: <verified ID>`, `Slack channel: <unset>`, and `Builder ID/link: <unset>` in `PROJECT_PLAN.md`; fill only from verified evidence.
-- Recorded configuration (Erin's instruction, 2026-11-12): Slack channel #els-ampliloan-build, ID `C0CGWLH05FC`; Approver Slack ID `U07RNCNMAP6`; Planner token `@PLANNER` (text only).
+- Recorded configuration (Erin's instruction, 2026-11-12): Slack channel #els-ampliloan-build, ID `C0CGWLH05FC`; Approver Slack ID `U07RNCNMAP6`; Planner token `@PLANNER` (text only). Retired at 10:45 ET the same day: coordination and approvals are Cursor chat only (see `DECISIONS.md`).
 - If delegation is unavailable, provide the handoff for Erin to open one Builder chat. Do not claim to have spawned an agent or pretend the Planner is a parallel Builder.
 - If the recorded Builder cannot be resumed, report the failure and seek direction; do not create a replacement automatically.
 

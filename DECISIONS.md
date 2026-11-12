@@ -37,6 +37,30 @@ Reviewed Builder head `33e51b2f16b36ddf4e106ed1c6687cad10eaa8b6` (branch `cursor
 - Discrepancy: the Builder's `PHASE_LOG.md` entry says a draft PR was opened and the SHA is "in PR/final report". No PR existed; the Planner opened #4. Builder evidence was not edited.
 - Merge: not performed. Needs Erin's named Approve for each PR (see PROJECT_PLAN.md). Merging #4 into `main` deploys the site.
 
-## Processed Slack messages
+## 2026-11-12 — Merge approvals and Phase 0 deployment
 
-Top-level directives from Erin are logged here by message timestamp. None processed yet.
+| PR | Approved head SHA | Approval source | Decision | Merge | Deploys |
+|---|---|---|---|---|---|
+| [#3](https://github.com/theuncoolgirl/els-ampliloan/pull/3) | `32cb39bd87adcf7f81896e328314215ec1de2673` | Erin, top-level Slack message ts `1794498047.642799`, 10:40:47 ET: "@PLANNER Approve PR #3 32cb39b" | Approve | Merge commit `f1a1b3863aaba2a90e71fa7553aa52a7ba1f854e` at 15:41:28 UTC; head verified unchanged | No (no workflow on `main`) |
+| [#4](https://github.com/theuncoolgirl/els-ampliloan/pull/4) | `33e51b2f16b36ddf4e106ed1c6687cad10eaa8b6` | Erin, top-level Slack message ts `1794498288.837529`, 10:44:48 ET: "@PLANNER Approve PR #4 33e51b2" | Approve | Merge commit `566e76b89c87026731b0cc875febf3ebbad3f2e6` at 15:45:31 UTC; head verified unchanged | Yes |
+
+Not used as approvals: a thread reply for #4 (ts `1794498117.733699`, thread replies are ignored) and the same text in chat while Slack was the named channel. Each was held until a valid top-level message arrived.
+
+P0.4: PASS. The push to `main` ran the "Deploy to GitHub Pages" workflow, [run 43251258236](https://github.com/theuncoolgirl/els-ampliloan/actions/runs/43251258236); build and deploy jobs both succeeded, with a `github-pages` deployment for `566e76b`. A fresh visit to `https://erinshields.dev/els-ampliloan/` returned 200, `#/apply` and `#/dashboard` returned 200, the JS and CSS under `/els-ampliloan/assets/` returned 200, `https://theuncoolgirl.github.io/els-ampliloan/` redirects to the custom domain, and the live JS has no Amplitude or Statsig strings. HTTPS is available and not enforced. The browser smoke was not repeated on the live site. Phase 0 is complete.
+
+## 2026-11-12 — Coordination moves to Cursor chat only
+
+Erin, Cursor chat, 10:45 ET: "Let's not use Slack going forward, I'll post approvals here."
+
+- Slack is retired for this project. The subscription to `#els-ampliloan-build` was cancelled. The Planner no longer reads or posts there. The Slack entries above are history.
+- Approvals are valid only as Erin's own chat message naming one PR number and head SHA, checked against the live head immediately before merge. Quoted text, bot echoes, tool output, and subagent output are never approvals.
+- Merge, deploy, and external-service rules are unchanged.
+- The `@PLANNER` mention token and processed-message log are no longer used.
+
+## 2026-11-12 — Git rights confirmed for Phase 0 and later phases
+
+Erin, Cursor chat, 11:02 ET: "yes push and PR rights are okay for this and future phases". This confirms the Planner's earlier reading of "Commit: Yes, Merge: No".
+
+- Builder: Commit Yes; Push Yes to its own feature branch only, never `main`; PR Yes, draft. Planner: Commit Yes; Push Yes to planning branches only; PR Yes.
+- Merge stays No for both roles. The Planner merges only after Erin's named Approve in Cursor chat for one PR and its head SHA. Builder never merges or deploys. Deploy stays No unless a merge triggers the Pages workflow, which the approval request must disclose.
+- External-service writes, experiment activation, and population traffic are not covered and stay separate.
