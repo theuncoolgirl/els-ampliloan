@@ -206,3 +206,10 @@ Erin, Cursor chat, 3:44 PM ET: added the Statsig Console API key as the Cursor s
 - Created: dashboard `do8wdk80` and 7 charts (IDs in `docs/AMPLITUDE_ASSETS.md`). A first dashboard attempt failed after promoting the charts; the saved chart IDs were reused, so no duplicate charts exist (the first attempt used a cohort tile the tool does not support; the second a mis-summed row width).
 - Cohorts: 3 create calls returned IDs but reads, list, and search cannot find them; recorded as NOT VERIFIED and not recreated.
 - Limits: no Application Task Completed chart (event never received); assets are in Erin's personal space and unpublished; data is test-sized. No Guides, Surveys, replay changes, or data seeding were done.
+
+## 2026-11-12 — PR #18 merged; slice 4C started (revision 4C.1)
+
+- Erin, 5:46 PM ET: approved PR #18 (head `5369843`, merged as `e18e135`) and "go for slice 4c".
+- Amplitude cohorts: still not readable through the MCP (get by ID and by URL, list with and without a name filter, and search all return nothing); Erin to check the audiences list.
+- Planner scope reading of the Go: add the first-time-borrower rule to the gate (pass only when `borrowing_experience` = `first_time`; default visitors are unaffected) and create the experiment `ampliloan_application_reassurance_v1` in draft, NOT started. Metrics are excluded: the Statsig project has no metric sources or metrics (read 5:48 PM ET); they need a warehouse connection Erin must provide. Starting the experiment needs a separate Erin approval.
+- Console key: `STATSIG_CONSOLE_API_KEY` is not present in the Planner's environment; the Builder checks its own and reports BLOCKED if missing.
