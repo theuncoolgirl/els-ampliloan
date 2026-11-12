@@ -180,6 +180,19 @@
 - Blocker and exact decision/configuration needed, if any: none.
 - Next: stopped; awaiting Planner review.
 
+## 2026-11-12T22:55Z | Phase 4 | Revision 4C.1 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase4c-statsig-360f from origin/main; head SHA in the final report
+- Objective and implementation summary: add gate rule, create draft experiment, one live check.
+- Files changed: docs/evidence/phase-4.md, docs/STATSIG_INVENTORY.md, PHASE_LOG.md (no source)
+- Git actions performed; draft PR link if any: branch pushed; PR per final report.
+- External actions performed (project/entity names or IDs; no secrets): Console API: GET gate 200, PATCH gate 200 (rule `first_time_borrowers`, ID ytc41AcZcgDgMS4U8Bl3s), GET gate 200, POST /experiments 400 (no exposure source), GET assignment_sources 200 (0), GET experiment 404. One live journey 22:48:28-22:48:49 UTC, stable IDs 4181ec73 (first_time) and 04eb7b8c (default).
+- Definition-of-done results: gate rule PASS (true with hint for first_time, false without hint for default). Experiment BLOCKED (no assignment source; needs a warehouse connection from Erin). P4.1 PARTIAL, P4.4 BLOCKED.
+- Checks: no source change; build with console key removed; 0 key occurrences in output.
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-4.md.
+- Deviations and known limitations: the default user's false-gate exposure not captured; gate description text still says "No rules".
+- Blocker and exact decision/configuration needed, if any: warehouse connection and an assignment source (then metrics) from Erin; then re-authorize the experiment POST.
+
 ## 2026-11-12T23:10Z | Phase 4 | Revision 4C.2 | NEEDS_REVIEW
 - Builder ID/link: single Builder cloud agent (same as earlier phases)
 - Branch and head SHA (or no commit): cursor/phase4c2-statsig-cloud-360f from origin/main; head SHA in the final report

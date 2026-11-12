@@ -206,3 +206,43 @@ Erin, Cursor chat, 3:44 PM ET: added the Statsig Console API key as the Cursor s
 - Created: dashboard `do8wdk80` and 7 charts (IDs in `docs/AMPLITUDE_ASSETS.md`). A first dashboard attempt failed after promoting the charts; the saved chart IDs were reused, so no duplicate charts exist (the first attempt used a cohort tile the tool does not support; the second a mis-summed row width).
 - Cohorts: 3 create calls returned IDs but reads, list, and search cannot find them; recorded as NOT VERIFIED and not recreated.
 - Limits: no Application Task Completed chart (event never received); assets are in Erin's personal space and unpublished; data is test-sized. No Guides, Surveys, replay changes, or data seeding were done.
+
+## 2026-11-12 — PR #18 merged; slice 4C started (revision 4C.1)
+
+- Erin, 5:46 PM ET: approved PR #18 (head `5369843`, merged as `e18e135`) and "go for slice 4c".
+- Amplitude cohorts: still not readable through the MCP (get by ID and by URL, list with and without a name filter, and search all return nothing); Erin to check the audiences list.
+- Planner scope reading of the Go: add the first-time-borrower rule to the gate (pass only when `borrowing_experience` = `first_time`; default visitors are unaffected) and create the experiment `ampliloan_application_reassurance_v1` in draft, NOT started. Metrics are excluded: the Statsig project has no metric sources or metrics (read 5:48 PM ET); they need a warehouse connection Erin must provide. Starting the experiment needs a separate Erin approval.
+- Console key: `STATSIG_CONSOLE_API_KEY` is not present in the Planner's environment; the Builder checks its own and reports BLOCKED if missing.
+
+## 2026-11-12 — Slice 4C result
+
+- Builder head `26085ae` (draft PR #19, evidence only). Planner verified through the read-only MCP: gate `ampliloan_contextual_help` version 2 has rule `first_time_borrowers` (ID `ytc41AcZcgDgMS4U8Bl3s`): pass 100% when custom field `borrowing_experience` is `first_time`. The gate description still says "No rules"; cosmetic, not edited.
+- Live effect: visitors whose profile trait is `first_time` (the first_time_personal persona) now get the contextual help hint on the details step; default visitors (`unknown`) are unaffected. Rollback: remove the rule.
+- Experiment `ampliloan_application_reassurance_v1`: NOT created. `POST /experiments` returned 400 ("Exposure source ID and name must be specified"); the project has no assignment source and creating one needs a warehouse connection. Nothing half-built (GET returns 404). Metrics: blocked for the same reason (no metric sources).
+- Needed from Erin before the experiment or metrics can proceed: connect the warehouse to the Statsig project (Console > Settings > Data Connection), then an assignment source, event tables or metric sources, and a fresh authorization.
+- Live check (Builder, one journey): first_time persona gate true with exposure; new user gate false; no experiment exposure; a false-gate exposure and application-layer exposures were not captured inside the 15 s window (not proof of absence).
+
+## 2026-11-12 — Provisioning gaps and move to Statsig Cloud (Erin, 5:53 PM ET)
+
+- Erin: the Amplitude demo environment is not provisioned for paid features such as cohorts; they cannot be tested in the UI until provisioned. Forgo for now; keep a running list (`docs/PROVISIONING_GAPS.md`) and note that the three AmpliLoan cohorts still need to be created.
+- Erin: the Statsig warehouse-native choice was a mistake. The purpose of Statsig here is to illustrate SDK implementation, so Statsig Cloud is enough; Amplitude should be the underlying analytics engine feeding Statsig (events and, if provisioned, cohorts). Superseded decision: "warehouse-native allowed" (earlier DECISIONS entry).
+- Planner answer on keys: the client key cannot be dropped (the browser SDK needs it); the console key must never be in the browser or build. Both are replaced for the new project: `VITE_STATSIG_CLIENT_KEY` (Cursor secrets and GitHub Actions secret) and `STATSIG_CONSOLE_API_KEY` (Cursor secrets only).
+- No code change is expected for the move except keys; the 10 entities and the gate rule must be re-created in the new project and the project ID updated in docs.
+
+## 2026-11-12 — Statsig Cloud project created; entities to be re-created (revision 4C.2)
+
+- Erin, 6:03 PM ET: new project `AmpliLoan [Cloud]` ID `6oe5DaLQIx5XnKfBrG0JnT` (staging console host), "go ahead and create the 10 entities". Replaces `AmpliLoan [WHN]` `363sCqDdACZXt4M88ZqiKa`, which stays untouched.
+- Planner scope reading: the 10 entities (4 layers, 4 stores, gate, config) plus the one gate rule previously approved, so the new gate behaves like the old one. No experiment, metrics, or other writes. One local live check with the new client key; no deploy.
+- Risk recorded: the console is on a staging host. The Console API base and the SDK's network hosts may differ from production; the Builder stops and reports instead of changing source.
+- The live site keeps using the old project until Erin updates the GitHub Actions secret `VITE_STATSIG_CLIENT_KEY` and the deploy is re-run (a secret change alone does not trigger the Pages workflow). Planner Deploy stays No; Erin re-runs or grants it.
+
+## 2026-11-12 — Revision 4C.2 result
+
+- Builder head `d26d747` (draft PR #22, docs only): 10 entities and the one gate rule created in the Cloud project; Builder GETs matched; live check on a local build with the new client key: all six parameters, the gate (true for first_time_personal), and the config from `statsig`, no setup failures, hosts `featureassets.org` and `prodregistryv2.org`.
+- NOT independently verified by the Planner: the Statsig MCP is bound to the old project `363sCqDdACZXt4M88ZqiKa`, so it cannot read the Cloud project. The Builder also could not read a project ID from the API and inferred the project from the key seeing an empty project. Erin to confirm the entities are visible in the Cloud project's console (layers, param stores, gates, dynamic configs) before the live site is switched.
+- Live site still uses the old project. Switching needs Erin to update the GitHub Actions secret `VITE_STATSIG_CLIENT_KEY` and re-run the deploy.
+
+## 2026-11-12 — Cohorts provisioned and created
+
+- Erin, 6:07 PM ET: cohorts are provisioned; approved PR #19 (head `26085ae`, marked ready, merged). The cohorts Erin saw in the audiences list belong to another project (appId 837233); none were AmpliLoan's.
+- Correction (6:10 PM ET): the first three cohorts (`ioj44xe2`, `bnuw8dwc`, `14yez3z5`) did exist; they were invisible until provisioning. The Planner mistakenly created a second set (`lzv2xsg3`, `dxcan1gy`, `mgb3031z`), which Erin archived at 6:09 PM ET. Erin: the cohorts in the account now are the ones to use. Active IDs are in `docs/AMPLITUDE_ASSETS.md`. Lesson: a not-found read before provisioning is not proof of absence.
