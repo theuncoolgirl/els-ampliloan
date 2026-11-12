@@ -82,3 +82,23 @@ Erin, Cursor chat, 11:02 ET: "yes push and PR rights are okay for this and futur
 - Builder: Commit Yes; Push Yes to its own feature branch only, never `main`; PR Yes, draft. Planner: Commit Yes; Push Yes to planning branches only; PR Yes.
 - Merge stays No for both roles. The Planner merges only after Erin's named Approve in Cursor chat for one PR and its head SHA. Builder never merges or deploys. Deploy stays No unless a merge triggers the Pages workflow, which the approval request must disclose.
 - External-service writes, experiment activation, and population traffic are not covered and stay separate.
+
+## 2026-11-12 — Approval log gap closed and P0.5 live proof
+
+Erin's chat approvals, each naming one PR and head SHA, each merged by the Planner with `gh pr merge --merge --match-head-commit`:
+- PR #5, head `535c716`, merge commit `797e26f` (see the Pages path-filter entry above).
+- PR #7, head `585d991`, merge commit `86b324d` (Phase 0 revision 3, `pages.yml` path filter; deployed once as expected).
+- PR #6, head `c5b3fac`, merge commit `c5d2169` (planning records only). P0.5 live proof: it created no Pages run, because no listed site path changed. P0.5 is PASS.
+
+## 2026-11-12 — Phase 1 started (revision 2)
+
+Erin, Cursor chat, 1:02 PM ET: "Start phase 1". Handoff written on `cursor/planner-phase1-start-360f`; the same Builder resumes. Permissions are unchanged from the 11:02 ET confirmation (Builder Commit/Push/draft PR Yes, Merge No, Deploy No).
+- Scope is unchanged. Tightening: fixed constants from `docs/custom-events.yml`; `vitest` allowed as the only new dev dependency; shared profile traits and stable-ID handling are out of Phase 1 and belong to Phase 2.
+- The Phase 1 PR touches `src/`, so merging it deploys the site. The approval request will say so.
+- **Open conflict for Erin before Phase 2:** `PROJECT_BRIEF.md` (lines 67-69) and `docs/custom-events.yml` disagree on profile trait values. `customer_relationship`: brief `prospect`, `existing_customer`; contract `new`, `returning`, `existing`. `borrowing_experience`: brief `first_time`, `experienced`, `unknown`; contract `first_time`, `experienced` only. `employment_type`: brief `employed`, `self_employed`, `business_owner`, `unknown`; contract `employed`, `self_employed`, `other`, `not_provided`. Phase 1 does not implement these traits, so it is not blocked. The Planner will ask Erin to choose before the Phase 2 handoff and will not change either document silently.
+
+## 2026-11-12 — Profile traits: brief wins
+
+Erin, Cursor chat, 1:39 PM ET: "use the profile traits from the brief". This resolves the open conflict above in favor of `PROJECT_BRIEF.md`.
+- `docs/custom-events.yml` updated: `customer_relationship` = `prospect`, `existing_customer`; `borrowing_experience` = `first_time`, `experienced`, `unknown`; `employment_type` = `employed`, `self_employed`, `business_owner`, `unknown`.
+- Any other text in the docs that still names the old values (`new`, `returning`, `existing`, `other`, `not_provided`) should be fixed in the Phase 2 handoff pass. The open conflict is closed.
