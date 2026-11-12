@@ -2,7 +2,7 @@
 Status: IDLE
 Phase: 0
 Revision: 2 (closed; reviewed)
-Review: PASS for P0.1, P0.2, P0.3 against Builder head 33e51b2f16b36ddf4e106ed1c6687cad10eaa8b6 (branch `cursor/phase0-shell-360f`, draft PR #4). P0.4 pending approved deployment. Awaiting Erin's named Approve to merge. Details in PROJECT_PLAN.md and DECISIONS.md.
+Review: PASS for P0.1, P0.2, P0.3 against Builder head 33e51b2f16b36ddf4e106ed1c6687cad10eaa8b6 (branch `cursor/phase0-shell-360f`, draft PR #4). P0.4 PASS after PR #4 merged and deployed (run 43251258236). Phase 0 is complete. Details in PROJECT_PLAN.md and DECISIONS.md.
 Owner: Planner
 Builder ID/link: recorded by the Planner in PROJECT_PLAN.md after launch (kept out of this file so a running Builder is never disturbed by a link edit)
 Repository / authorized branch: theuncoolgirl/els-ampliloan. Start from branch `cursor/planner-phase0-start-360f` (it carries this handoff; `main` still holds revision 1). Work on your own branch `cursor/<short-name>-360f`. Never commit to `main`.
