@@ -24,7 +24,7 @@
 
 ## Statsig (Phase 3)
 - `@statsig/js-client` is the only Statsig package, and `src/integrations/statsig.ts` is the only file that imports it. One client is created lazily per page load, only when a key exists.
-- Build-time configuration: `VITE_STATSIG_CLIENT_KEY` (a browser-safe client key; never a console or server key). The environment tier is not set by the app, so the SDK default applies. The Pages workflow does not pass a Statsig key; with no key the production site runs in Statsig local mode (no client, zero vendor requests, all page values at their defaults).
+- Build-time configuration: `VITE_STATSIG_CLIENT_KEY` (a browser-safe client key; never a console or server key). The environment tier is not set by the app, so the SDK default applies. The Pages workflow passes `VITE_STATSIG_CLIENT_KEY` from the repository secret of the same name to the `npm run build` step (name only; no value is in any file). If that secret is unset the build has an empty key and the site runs in Statsig local mode (no client, zero vendor requests, all page values at their defaults). Merging a listed-path change to `main` with the secret set turns live Statsig traffic on for all visitors.
 - With a key, the UI waits at most 2000 ms for initialization, then continues on defaults. Late completion does not change visible values; values are re-evaluated at the next route change.
 - Entities are listed in `docs/STATSIG_INVENTORY.md` (all `not provisioned`). Presenter Preview applies local overrides only and sends nothing.
 - Statsig event telemetry: with a key, each valid business event is also sent to Statsig with the same name, no value, and flat string metadata including `business_event_id`. In local mode events are only counted as declined.
