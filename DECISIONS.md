@@ -246,3 +246,9 @@ Erin, Cursor chat, 3:44 PM ET: added the Statsig Console API key as the Cursor s
 
 - Erin, 6:07 PM ET: cohorts are provisioned; approved PR #19 (head `26085ae`, marked ready, merged). The cohorts Erin saw in the audiences list belong to another project (appId 837233); none were AmpliLoan's.
 - Correction (6:10 PM ET): the first three cohorts (`ioj44xe2`, `bnuw8dwc`, `14yez3z5`) did exist; they were invisible until provisioning. The Planner mistakenly created a second set (`lzv2xsg3`, `dxcan1gy`, `mgb3031z`), which Erin archived at 6:09 PM ET. Erin: the cohorts in the account now are the ones to use. Active IDs are in `docs/AMPLITUDE_ASSETS.md`. Lesson: a not-found read before provisioning is not proof of absence.
+
+## 2026-11-12 — PR #22, deploy, and experiment setup (6:11 PM ET)
+
+- Erin approved PR #22 at head `d26d747`; it then had doc merge conflicts with main (additive sections). The Planner merged main into the Builder branch keeping both sections; the head is now `1b9c682`, so the approval no longer matches and a new approval is needed.
+- Deploy Go: the Planner's token cannot re-run the Pages workflow ("Resource not accessible by integration"), and the workflow has no manual trigger. Erin re-runs the latest "Deploy to GitHub Pages" run in Actions; the build uses the new `VITE_STATSIG_CLIENT_KEY`. The Planner then verifies the live site against the Cloud project.
+- Go for metrics and the experiment in the Cloud project (revision 4C.3): four event-based metrics and one draft experiment, NOT started. Starting it needs a separate named approval from Erin.
