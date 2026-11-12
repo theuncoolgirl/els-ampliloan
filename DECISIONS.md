@@ -263,3 +263,4 @@ Erin, Cursor chat, 3:44 PM ET: added the Statsig Console API key as the Cursor s
 
 - Erin, Cursor chat, 6:51 PM ET: do not start `ampliloan_application_reassurance_v1` now. Before it is finalized, Erin wants aesthetic and content updates to the demo site (a marketing-style landing page and similar) that do not change the borrower journey, and she may revise the experiment afterward. Starting the experiment still needs a separate named approval.
 - Deploy re-run completed green at 6:47 PM ET. Planner confirmed the bundled client key returns the Cloud project's entities (1 gate, 2 configs, 4 layers, 4 stores); no browser check was done.
+- Erin, Cursor chat, 6:54 PM ET: defer the metric rollup window decision to experiment finalization. At that time the Planner must tell Erin what the API default is. Erin also chose to do the site aesthetic updates now, before 4D (planned as Phase 4F).
