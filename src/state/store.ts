@@ -138,7 +138,11 @@ export const createStore = (storage: StorageLike, hooks: StoreHooks = {}) => {
 
   const read = (): Persisted => {
     const raw = storage.getItem(STORAGE_KEY);
-    if (raw === null) return freshState();
+    if (raw === null) {
+      const fresh = freshState();
+      storage.setItem(STORAGE_KEY, JSON.stringify(fresh));
+      return fresh;
+    }
     try {
       const parsed: unknown = JSON.parse(raw);
       if (isPersisted(parsed)) return parsed;

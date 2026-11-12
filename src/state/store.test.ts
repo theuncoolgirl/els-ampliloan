@@ -129,6 +129,14 @@ describe('amount bands', () => {
 });
 
 describe('persistence and owners', () => {
+  it('persists the anonymous ID on first read so it never changes before the first write', () => {
+    const first = store.getSnapshot().anonymousId;
+    expect(createStore(storage).getSnapshot().anonymousId).toBe(first);
+    store.createApplication('personal');
+    expect(store.getSnapshot().anonymousId).toBe(first);
+    expect(createStore(storage).getSnapshot().anonymousId).toBe(first);
+  });
+
   it.each(['not json', '{"schemaVersion":99}', JSON.stringify({ schemaVersion: 1, owners: 5 })])(
     'recovers from corrupt storage: %s',
     (raw) => {
