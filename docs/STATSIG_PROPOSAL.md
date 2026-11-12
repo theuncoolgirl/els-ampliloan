@@ -3,7 +3,7 @@ Status: PROPOSED. Project ID: unset. Environment: verify demo tier. No entities 
 
 | Page | Parameter store | Layer | Parameters and safe defaults | Initial use |
 |---|---|---|---|---|
-| Home | ampliloan_home | ampliloan_home_layer | hero_headline: string = Your next chapter starts here; cta_label: string = Check your rate | Rendered headline/CTA only |
+| Home | ampliloan_home | ampliloan_home_layer | hero_headline: string = A clearer path to the loan you need; cta_label: string = Check your rate | Rendered headline/CTA only |
 | Application | ampliloan_application | ampliloan_application_layer | show_reassurance: boolean = false; progress_style: string = steps | One shared form; no alternate loan journeys |
 | Offers | ampliloan_offers | ampliloan_offers_layer | show_comparison_hint: boolean = false | Optional explanatory copy; never change actual eligibility |
 | Dashboard | ampliloan_dashboard | ampliloan_dashboard_layer | show_next_steps: boolean = true | Mock next-action presentation |
@@ -12,7 +12,7 @@ Each page parameter initially maps to its matching layer parameter; ensure exact
 
 Standalone technical demonstrations, outside page-layer parameters:
 - Gate `ampliloan_contextual_help`: boolean false by default; evaluate when help entry becomes relevant. Target synthetic borrowing_experience=first_time for a draft example.
-- Dynamic config `ampliloan_support_content`: heading string, body string, max_items integer default 3 (clamp 1–5); read only when help panel opens. Demonstrates typed fallback and validation.
+- Dynamic config `ampliloan_support_content`: heading string default "Help", body string default empty (shown only when non-empty), max_items integer default 5 (clamp 1–5; the demo lowers it); read only when help panel opens. Demonstrates typed fallback and validation.
 These are separate accessors, not duplicate backing sources for page parameters. Do not call both a store getter and an underlying gate/layer solely to display diagnostics.
 
 ## First experiment proposal
