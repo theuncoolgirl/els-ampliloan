@@ -38,6 +38,13 @@ Update behavior (revision 3.1)
 
 Revision 4C.1 (2026-11-12): gate rule added (above). Experiment `ampliloan_application_reassurance_v1` NOT created: POST /experiments returned 400 "Exposure source ID and name must be specified" (no assignment source exists: `GET /experiments/assignment_sources` returns 0). It is not in the project (GET 404). No metric attached.
 
+## Cloud project (revision 4C.3 additions)
+
+Project `AmpliLoan [Cloud]`, ID `6oe5DaLQIx5XnKfBrG0JnT` (https://staging.console.statsig.com/6oe5DaLQIx5XnKfBrG0JnT). The 10 entities and gate rule are on PR #22 (revision 4C.2). Added here, 2026-11-12 23:13Z:
+- Metrics (Statsig Cloud event metrics, unit Stable ID, source SDK business events, synthetic demo data, no revenue; rollup window not set): `ampliloan_application_submitted_users` (ID `ampliloan_application_submitted_users::event_user`, primary), `ampliloan_application_saved_users` (`::event_user`, secondary), `ampliloan_offer_selected_users` (`::event_user`, secondary), `ampliloan_validation_failed_count` (`ampliloan_validation_failed_count::event_count_custom`, guardrail, direction decrease). The event `Application Validation Failed` has not been received by this project yet, so that metric will show no data until it appears.
+- Experiment `ampliloan_application_reassurance_v1`, status `setup` (NOT STARTED, no start time, no launched group), idType stableID, layer `ampliloan_application_layer`, control (id 4XR9aEueKE1cYUa8Pd0vTU, 50, show_reassurance false, progress_style "steps") and treatment (id 4XR9aG9hcWaHijI4qkW9cW, 50, show_reassurance true, progress_style "steps"), allocation 100 (groups split it 50/50), primary `ampliloan_application_submitted_users`, secondary saved/offer-selected and the guardrail. The API has no separate guardrail slot, so the guardrail sits in `secondaryMetrics`.
+- Start: Erin must approve separately, then start it in the console. Stop: stop the experiment in the console, then check a fresh Stable ID gets the layer defaults (`show_reassurance` false, `progress_style` "steps") in the presenter diagnostics.
+
 ## Cloud project (revision 4C.2, current)
 
 Project `AmpliLoan [Cloud]`, ID `6oe5DaLQIx5XnKfBrG0JnT` (https://staging.console.statsig.com/6oe5DaLQIx5XnKfBrG0JnT/settings). Created 2026-11-12 23:04:44-55Z through `https://statsigapi.net/console/v1`; every entity verified by GET. Same names, types, defaults and store-to-layer references as the table above.
