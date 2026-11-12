@@ -123,3 +123,17 @@
 - Deviations and known limitations: cap exceeded as above; console blocked; volatile traits in the Statsig user cause `timeout` fallbacks after state changes; Statsig default tier NOT VERIFIED; warehouse results not checked.
 - Blocker and exact decision/configuration needed, if any: console access that does not need SSO (or an SSO-capable member to create the listed entities); Planner decision on keeping volatile traits out of the evaluation user.
 - Next: stopped; awaiting Planner review.
+
+## 2026-11-12T20:55Z | Phase 3 | Revision 3.1 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase3-statsig-360f; head SHA in the final report; draft PR #15
+- Objective and implementation summary: identity versus trait generations in the Statsig facade (coalesced trait updates, stale_traits serving, failure keeps values, boundary-only application, active_loan_type baseline rule), presenter indicators, tests.
+- Files changed: src/integrations/statsig.ts, statsig.test.ts, src/presenter/Diagnostics.tsx, docs/STATSIG_INVENTORY.md, docs/evidence/phase-3.md, PHASE_LOG.md
+- Git actions performed; draft PR link if any: commit pushed to the same branch; PR #15 exists.
+- External actions performed (project/entity names or IDs; no secrets): none. Capture shows only 127.0.0.1:4180 (29 requests); zero Statsig or Amplitude requests; no console login; no bot credentials.
+- Definition-of-done results: P3.2 identity and exposure-rule tests with fakes PASS (125 tests); offline P3.4 PASS (smokes). P3.1 live binding, real-SDK exposure behavior, and P3.3 stay open.
+- Checks: typecheck exit 0; build exit 0; npm test exit 0 (125 passed).
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-3.md, Revision 3.1.
+- Deviations and known limitations: real-SDK behavior during an in-flight update not verified live; revision 3 cap overrun note stands.
+- Blocker and exact decision/configuration needed, if any: none new (console access still needed for entities).
+- Next: stopped; awaiting Planner review.

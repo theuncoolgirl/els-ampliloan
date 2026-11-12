@@ -43,19 +43,9 @@ const fakeClient = (cfg: Record<string, Record<string, { param_type: string; val
     initializeAsync: async () => void calls.push('init'),
     updateUserAsync: (user) => {
       calls.push('update');
-      if (autoResolve) {
-        current = user;
-        return Promise.resolve();
-      }
-      return new Promise<void>((resolve) =>
-        updates.push({
-          user,
-          resolve: () => {
-            current = user;
-            resolve();
-          },
-        }),
-      );
+      current = user;
+      if (autoResolve) return Promise.resolve();
+      return new Promise<void>((resolve) => updates.push({ user, resolve }));
     },
     getParameterStore: (name) => {
       calls.push(`store:${name}`);
@@ -149,13 +139,11 @@ describe('identity', () => {
     s.service.syncProfile();
     s.store.signOut();
     s.service.syncProfile();
-    await tick();
-    expect(f.updates.length).toBe(1);
+    expect(f.updates.length).toBe(2);
     f.updates[0].resolve();
     await tick();
     s.service.boundary();
     expect(s.params.getPageParams('home').get('cta_label').source).toBe('default');
-    expect(f.updates.length).toBe(2);
     f.updates[1].resolve();
     await tick();
     s.service.boundary();
@@ -175,6 +163,176 @@ describe('identity', () => {
     await flush(s);
     expect(JSON.parse(f.logged[0].user)).not.toHaveProperty('userID');
     expect(JSON.parse(f.logged[1].user).userID).toBeTruthy();
+  });
+});
+
+describe('trait-only updates', () => {
+  const cfg = () => ({
+    ampliloan_home: { cta_label: { param_type: 'string', value: 'Go' } },
+    ampliloan_application: { show_reassurance: { param_type: 'boolean', value: true } },
+  });
+  const ready = async (f: ReturnType<typeof fakeClient>) => {
+    const s = setup('k', f);
+    s.service.syncProfile();
+    await flush(s);
+    return s;
+  };
+  const traitChange = (s: ReturnType<typeof setup>) => {
+    s.store.createApplication('personal');
+    s.service.syncProfile();
+  };
+
+  it('keeps the same-identity value, flags stale_traits, and never blocks', async () => {
+    const f = fakeClient(cfg());
+    const s = await ready(f);
+    s.service.boundary();
+    expect(s.params.getPageParams('home').get('cta_label')).toMatchObject({ value: 'Go', source: 'statsig' });
+    f.hold();
+    traitChange(s);
+    await tick();
+    expect(f.updates).toHaveLength(1);
+    const storeCalls = f.calls.filter((c) => c.startsWith('store:')).length;
+    s.service.boundary();
+    const r = s.params.getPageParams('home').get('cta_label');
+    expect(r).toMatchObject({ value: 'Go', source: 'statsig', staleTraits: true });
+    expect(f.calls.filter((c) => c.startsWith('store:')).length).toBe(storeCalls);
+    expect(s.service.diagnostics().snapshots.find((e) => e.name.endsWith('cta_label'))?.staleTraits).toBe(true);
+    expect(s.service.diagnostics().traitUpdatePending).toBe(true);
+  });
+
+  it('returns a default with reason timeout for a key never evaluated while an update is in flight', async () => {
+    const f = fakeClient(cfg());
+    const s = await ready(f);
+    f.hold();
+    traitChange(s);
+    await tick();
+    s.service.boundary();
+    expect(s.params.getPageParams('home').get('cta_label')).toMatchObject({ source: 'default', reason: 'timeout' });
+  });
+
+  it('applies newly evaluated values only at the next boundary', async () => {
+    const c = cfg();
+    const f = fakeClient(c);
+    const s = await ready(f);
+    s.service.boundary();
+    expect(s.params.getPageParams('home').get('cta_label').value).toBe('Go');
+    f.hold();
+    traitChange(s);
+    await tick();
+    c.ampliloan_home.cta_label.value = 'Go v2';
+    f.updates[0].resolve();
+    await tick();
+    expect(s.params.getPageParams('home').get('cta_label').value).toBe('Go');
+    s.service.boundary();
+    expect(s.params.getPageParams('home').get('cta_label')).toMatchObject({ value: 'Go v2', source: 'statsig' });
+    expect(s.params.getPageParams('home').get('cta_label').staleTraits).toBeUndefined();
+  });
+
+  it('discards everything on an identity change and never returns the old identity value', async () => {
+    const f = fakeClient(cfg());
+    const s = await ready(f);
+    s.service.boundary();
+    expect(s.params.getPageParams('home').get('cta_label').value).toBe('Go');
+    f.hold();
+    s.store.signIn();
+    s.service.syncProfile();
+    expect(s.params.getPageParams('home').get('cta_label')).toMatchObject({ source: 'default', reason: 'timeout' });
+    f.updates[0].resolve();
+    await tick();
+    s.service.boundary();
+    expect(s.params.getPageParams('home').get('cta_label')).toMatchObject({ value: 'Go', source: 'statsig' });
+  });
+
+  it('coalesces trait changes in one tick into one update', async () => {
+    const f = fakeClient(cfg());
+    const s = await ready(f);
+    const before = f.calls.filter((c) => c === 'update').length;
+    s.store.createApplication('personal');
+    s.service.syncProfile();
+    s.store.saveDraft({ lastStepId: 'offers' });
+    s.service.syncProfile();
+    s.store.saveDraft({ lastStepId: 'review' });
+    s.service.syncProfile();
+    await flush(s);
+    expect(f.calls.filter((c) => c === 'update').length - before).toBe(1);
+  });
+
+  it('sends only the latest queued traits next, and an identity change cancels the queue', async () => {
+    const f = fakeClient(cfg());
+    const s = await ready(f);
+    f.hold();
+    traitChange(s);
+    await tick();
+    s.store.saveDraft({ lastStepId: 'offers' });
+    s.service.syncProfile();
+    s.store.saveDraft({ lastStepId: 'review' });
+    s.service.syncProfile();
+    expect(f.updates).toHaveLength(1);
+    s.store.signIn();
+    s.service.syncProfile();
+    expect(f.updates).toHaveLength(2);
+    f.updates[0].resolve();
+    f.updates[1].resolve();
+    await tick();
+    await tick();
+    expect(f.updates).toHaveLength(2);
+    expect(f.user()?.userID).toBeTruthy();
+    s.service.boundary();
+    expect(s.params.getPageParams('home').get('cta_label').source).toBe('statsig');
+  });
+
+  it('sends the latest trait set as the single follow-up after an in-flight update', async () => {
+    const f = fakeClient(cfg());
+    const s = await ready(f);
+    f.hold();
+    traitChange(s);
+    await tick();
+    s.store.saveDraft({ lastStepId: 'offers' });
+    s.service.syncProfile();
+    s.store.saveDraft({ lastStepId: 'review' });
+    s.service.syncProfile();
+    f.updates[0].resolve();
+    await tick();
+    expect(f.updates).toHaveLength(2);
+    expect(f.updates[1].user.custom.journey_stage).toBe('reviewing');
+  });
+
+  it('keeps previous values and records error when a trait update fails', async () => {
+    const f = fakeClient(cfg());
+    const s = await ready(f);
+    s.service.boundary();
+    expect(s.params.getPageParams('home').get('cta_label').value).toBe('Go');
+    f.client.updateUserAsync = () => Promise.resolve({ success: false });
+    traitChange(s);
+    await flush(s);
+    s.service.boundary();
+    expect(s.params.getPageParams('home').get('cta_label')).toMatchObject({ value: 'Go', source: 'statsig', reason: 'error', staleTraits: true });
+  });
+
+  it('requires active_loan_type to be resolved before an application parameter read, with a bounded fallback', async () => {
+    vi.useFakeTimers();
+    const f = fakeClient(cfg());
+    const s = setup('k', f, { waitMs: 2000 });
+    s.service.syncProfile();
+    await vi.advanceTimersByTimeAsync(10);
+    s.service.boundary();
+    expect(s.params.getPageParams('application').get('show_reassurance')).toMatchObject({ value: true, source: 'statsig' });
+    f.hold();
+    s.store.createApplication('personal');
+    s.service.syncProfile();
+    await vi.advanceTimersByTimeAsync(0);
+    s.service.boundary();
+    let done = false;
+    void s.service.settled().then(() => (done = true));
+    await vi.advanceTimersByTimeAsync(1999);
+    expect(done).toBe(false);
+    await vi.advanceTimersByTimeAsync(2);
+    expect(done).toBe(true);
+    expect(s.params.getPageParams('application').get('show_reassurance')).toMatchObject({ value: false, source: 'default', reason: 'timeout' });
+    f.updates[0].resolve();
+    await vi.advanceTimersByTimeAsync(0);
+    s.service.boundary();
+    expect(s.params.getPageParams('application').get('show_reassurance')).toMatchObject({ value: true, source: 'statsig' });
   });
 });
 

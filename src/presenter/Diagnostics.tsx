@@ -18,6 +18,7 @@ export function Diagnostics() {
         <div><dt>Statsig init</dt><dd>{sd.initState}</dd></div>
         <div><dt>Bounded wait result</dt><dd>{sd.waitResult}</dd></div>
         <div><dt>Statsig environment tier</dt><dd>{sd.environment}</dd></div>
+        <div><dt>Trait update pending</dt><dd>{sd.traitUpdatePending ? 'Yes (same-identity values served as stale_traits)' : 'No'}</dd></div>
         <div><dt>Preview</dt><dd>{sd.preview ? 'On (no evaluations, exposures, or sends)' : 'Off'}</dd></div>
         <div><dt>Statsig events declined (local)</dt><dd>{sd.declined}</dd></div>
         <div><dt>Statsig events sent</dt><dd>{sd.sent}</dd></div>
@@ -39,6 +40,7 @@ export function Diagnostics() {
             <li key={e.name}>
               <code>{e.name}</code> = {e.value} <strong>{e.source}</strong>
               {e.reason ? ` (${e.reason})` : ''}
+              {e.staleTraits ? ' stale_traits: true' : ''}
             </li>
           ))}
         </ul>

@@ -22,3 +22,14 @@ Notes
 
 Known fragility
 - Telling `missing_binding` from `type_mismatch` reads the SDK's internal `__configuration` field on the parameter store, because the typed getter does not say why it fell back. The read is wrapped: if the field is absent, renamed, or not an object, the parameter returns its default with reason `error` and no setup failure is recorded. Re-check this on every `@statsig/js-client` upgrade.
+
+Statsig hosts for blocking tests (observed in revision 3)
+- Primary: `featureassets.org` (initialize), `prodregistryv2.org` (event log).
+- Fallbacks the SDK uses when the primary fails: `assetsconfigcdn.org` (initialize) and `beyondwickedmapping.org`, discovered through a `cloudflare-dns.com` TXT lookup. A fallback test must block all four Statsig hosts (and any host matching `statsig` or `featuregates`); `cloudflare-dns.com` is not a Statsig host.
+
+Update behavior (revision 3.1)
+- Identity generation changes only when the stable ID or known user ID changes. It discards every cached value for the old identity and starts a fresh update at once; a response for an older generation is ignored.
+- Trait-only changes (any other `custom` change) are coalesced: changes in one tick produce one `updateUserAsync`, at most one is in flight, and only the latest trait set is sent next. Nothing cached is discarded.
+- While a trait update is in flight, reads return the last value evaluated for the same identity (source `statsig`, `stale_traits` in the presenter), never block, and never return another identity's value. A key never evaluated for this identity gets its default with reason `timeout`. A failed trait update keeps the previous values and records reason `error`.
+- Newly evaluated values become visible only at the next route or step boundary.
+- Application-store parameters are read only when the resolved user's `active_loan_type` matches the current application; otherwise the default with reason `timeout` is returned (`settled()` bounds a wait at 2000 ms).

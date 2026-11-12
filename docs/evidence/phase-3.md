@@ -98,3 +98,20 @@ Run B (fallback): the first two attempts did not block every Statsig host. The S
 
 ## Data readiness
 NOT VERIFIED. SDK receipt is not the same as results availability. This project is warehouse-native; no warehouse, metric, exposure, or results check was made, and no entities exist, so there are no assignments or exposures.
+
+# Revision 3.1 (offline: trait updates must not discard same-identity values)
+Offline: both client keys unset in every command, no live traffic, no console login, no bot credentials. The earlier sections, including the revision 3 cap-overrun note (two Run B attempts reached Statsig through the unblocked fallback host `assetsconfigcdn.org`), are unchanged. The 2-journey cap from revision 3 is spent and was not reset.
+
+## SDK (fake-client tests only)
+- Two generations implemented in `src/integrations/statsig.ts`: identity generation (stable ID or known user ID) discards everything for the old identity; trait-only updates are coalesced (one tick, one `updateUserAsync`; at most one in flight; only the latest trait set queued; an identity change cancels the queue) and keep same-identity values, served with `stale_traits` and never blocking. A failed trait update keeps previous values with reason `error`. New values are visible only at the next boundary. Application-store reads require the resolved `active_loan_type` to match, with a 2000 ms bounded `settled()` and default `timeout` fallback.
+- New tests (9): stale same-identity value with `stale_traits`, no block, no extra SDK read; default `timeout` for a key never evaluated in flight; apply only at boundary; identity change discards and never returns the old value; coalescing in one tick; latest-only follow-up and identity cancel of the queue; failed trait update keeps values with `error`; `active_loan_type` baseline with bounded fallback. The stale-response test was updated for concurrent identity updates. `npm test`: 125 passed. Typecheck and build pass.
+- Not verified: how the real SDK behaves for reads during `updateUserAsync` (it clears values while an update is in flight, which is why reads are served from the app's snapshot), and exposure behavior with real entities. No live check was made.
+
+## UI
+Keyboard-only default smoke and one preview smoke on the production build (two runs, 0 failures; same checks as revision 2.1, plus "Trait update pending: No" in diagnostics). The presenter shows `stale_traits: true` on affected snapshot entries and a trait-update-pending row.
+
+## Telemetry
+Network capture across both browser contexts: 29 requests, all to `127.0.0.1:4180`. Zero requests to any Statsig host (featureassets, prodregistryv2, beyondwickedmapping, assetsconfigcdn, statsig) and zero to any Amplitude host. No live telemetry.
+
+## Console and data readiness
+Unchanged: BLOCKED (SSO) and NOT VERIFIED.

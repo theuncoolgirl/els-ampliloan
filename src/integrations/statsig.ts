@@ -9,6 +9,7 @@ export interface Resolved<T> {
   value: T;
   source: Source;
   reason?: Reason;
+  staleTraits?: boolean;
 }
 
 export type Primitive = string | number | boolean | undefined;
@@ -97,6 +98,7 @@ export interface StatsigSnapshotEntry {
   value: string;
   source: Source;
   reason?: Reason;
+  staleTraits?: boolean;
 }
 export interface SetupFailure {
   name: string;
@@ -108,6 +110,7 @@ export interface StatsigDiagnostics {
   waitResult: string;
   environment: string;
   generation: number;
+  traitUpdatePending: boolean;
   snapshots: StatsigSnapshotEntry[];
   setupFailures: SetupFailure[];
   preview: boolean;
@@ -127,19 +130,34 @@ const succeeded = (r: unknown) => !(typeof r === 'object' && r !== null && 'succ
 
 const show = (v: unknown) => (typeof v === 'string' ? JSON.stringify(v) : String(v));
 
+const APPLICATION_STORE = 'ampliloan_application';
+
+/**
+ * Two generations: the identity generation changes only with the stable ID or known user ID and discards everything
+ * cached for the old identity; trait-only changes are coalesced into at most one in-flight update and never discard
+ * values for the same identity.
+ */
 export const createStatsigService = (deps: StatsigDeps) => {
   const live = deps.key !== '';
   const waitMs = deps.waitMs ?? STATSIG_INIT_WAIT_MS;
   let client: StatsigLike | null = null;
   let initState: InitState = live ? 'initializing' : 'local';
   let waitResult = live ? 'pending' : 'not applicable (local mode)';
-  let generation = 0;
-  let readyGeneration = -1;
-  let userSig = '';
-  let failedGeneration = -1;
   let waitSettled = false;
-  let chain: Promise<void> = Promise.resolve();
+
+  let idGen = 0;
+  let identity = '';
+  let desired: { user: StatsigUserObject; sig: string } | null = null;
+  let applied: { user: StatsigUserObject; sig: string } | null = null;
+  let readyIdGen = -1;
+  let failedIdGen = -1;
+  let traitFailed = false;
+  let inflight: { idGen: number; promise: Promise<void> } | null = null;
+  let microPending = false;
+  let initPromise: Promise<void> = Promise.resolve();
+
   let navCache = new Map<string, Resolved<unknown>>();
+  let evaluated = new Map<string, Resolved<unknown>>();
   let snapshots = new Map<string, StatsigSnapshotEntry>();
   const failures = new Map<string, SetupFailure>();
   const failureKeys = new Set<string>();
@@ -152,66 +170,99 @@ export const createStatsigService = (deps: StatsigDeps) => {
     queueMicrotask(() => listeners.forEach((l) => l()));
   };
 
-  const enqueue = (op: () => Promise<void> | void) => {
-    chain = chain.then(op).catch(() => {
-      initState = initState === 'ready' ? initState : 'failed';
+  const traitUpdatePending = () => !!desired && (inflight !== null || microPending || desired.sig !== applied?.sig);
+
+  const issue = (user: StatsigUserObject, sig: string, isInit: boolean) => {
+    const c = client!;
+    const gen = idGen;
+    const run = async () => {
+      let ok = false;
+      try {
+        ok = succeeded(await (isInit ? c.initializeAsync() : c.updateUserAsync(user)));
+      } catch {
+        ok = false;
+      }
+      if (gen !== idGen) return;
+      inflight = null;
+      if (ok) {
+        readyIdGen = gen;
+        applied = { user, sig };
+        traitFailed = false;
+        if (isInit) initState = 'ready';
+        else if (initState !== 'ready') initState = 'ready';
+      } else if (readyIdGen === gen) {
+        traitFailed = true;
+      } else {
+        failedIdGen = gen;
+        if (isInit) initState = 'failed';
+      }
+      if (ok && desired && desired.sig !== sig) issue(desired.user, desired.sig, false);
       changed();
-    });
-    return chain;
+    };
+    const promise = run();
+    inflight = { idGen: gen, promise };
+    if (isInit) initPromise = promise;
+    return promise;
   };
 
-  /** Builds a new user object when the shared profile changed; each change starts a new generation. */
+  const flushTraits = () => {
+    microPending = false;
+    if (!client || inflight || !desired || desired.sig === applied?.sig) return;
+    issue(desired.user, desired.sig, false);
+  };
+
   const syncProfile = () => {
     if (!live) return;
     const user = userFromProfile(deps.getProfile());
     const sig = JSON.stringify(user);
-    if (sig === userSig) return;
-    userSig = sig;
-    generation += 1;
-    const gen = generation;
+    const id = `${user.userID ?? ''}|${user.customIDs.stableID}`;
     if (!client) {
       client = deps.makeClient(user);
-      const c = client;
-      enqueue(async () => {
-        const ok = succeeded(await c.initializeAsync());
-        if (ok) {
-          if (gen === generation) readyGeneration = gen;
-          initState = 'ready';
-        } else {
-          failedGeneration = gen;
-          initState = 'failed';
-        }
-        changed();
-      });
+      identity = id;
+      idGen = 1;
+      desired = { user, sig };
+      issue(user, sig, true);
       return;
     }
-    const c = client;
-    enqueue(async () => {
-      const ok = succeeded(await c.updateUserAsync(user));
-      if (!ok) {
-        failedGeneration = gen;
-        changed();
-      } else if (gen === generation) {
-        readyGeneration = gen;
-        initState = 'ready';
-        changed();
+    if (id !== identity) {
+      identity = id;
+      idGen += 1;
+      evaluated = new Map();
+      navCache = new Map();
+      applied = null;
+      readyIdGen = -1;
+      failedIdGen = -1;
+      traitFailed = false;
+      microPending = false;
+      desired = { user, sig };
+      inflight = null;
+      issue(user, sig, false);
+      changed();
+      return;
+    }
+    if (desired && sig !== desired.sig) {
+      desired = { user, sig };
+      if (!inflight && !microPending) {
+        microPending = true;
+        queueMicrotask(flushTraits);
       }
-    });
+      changed();
+    }
   };
 
   const record = (name: string, r: Resolved<unknown>) => {
-    snapshots.set(name, { name, value: show(r.value), source: r.source, reason: r.reason });
+    snapshots.set(name, { name, value: show(r.value), source: r.source, reason: r.reason, staleTraits: r.staleTraits });
     changed();
   };
 
   const fail = (name: string, reason: 'missing_binding' | 'type_mismatch') => {
-    const k = `${generation}:${name}:${reason}`;
+    const k = `${idGen}:${name}:${reason}`;
     if (failureKeys.has(k)) return;
     failureKeys.add(k);
     failures.set(name, { name, reason });
   };
 
-  const fallbackReason = (): Reason => (initState === 'failed' || failedGeneration === generation ? 'error' : 'timeout');
+  const currentLoanType = () => deps.getProfile().traits.set.active_loan_type;
 
   const resolve = <T,>(cacheKey: string, label: string, def: T, previewKind: 'param' | 'gate' | 'config', previewName: string, previewKey: string | undefined, read: (c: StatsigLike) => Resolved<T>): Resolved<T> => {
     if (deps.preview?.active()) {
@@ -226,10 +277,19 @@ export const createStatsigService = (deps: StatsigDeps) => {
     if (!live) r = { value: def, source: 'default', reason: 'no_key' };
     else {
       syncProfile();
-      if (!client || readyGeneration !== generation) r = { value: def, source: 'default', reason: fallbackReason() };
-      else {
+      const ready = !!client && readyIdGen === idGen;
+      if (!ready) r = { value: def, source: 'default', reason: failedIdGen === idGen || initState === 'failed' ? 'error' : 'timeout' };
+      else if (previewName === APPLICATION_STORE && applied?.user.custom.active_loan_type !== currentLoanType()) {
+        r = { value: def, source: 'default', reason: 'timeout' };
+      } else if (traitUpdatePending() || traitFailed) {
+        const prev = evaluated.get(cacheKey) as Resolved<T> | undefined;
+        r = prev
+          ? { value: prev.value, source: 'statsig', staleTraits: true, ...(traitFailed ? { reason: 'error' as Reason } : {}) }
+          : { value: def, source: 'default', reason: traitFailed ? 'error' : 'timeout' };
+      } else {
         try {
-          r = read(client);
+          r = read(client!);
+          if (r.source === 'statsig') evaluated.set(cacheKey, r);
         } catch {
           r = { value: def, source: 'default', reason: 'error' };
         }
@@ -249,7 +309,7 @@ export const createStatsigService = (deps: StatsigDeps) => {
       syncProfile();
       const started = Date.now();
       return Promise.race([
-        chain.then(() => {
+        initPromise.then(() => {
           if (waitSettled) return;
           waitSettled = true;
           waitResult = initState === 'failed' ? `initialization failed after ${Date.now() - started} ms; UI continued on defaults` : `initialized in ${Date.now() - started} ms`;
@@ -269,9 +329,22 @@ export const createStatsigService = (deps: StatsigDeps) => {
       ]);
     },
 
+    /** Resolves when no update is pending, or after the bounded wait. */
+    settled(): Promise<void> {
+      return new Promise<void>((resolve) => {
+        const timer = setTimeout(resolve, waitMs);
+        const check = async () => {
+          while (inflight || microPending) await (inflight?.promise ?? Promise.resolve());
+          clearTimeout(timer);
+          resolve();
+        };
+        void check();
+      });
+    },
+
     syncProfile,
 
-    /** Safe route boundary: values are re-evaluated for the next page. */
+    /** Safe route or step boundary: newly evaluated values become visible for the next page. */
     boundary() {
       navCache = new Map();
       if (live) syncProfile();
@@ -315,7 +388,7 @@ export const createStatsigService = (deps: StatsigDeps) => {
       });
     },
 
-    /** Sends a business event to Statsig, after any pending identity update, in order. */
+    /** Logs under the identity and traits current at the call; a scheduled trait update is started first. */
     logEvent(name: string, metadata: Record<string, string>) {
       if (!live) {
         declined += 1;
@@ -323,9 +396,9 @@ export const createStatsigService = (deps: StatsigDeps) => {
         return;
       }
       syncProfile();
-      const c = client;
+      if (microPending) flushTraits();
       sent += 1;
-      if (c) enqueue(() => c.logEvent(name, metadata));
+      client?.logEvent(name, metadata);
       changed();
     },
 
@@ -336,7 +409,8 @@ export const createStatsigService = (deps: StatsigDeps) => {
           initState,
           waitResult,
           environment: 'SDK default (no tier set by the app)',
-          generation,
+          generation: idGen,
+          traitUpdatePending: live && traitUpdatePending(),
           snapshots: [...snapshots.values()],
           setupFailures: [...failures.values()],
           preview: !!deps.preview?.active(),
@@ -356,7 +430,13 @@ export const createStatsigService = (deps: StatsigDeps) => {
       failureKeys.clear();
       changed();
     },
-    flush: () => chain,
+    flush: async () => {
+      for (let i = 0; i < 10; i++) {
+        await Promise.resolve();
+        if (!inflight && !microPending) return;
+        if (inflight) await inflight.promise;
+      }
+    },
   };
   return service;
 };
