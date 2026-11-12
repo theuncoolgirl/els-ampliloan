@@ -3,6 +3,7 @@ import { PERSONA_IDS, STATUS_LABELS, type PersonaId } from '../state/fixtures';
 import { shortReference } from '../state/model';
 import { store, useSnapshot } from '../state/useStore';
 import { Diagnostics } from '../presenter/Diagnostics';
+import { PreviewControls } from '../presenter/PreviewControls';
 
 const PERSONA_LABELS: Record<PersonaId, string> = {
   first_time_personal: 'First-time personal borrower (no application)',
@@ -78,6 +79,7 @@ export function PresenterPage() {
         <div><dt>Status</dt><dd>{a ? STATUS_LABELS[a.status] : 'None'}</dd></div>
         <div><dt>Step</dt><dd>{a ? a.lastStepId : 'None'}</dd></div>
       </dl>
+      <PreviewControls />
       <Diagnostics />
     </section>
   );

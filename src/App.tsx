@@ -2,17 +2,41 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation } from './router';
 import { Footer, Header, Main, Notice } from './components/Layout';
 import { Hero } from './components/Hero';
+import { HELP_EVENT } from './components/helpBus';
+import { PreviewBanner } from './components/PreviewBanner';
 import { HelpPanel } from './components/HelpPanel';
 import { ApplyPage } from './pages/ApplyPage';
 import { OffersPage } from './pages/OffersPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { PresenterPage } from './pages/PresenterPage';
-import { telemetry } from './telemetry/runtime';
+import { statsig, telemetry } from './telemetry/runtime';
 
 export function App() {
   const loc = useLocation();
   const [help, setHelp] = useState(false);
   const first = useRef(true);
+  const decided = useRef<{ key: unknown; hold: boolean }>({ key: undefined, hold: false });
+  const [released, setReleased] = useState<unknown>(undefined);
+  if (decided.current.key !== loc.key) decided.current = { key: loc.key, hold: statsig.updating() };
+  const hold = decided.current.hold && released !== loc.key;
+
+  useEffect(() => {
+    if (!hold) return;
+    let current = true;
+    void statsig.settled().then(() => current && setReleased(loc.key));
+    return () => {
+      current = false;
+    };
+  }, [hold, loc.key]);
+
+  useEffect(() => {
+    const open = () => {
+      telemetry.helpRequested('help', 'application');
+      setHelp(true);
+    };
+    window.addEventListener(HELP_EVENT, open);
+    return () => window.removeEventListener(HELP_EVENT, open);
+  }, []);
 
   useEffect(() => {
     if (first.current) {
@@ -52,9 +76,10 @@ export function App() {
       >
         Skip to content
       </a>
+      <PreviewBanner />
       <Header route={loc.path} onHelp={() => { telemetry.helpRequested('header'); setHelp(true); }} />
       <Notice />
-      <Main>{page}</Main>
+      <Main>{hold ? null : page}</Main>
       <Footer />
       <HelpPanel open={help} onClose={() => setHelp(false)} />
     </>

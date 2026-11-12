@@ -18,13 +18,17 @@ import {
   type Application,
 } from '../state/model';
 import { store, useSnapshot } from '../state/useStore';
+import { usePageParams } from '../integrations/useStatsig';
+import { requestHelp } from '../components/helpBus';
 import { useNavigationEvent } from '../telemetry/navigation';
-import { telemetry } from '../telemetry/runtime';
+import { telemetry, pageParams } from '../telemetry/runtime';
 
 const amountMessage = (t: LoanType) => {
   const f = LOAN_FIXTURES[t];
   return `Enter an amount between ${formatUsd(f.amountMin)} and ${formatUsd(f.amountMax)}.`;
 };
+
+const REASSURANCE = 'Your answers are saved on this device as you go. This is a demo with synthetic data.';
 
 export function ApplyPage({ step }: { step: string | null }) {
   const { active, intent } = useSnapshot();
@@ -136,6 +140,8 @@ function DetailsStep({ app }: { app: Application }) {
   const parsed = num !== null && Number.isFinite(num) ? num : null;
   const err = (id: string) => errors.find((e) => e.field === id);
   useNavigationEvent('step:loan_details', () => telemetry.stepViewed('loan_details'));
+  const params = usePageParams('application');
+  const showHint = pageParams.contextualHelp().value;
 
   const save = (lastStepId: 'loan_details' | 'offers') =>
     store.saveDraft({ requestedAmount: parsed, purposeId: purpose || null, lastStepId });
@@ -161,6 +167,14 @@ function DetailsStep({ app }: { app: Application }) {
       <div data-demo="application-step" data-step-id="loan_details">
         <h1 tabIndex={-1}>{f.headline}</h1>
         <p className="muted">{f.helper}</p>
+        {params.get('show_reassurance').value && <p className="reassurance" data-demo="reassurance">{REASSURANCE}</p>}
+        {showHint && (
+          <p className="help-hint">
+            <button type="button" className="link" data-demo="contextual-help-hint" onClick={() => requestHelp()}>
+              Need help with this step?
+            </button>
+          </p>
+        )}
         <ErrorSummary errors={errors} />
         <form onSubmit={(e) => { e.preventDefault(); next(); }} noValidate>
           <div className="field">
@@ -219,6 +233,7 @@ function ReviewStep({ app }: { app: Application }) {
   const offer = findOffer(app.selectedOfferId);
   const purpose = f.purposes.find((p) => p.id === app.purposeId);
   useNavigationEvent('step:review', () => telemetry.stepViewed('review'));
+  const reviewParams = usePageParams('application');
 
   const submit = () => {
     if (busy) return;
@@ -245,6 +260,7 @@ function ReviewStep({ app }: { app: Application }) {
       <Stepper index={3} />
       <div data-demo="application-step" data-step-id="review">
         <h1 tabIndex={-1}>Review and submit</h1>
+        {reviewParams.get('show_reassurance').value && <p className="reassurance" data-demo="reassurance">{REASSURANCE}</p>}
         <ErrorSummary errors={errors} />
         <dl className="summary" id="review-summary" tabIndex={-1}>
           <div><dt>Loan type</dt><dd>{f.label}</dd></div>

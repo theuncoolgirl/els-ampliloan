@@ -81,3 +81,101 @@
 - Deviations and known limitations: the 60 s minimum was missed by 4 s; the run cap is spent.
 - Blocker and exact decision/configuration needed, if any: Planner decides whether the replay is sufficient or authorizes another run.
 - Next: stopped; awaiting Planner review or revised handoff.
+
+## 2026-11-12T20:30Z | Phase 3 | Revision 2 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase3-statsig-360f; head SHA in the final report
+- Objective and implementation summary: `@statsig/js-client` behind `src/integrations/statsig.ts` (lazy single client, local mode with no key, 2000 ms bounded wait, generation-token identity sync, typed never-throwing accessors with source and fallback reason), `pageParameters.ts` (lazy typed page parameters, once-per-generation setup failures), page bindings for home, application, offers, dashboard, standalone gate and dynamic config, Statsig telemetry adapter behind the dispatcher, presenter Preview with banner, extended presenter diagnostics, tests.
+- Files changed: src/** (integrations, telemetry, presenter, components, pages, styles, tests), package.json, package-lock.json, docs/STATSIG_INVENTORY.md, docs/SETUP.md, docs/evidence/phase-3.md, PHASE_LOG.md. `.env.example` already listed `VITE_STATSIG_CLIENT_KEY` (unchanged).
+- Git actions performed; draft PR link if any: logical commits pushed to the branch; draft PR attempted with base main (see final report; if the PR tool only showed an unsubmitted form, `gh pr list` is the check).
+- External actions performed (project/entity names or IDs; no secrets): none. No Statsig or Amplitude requests (capture shows only 127.0.0.1:4180), no console, no Statsig API, no keys.
+- Definition-of-done results: offline checks PASS (typecheck, build, 111 tests, keyboard-only smoke with 30 checks, preview run, zero vendor requests). Live and console items NOT STARTED or NOT VERIFIED by design for this revision.
+- Checks: typecheck exit 0; build exit 0; npm test exit 0 (111 passed).
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-3.md.
+- Deviations and known limitations: the specified defaults change three visible Phase 2 defaults (hero headline, help heading and body, FAQ count 3 instead of 5); `__configuration` is an internal SDK field; the SDK default tier as reported by the server is not verified.
+- Blocker and exact decision/configuration needed, if any: Planner to confirm the three default changes are intended; console provisioning and a keyed live run need a later authorization.
+- Next: stopped; awaiting Planner review or revised handoff.
+
+## 2026-11-12T20:25Z | Phase 3 | Revision 2.1 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase3-statsig-360f; head SHA in the final report; draft PR #15
+- Objective and implementation summary: corrected defaults (shipped hero headline; support content heading "Help", empty body line not rendered, max_items 5), wrapped the internal `__configuration` read with an `error` fallback, tests, inventory and evidence updates.
+- Files changed: src/integrations/pageParameters.ts, statsig.ts, statsig.test.ts, src/components/HelpPanel.tsx, docs/STATSIG_INVENTORY.md, docs/evidence/phase-3.md, PHASE_LOG.md
+- Git actions performed; draft PR link if any: commit pushed to the same branch; PR #15 exists.
+- External actions performed (project/entity names or IDs; no secrets): none. Capture shows only 127.0.0.1:4180 (29 requests); zero Statsig or Amplitude requests.
+- Definition-of-done results: offline P3.1 PASS (default and preview smokes, two runs); P3.2 fake-client tests PASS (114). Console and live items NOT STARTED or NOT VERIFIED by design.
+- Checks: typecheck exit 0; build exit 0; npm test exit 0 (114 passed).
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-3.md, Revision 2.1.
+- Deviations and known limitations: supersedes revision 2 notes on defaults and `__configuration`. Residual: the old static help line "Local sample content for this demo." no longer shows, since the corrected default body is empty; SDK default tier NOT VERIFIED.
+- Blocker and exact decision/configuration needed, if any: none
+- Next: stopped; awaiting Planner review.
+
+## 2026-11-12T20:40Z | Phase 3 | Revision 3 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase3-statsig-360f; head SHA in the final report; draft PR #15
+- Objective and implementation summary: console entities (BLOCKED), Pages env line for the Statsig key (done), live-mode fixes, live Run A, fallback Run B, evidence.
+- Files changed: .github/workflows/pages.yml (one env line), src/integrations/statsig.ts, statsig.test.ts, docs/SETUP.md, docs/STATSIG_INVENTORY.md, docs/evidence/phase-3.md, PHASE_LOG.md
+- Git actions performed; draft PR link if any: commits pushed to the same branch; PR #15 exists.
+- External actions performed (project/entity names or IDs; no secrets): console login attempt only, no entity created (BLOCKED: org requires SSO). Live Run A to Statsig and Amplitude, window 2026-11-12 20:23:12-20:23:41 UTC, stable ID a109bc66-5915-4a1e-9398-7ba8b6a96d59, user sim_profile_default, Amplitude session 1794514992286. Two earlier Run B attempts unintentionally reached Statsig through a fallback host I had not blocked (one also sent Amplitude events), so the cap of 2 journeys was exceeded; a third Run B had all Statsig hosts blocked and sent nothing.
+- Definition-of-done results: P3.1 live binding BLOCKED (no entities). P3.2 documented real-SDK behavior PARTIAL (init payload, success:false semantics, non_exposed_checks; exposure behavior with real entities not verified). P3.3 payload comparison recorded for Planner to verify. P3.4 fallback PASS in browser and tests (bounded wait, fallback with reason error, no cross-identity values).
+- Checks: typecheck exit 0; build exit 0; npm test exit 0 (116 passed).
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-3.md, Revision 3.
+- Deviations and known limitations: cap exceeded as above; console blocked; volatile traits in the Statsig user cause `timeout` fallbacks after state changes; Statsig default tier NOT VERIFIED; warehouse results not checked.
+- Blocker and exact decision/configuration needed, if any: console access that does not need SSO (or an SSO-capable member to create the listed entities); Planner decision on keeping volatile traits out of the evaluation user.
+- Next: stopped; awaiting Planner review.
+
+## 2026-11-12T20:55Z | Phase 3 | Revision 3.1 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase3-statsig-360f; head SHA in the final report; draft PR #15
+- Objective and implementation summary: identity versus trait generations in the Statsig facade (coalesced trait updates, stale_traits serving, failure keeps values, boundary-only application, active_loan_type baseline rule), presenter indicators, tests.
+- Files changed: src/integrations/statsig.ts, statsig.test.ts, src/presenter/Diagnostics.tsx, docs/STATSIG_INVENTORY.md, docs/evidence/phase-3.md, PHASE_LOG.md
+- Git actions performed; draft PR link if any: commit pushed to the same branch; PR #15 exists.
+- External actions performed (project/entity names or IDs; no secrets): none. Capture shows only 127.0.0.1:4180 (29 requests); zero Statsig or Amplitude requests; no console login; no bot credentials.
+- Definition-of-done results: P3.2 identity and exposure-rule tests with fakes PASS (125 tests); offline P3.4 PASS (smokes). P3.1 live binding, real-SDK exposure behavior, and P3.3 stay open.
+- Checks: typecheck exit 0; build exit 0; npm test exit 0 (125 passed).
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-3.md, Revision 3.1.
+- Deviations and known limitations: real-SDK behavior during an in-flight update not verified live; revision 3 cap overrun note stands.
+- Blocker and exact decision/configuration needed, if any: none new (console access still needed for entities).
+- Next: stopped; awaiting Planner review.
+
+## 2026-11-12T21:00Z | Phase 3 | Revision 3.2 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase3-statsig-360f; head SHA in the final report; draft PR #15
+- Objective and implementation summary: create the Statsig entities through the Console API (POST only), then two live journeys (A: full, B: all Statsig hosts blocked).
+- Files changed: docs/STATSIG_INVENTORY.md, docs/evidence/phase-3.md, PHASE_LOG.md (no source changes)
+- Git actions performed; draft PR link if any: commit pushed to the same branch; PR #15 exists.
+- External actions performed (project/entity names or IDs; no secrets): Console API, project `AmpliLoan [WHN]` (363sCqDdACZXt4M88ZqiKa): GET gates?limit=1 (200); POST /gates 201 (`ampliloan_contextual_help`), GET 200; POST /dynamic_configs 201 (`ampliloan_support_content`), GET 200. No other calls. Live journey A 2026-11-12 20:48:41-20:49:10 UTC, stable ID 9fac13c8-6be8-4fc9-898a-3220e35f40a4, user sim_profile_default (Statsig and Amplitude). Journey B 20:49:30-20:49:51 UTC with all Statsig hosts blocked, no vendor responses.
+- Definition-of-done results: gate and config provisioned and verified; 4 layers and 4 parameter stores BLOCKED (POST cannot define parameters; PATCH not authorized). P3.1 PARTIAL (config delivered to the client; gate not in the client payload; no parameter binding). P3.2 PARTIAL (no exposures observed). P3.3 recorded for Planner verification. P3.4 PASS.
+- Checks: not re-run (no source change); build with the console key removed; dist contains 0 occurrences of the full console key.
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-3.md, Revision 3.2.
+- Deviations and known limitations: layers and stores not created; gate absent from the client payload (cause undetermined); config not read in the UI during the journey; reasons `timeout` for gate and non-store reads.
+- Blocker and exact decision/configuration needed, if any: authorize PATCH (or PUT) for the 4 layers and 4 parameter stores so parameters can be defined after the POST, or have a console user add them; check why the gate is not served (status "In Progress").
+- Next: stopped; awaiting Planner review.
+
+## 2026-11-12T21:10Z | Phase 3 | Revision 3.3 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase3-statsig-360f; head SHA in the final report; draft PR #15
+- Objective and implementation summary: create and define the 4 layers and 4 parameter stores through the Console API, small presenter fix, one live journey.
+- Files changed: src/integrations/statsig.ts, statsig.test.ts, src/App.tsx, docs/STATSIG_INVENTORY.md, docs/evidence/phase-3.md, PHASE_LOG.md
+- Git actions performed; draft PR link if any: commits pushed to the same branch; PR #15 exists.
+- External actions performed (project/entity names or IDs; no secrets): Console API, project `AmpliLoan [WHN]`: 2 list GETs; POST /layers x4 (201), PATCH /layers/{id} x4 (200), POST /param_stores x4 (201), POST /param_stores/{name} x4 (201, documented update call), GET of each (200). Store IDs YWTl4E33mPmYJjhrjXG3l, ZDMfK0Fowz7wohsxrIOkQ, 10fQQK8ElPNovUraM6AgVS, 1169qA5ZoX8l5ubZIlGQeW; layer IDs equal their names. Gate and config untouched. One live journey 20:54:35-20:55:06 UTC, stable ID 495d128d-b0a1-4bf3-a3cc-507c2e1a58ce, user sim_profile_default.
+- Definition-of-done results: entities PASS. P3.1 PARTIAL: four parameters (home x2, application x2) and the config served by Statsig; offers and dashboard parameters and the gate returned default (timeout) because of first reads during an in-flight update; gate absent from payload. P3.2 PASS for observed behavior (layer and config exposures once per identity, none for unused or defaults, none from diagnostics). P3.3 recorded for Planner verification.
+- Checks: typecheck exit 0; build exit 0; npm test exit 0 (127 passed); dist has 0 occurrences of the console key.
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-3.md, Revision 3.3.
+- Deviations and known limitations: the route-hold fix (src/App.tsx, in its own commit) is not verified live because the journey cap is 1; one more journey is needed to confirm offers and dashboard values. The param store update uses the documented `POST /param_stores/{name}` (no PATCH or PUT exists for stores). Gate not served to clients.
+- Blocker and exact decision/configuration needed, if any: authorize one more live journey to verify the route-hold fix, or drop that commit.
+- Next: stopped; awaiting Planner review.
+
+## 2026-11-12T21:05Z | Phase 3 | Revision 3.4 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase3-statsig-360f; head SHA in the final report; draft PR #15
+- Objective and implementation summary: one live confirmation journey; no console changes; route-hold commit kept.
+- Files changed: docs/evidence/phase-3.md, docs/STATSIG_INVENTORY.md, PHASE_LOG.md
+- Git actions performed; draft PR link if any: commit pushed to the same branch; PR #15 exists.
+- External actions performed (project/entity names or IDs; no secrets): no Console API calls. One live journey 20:59:23-20:59:55 UTC, stable ID 3c847d39-d178-4d73-bc19-f598fd78f8c2, session 39297cf5-47e2-4191-8f78-66f1eb6e81b7, user sim_profile_default.
+- Definition-of-done results: P3.1 PASS (six parameters, gate, config all source statsig, no fallbacks). P3.2 PASS (exposures by type recorded; none from diagnostics or unused parameters; gate exposure logged despite gate absent from payload).
+- Checks: typecheck exit 0; build exit 0; npm test exit 0 (127 passed).
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-3.md, Revision 3.4.
+- Deviations and known limitations: submit transition 796 ms (350 ms is simulated delay); route hold not isolated per transition; hold not tested in preview mode live; gate still not in the client payload; default tier NOT VERIFIED; warehouse not checked.
+- Blocker and exact decision/configuration needed, if any: none.
+- Next: stopped; awaiting Planner review.
