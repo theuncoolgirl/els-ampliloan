@@ -14,3 +14,10 @@
 
 ## Tests
 `npm test` runs the state-module unit tests (vitest, node environment, `src/**/*.test.ts`).
+
+## Amplitude (Phase 2)
+- `@amplitude/unified` is the only Amplitude package. `src/integrations/amplitude.ts` is the only file that calls it, with one module-level `initAll` per page load. The UI waits at most 2000 ms for initialization, then continues with local behavior.
+- Build-time configuration: `VITE_AMPLITUDE_API_KEY` and `VITE_AMPLITUDE_SERVER_ZONE` (US). The Pages workflow passes only these two to the `npm run build` step: the key from the repository secret `VITE_AMPLITUDE_API_KEY`, the zone as the literal `US`. No other secret is used and no Statsig key exists. The key is a browser-safe project key and is bundled into the public site by design.
+- With no key set the app runs in local mode: events are validated and listed on the presenter page but nothing is sent to any vendor.
+- Statsig is intentionally disabled in this phase (`src/telemetry/statsigSink.ts` counts declined events and sends nothing).
+- A change to the repository secret does not trigger a deploy; a listed-path change is needed to publish a new key.
