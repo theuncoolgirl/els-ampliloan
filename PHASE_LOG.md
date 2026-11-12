@@ -11,3 +11,17 @@
 - Deviations and known limitations: Playwright-core run from /tmp outside repo using system Chrome. Action majors checked via GitHub releases API. Workflow not run.
 - Blocker and exact decision/configuration needed, if any: none
 - Next: stopped; awaiting Planner review or revised handoff.
+
+## 2026-11-12T16:20Z | Phase 0 | Revision 3 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as revision 2)
+- Branch and head SHA (or no commit): cursor/pages-path-filter-360f; SHA in final report
+- Objective and implementation summary: add `paths:` filter to pages.yml push trigger so docs/planning merges do not redeploy.
+- Files changed: .github/workflows/pages.yml, docs/SETUP.md, docs/evidence/phase-0.md, PHASE_LOG.md
+- Git actions performed; draft PR link if any: branch from origin/main, commits, push; draft PR against main
+- External actions performed (project/entity names or IDs; no secrets): none
+- Definition-of-done results: P0.5 builder evidence gathered: filter validated by YAML parse PASS; live no-deploy proof NOT RUN (Planner, after merge)
+- Checks: actionlint not installed; YAML parse confirmed branches [main] and exact paths list; npm run typecheck exit 0; npm run build exit 0; workflow not run
+- Readiness (UI / SDK / console / telemetry / data): unchanged; no SDK, no telemetry
+- Deviations and known limitations: no linter; merging changes pages.yml (in filter) so it deploys once.
+- Blocker and exact decision/configuration needed, if any: none
+- Next: stopped; awaiting Planner review or revised handoff.

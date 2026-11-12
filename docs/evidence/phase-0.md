@@ -26,3 +26,10 @@ Pending approved deployment. Not run.
 
 ## Limitations
 Smoke was one scripted run, not repeated; Chrome only. Focus on direct dashboard load stays on body (route-change focus applies to navigation, not initial load).
+
+## Revision 3 (Pages path filter)
+- Branch `cursor/pages-path-filter-360f` from `origin/main`; node v22.23.4, npm 10.9.9; `actionlint` not installed.
+- Change: `on.push.paths` added next to `branches: [main]` in `.github/workflows/pages.yml` with the eight listed paths and one comment. Nothing else changed.
+- Validation (YAML parse with Python `yaml`): `on.push.branches` = `['main']`; `on.push.paths` = `src/**`, `public/**`, `index.html`, `package.json`, `package-lock.json`, `tsconfig*.json`, `vite.config.*`, `.github/workflows/pages.yml`. PASS. No `workflow_dispatch` or pull-request trigger.
+- `npm run typecheck` exit 0; `npm run build` exit 0. PASS.
+- Workflow not run or dispatched. Live proof that a docs-only merge does not deploy is pending the Planner after approved merge.
