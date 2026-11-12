@@ -79,7 +79,7 @@ function Chooser({
           <legend>Loan type</legend>
           {LOAN_TYPES.map((t) => (
             <label key={t} className="choice">
-              <input type="radio" name="loan-type" value={t} checked={choice === t} onChange={() => setChoice(t)} />
+              <input data-amp-mask type="radio" name="loan-type" value={t} checked={choice === t} onChange={() => setChoice(t)} />
               <span>
                 <strong>{LOAN_FIXTURES[t].label}</strong>
                 <br />
@@ -167,6 +167,7 @@ function DetailsStep({ app }: { app: Application }) {
             <label htmlFor="requested-amount">Amount you would like (USD)</label>
             <input
               id="requested-amount"
+              data-amp-mask
               type="number"
               inputMode="decimal"
               step="any"
@@ -185,6 +186,7 @@ function DetailsStep({ app }: { app: Application }) {
             <label htmlFor="purpose">Purpose</label>
             <select
               id="purpose"
+              data-amp-mask
               value={purpose}
               onChange={(e) => { setPurpose(e.target.value); setSaved(false); }}
               aria-invalid={err('purpose') ? true : undefined}
@@ -264,6 +266,7 @@ function ReviewStep({ app }: { app: Application }) {
             <label className="choice">
               <input
                 id="consent"
+                data-amp-mask
                 type="checkbox"
                 checked={consent}
                 onChange={(e) => setConsent(e.target.checked)}

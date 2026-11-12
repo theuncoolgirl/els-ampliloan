@@ -94,7 +94,7 @@ function ApplicationCard({ app }: { app: Application }) {
           <p className="muted">Simulated, no files are uploaded.</p>
           {tasks.map((t) => (
             <label key={t} className="choice">
-              <input type="checkbox" checked={!!app.tasks[t]} onChange={(e) => store.completeTask(t, e.target.checked)} />
+              <input data-amp-mask type="checkbox" checked={!!app.tasks[t]} onChange={(e) => store.completeTask(t, e.target.checked)} />
               <span>{TASK_LABELS[t]}</span>
             </label>
           ))}

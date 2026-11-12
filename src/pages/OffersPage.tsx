@@ -54,6 +54,7 @@ export function OffersPage() {
         {offersFor(active.loanType).map((o) => (
           <label key={o.id} className={`offer-card${active.selectedOfferId === o.id ? ' selected' : ''}`} data-offer-id={o.id}>
             <input
+              data-amp-mask
               type="radio"
               name="offer"
               value={o.id}

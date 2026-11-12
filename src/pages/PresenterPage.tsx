@@ -27,7 +27,7 @@ export function PresenterPage() {
         <legend>Persona</legend>
         {PERSONA_IDS.map((id) => (
           <label key={id} className="choice">
-            <input type="radio" name="persona" value={id} checked={persona === id} onChange={() => setPersona(id)} />
+            <input data-amp-mask type="radio" name="persona" value={id} checked={persona === id} onChange={() => setPersona(id)} />
             <span>{PERSONA_LABELS[id]}</span>
           </label>
         ))}
