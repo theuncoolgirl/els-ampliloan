@@ -44,3 +44,14 @@ Project `AmpliLoan [Cloud]`, ID `6oe5DaLQIx5XnKfBrG0JnT` (https://staging.consol
 - Metrics (Statsig Cloud event metrics, unit Stable ID, source SDK business events, synthetic demo data, no revenue; rollup window not set): `ampliloan_application_submitted_users` (ID `ampliloan_application_submitted_users::event_user`, primary), `ampliloan_application_saved_users` (`::event_user`, secondary), `ampliloan_offer_selected_users` (`::event_user`, secondary), `ampliloan_validation_failed_count` (`ampliloan_validation_failed_count::event_count_custom`, guardrail, direction decrease). The event `Application Validation Failed` has not been received by this project yet, so that metric will show no data until it appears.
 - Experiment `ampliloan_application_reassurance_v1`, status `setup` (NOT STARTED, no start time, no launched group), idType stableID, layer `ampliloan_application_layer`, control (id 4XR9aEueKE1cYUa8Pd0vTU, 50, show_reassurance false, progress_style "steps") and treatment (id 4XR9aG9hcWaHijI4qkW9cW, 50, show_reassurance true, progress_style "steps"), allocation 100 (groups split it 50/50), primary `ampliloan_application_submitted_users`, secondary saved/offer-selected and the guardrail. The API has no separate guardrail slot, so the guardrail sits in `secondaryMetrics`.
 - Start: Erin must approve separately, then start it in the console. Stop: stop the experiment in the console, then check a fresh Stable ID gets the layer defaults (`show_reassurance` false, `progress_style` "steps") in the presenter diagnostics.
+
+## Cloud project (revision 4C.2, current)
+
+Project `AmpliLoan [Cloud]`, ID `6oe5DaLQIx5XnKfBrG0JnT` (https://staging.console.statsig.com/6oe5DaLQIx5XnKfBrG0JnT/settings). Created 2026-11-12 23:04:44-55Z through `https://statsigapi.net/console/v1`; every entity verified by GET. Same names, types, defaults and store-to-layer references as the table above.
+- Layers (idType `stableID`, ID equals name): `ampliloan_home_layer`, `ampliloan_application_layer`, `ampliloan_offers_layer`, `ampliloan_dashboard_layer`.
+- Parameter stores: `ampliloan_home` (3y4tImqDP2JzeEDhFJLymz), `ampliloan_application` (3BNzAoluZw18gDrl7wAUHG), `ampliloan_offers` (3CwtSBdqA5pWY8mhj727p7), `ampliloan_dashboard` (3EIFykZ3LVvIyES8xd5eWS).
+- Gate `ampliloan_contextual_help` (idType `stableID`) with one rule `first_time_borrowers` (ID `3H1GVhuDB1LYeb6bsFCS3R`: custom field `borrowing_experience` any of `first_time`, pass 100%).
+- Dynamic config `ampliloan_support_content` (idType `stableID`, default `{"heading":"Help","body":"","max_items":5}`, no rules).
+- No experiment, metric, or other entity. The old project below is superseded and untouched; the client key in the build must belong to this project.
+
+Old project `363sCqDdACZXt4M88ZqiKa` (`AmpliLoan [WHN]`): SUPERSEDED. The text above this section describes its state.

@@ -192,6 +192,19 @@
 - Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-4.md.
 - Deviations and known limitations: the default user's false-gate exposure not captured; gate description text still says "No rules".
 - Blocker and exact decision/configuration needed, if any: warehouse connection and an assignment source (then metrics) from Erin; then re-authorize the experiment POST.
+
+## 2026-11-12T23:10Z | Phase 4 | Revision 4C.2 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase4c2-statsig-cloud-360f from origin/main; head SHA in the final report
+- Objective and implementation summary: re-create the 10 Statsig entities and the gate rule in project 6oe5DaLQIx5XnKfBrG0JnT; one local live check.
+- Files changed: docs/STATSIG_INVENTORY.md, docs/evidence/phase-4.md, PHASE_LOG.md (no source)
+- Git actions performed; draft PR link if any: branch pushed; PR per final report.
+- External actions performed (project/entity names or IDs; no secrets): Console API at statsigapi.net: 4 list GETs, 4x(POST layer, PATCH, GET), 4x(POST store, POST store update, GET), POST gate, POST config, PATCH gate rule, GETs; all 2xx. One live journey 23:05:21-23:05:55 UTC, stable ID c8aba84f-02b1-41dc-bb70-39cac6b4de85.
+- Definition-of-done results: 10 entities and gate rule PASS (verified by GET). Live check PASS: all values source statsig, no setup failures, gate true with hint for first_time persona.
+- Checks: build with console key removed; 0 key traces; no source change; no deploy.
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-4.md, 4C.2.
+- Deviations and known limitations: the API cannot confirm the project ID (inferred from empty project and new rule ID); phase-4.md also edited on PR #19 (merge needed); gate-false case not rerun; the GitHub Actions client-key secret is Erin's task.
+- Blocker and exact decision/configuration needed, if any: none.
 - Next: stopped; awaiting Planner review.
 
 ## 2026-11-12T23:20Z | Phase 4 | Revision 4C.3 | NEEDS_REVIEW
