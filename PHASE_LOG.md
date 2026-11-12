@@ -193,3 +193,17 @@
 - Deviations and known limitations: the default user's false-gate exposure not captured; gate description text still says "No rules".
 - Blocker and exact decision/configuration needed, if any: warehouse connection and an assignment source (then metrics) from Erin; then re-authorize the experiment POST.
 - Next: stopped; awaiting Planner review.
+
+## 2026-11-12T23:20Z | Phase 4 | Revision 4C.3 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase4c3-experiment-360f from origin/main; head SHA in the final report
+- Objective and implementation summary: create 4 metrics and one draft experiment in the Cloud project; not started.
+- Files changed: docs/STATSIG_INVENTORY.md, docs/evidence/phase-4.md, PHASE_LOG.md (no source)
+- Git actions performed; draft PR link if any: branch pushed; PR per final report.
+- External actions performed (project/entity names or IDs; no secrets): Console API at statsigapi.net, project 6oe5DaLQIx5XnKfBrG0JnT: metrics POST 201 x4 (after 4 rejected 400s, nothing created), experiment `ampliloan_application_reassurance_v1` POST 201, PATCH 200 (metrics only), GETs 200. No live journey.
+- Definition-of-done results: P4.1 PASS; P4.2 PARTIAL (definitions recorded; rollup window not set); P4.4 PASS (draft with variants, unit, layer, allocation, metrics, rollback; not started, awaiting Erin).
+- Checks: layer defaults unchanged; experiment status setup, no start time.
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-4.md, 4C.3.
+- Deviations and known limitations: experiment was POSTed before its metrics existed due to a script ordering slip and then updated with one PATCH (not listed in the handoff); guardrail stored in secondaryMetrics; `Application Validation Failed` event not yet seen by the project; rollup window unset.
+- Blocker and exact decision/configuration needed, if any: separate Erin approval to start; Planner decision on the metric rollup window.
+- Next: stopped; awaiting Planner review.

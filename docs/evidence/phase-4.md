@@ -31,3 +31,26 @@ Business events in this check (Rate Check Started, Loan Type Selected, Applicati
 
 ## Data readiness
 NOT VERIFIED. No warehouse connection, assignment source, or metrics exist; results are not available. SDK receipt is not results availability.
+
+# Revision 4C.3 (Cloud project: metrics and a draft experiment, not started)
+
+`STATSIG_CONSOLE_API_KEY` present: yes. Sent only to `statsigapi.net/console/v1`; never printed or written; script deleted. No live journey, no source change, no deploy. UTC 2026-11-12 23:13.
+
+## Console
+Project `6oe5DaLQIx5XnKfBrG0JnT`.
+- GET /layers/ampliloan_application_layer 200 before: `show_reassurance` boolean false, `progress_style` string "steps". GET /metrics/list 200: only auto-generated event metrics existed (the project already receives events; no `Application Saved`, `Application Validation Failed` or other Phase-4 events other than those listed by Statsig).
+- First metric attempts: POST /metrics x4 with `metricEvents: [{name}]` -> 400 "All events must have criteria" (three) and 400 "Invalid tag names received: [ampliloan]" (the fourth, because I sent a tag; tags must already exist). Nothing was created. This differs from the doc example only in that `criteria` must be present, even as `[]`.
+- Experiment ordering slip: my script continued after the metric failures and POSTed the experiment without metrics (POST /experiments 201, GET 200, status `setup`). I then created the metrics and attached them with `PATCH /experiments/ampliloan_application_reassurance_v1` 200 on that same experiment (only `primaryMetrics` and `secondaryMetrics`). The handoff lists POST and GET only; the PATCH is a minor extension to finish the experiment as specified, with no start. Flagged for the Planner.
+- Metrics: POST /metrics 201 x4 (retry with `criteria: []`, `unitTypes: ["stableID"]`, no tags). The GET path needs `name::type` URL-encoded (`GET /metrics/ampliloan_application_submitted_users::event_user` 200; a bare name gives 404, which differs from the layer and store pattern). IDs: `ampliloan_application_submitted_users::event_user` (primary), `ampliloan_application_saved_users::event_user`, `ampliloan_offer_selected_users::event_user`, `ampliloan_validation_failed_count::event_count_custom` (decrease). Each GET showed unit `stableID`, the one event, empty criteria, rollup window null, and the description with unit, source, synthetic and no-revenue text. Rollup/attribution window was not set (API default); a P4.2 window decision remains for the Planner.
+- Experiment GET 200 after PATCH: status `setup`, `startTime` null, `launchedGroupID` null, both groups `shipped: false`, `disabled: false`, no targeting gate, allocation 100 with groups 50/50, hypothesis as specified, primary and three secondary metrics as above (guardrail in secondary). Nothing started; no start, launch, review or schedule call was made. The experiment is not serving: it is in setup, so no group serves traffic.
+- Layer GET 200 after: `show_reassurance` false, `progress_style` "steps", identical to before.
+- No review or pending state was reported.
+
+## SDK and telemetry
+No live journey (experiment unstarted). The event `Application Validation Failed` does not exist in the project's event list yet, so the guardrail metric has no data source until the app sends it.
+
+## How to start and stop (for Erin)
+Start only after a separate approval: open the experiment in the Cloud console, check groups, metrics and allocation, then Start. Stop: stop or abandon the experiment in the console, then verify on a fresh Stable ID that the layer returns `show_reassurance` false and `progress_style` "steps". Rollback of the gate rule remains: remove `first_time_borrowers`.
+
+## Data readiness
+NOT VERIFIED. No results exist; metrics have never been computed for this experiment.
