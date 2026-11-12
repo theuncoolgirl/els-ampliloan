@@ -194,3 +194,8 @@ Erin, Cursor chat, 3:44 PM ET: added the Statsig Console API key as the Cursor s
 - Secret rename: Erin renamed the console secret to `STATSIG_CONSOLE_API_KEY` (4:40 PM ET). The old `VITE_STATSIG_CONSOLE_KEY` should be deleted. The Builder's console authorization is spent; later console writes need a new explicit grant. Handoffs after this point use the new name.
 - Known limits carried forward: exposure events not visible through the read-only MCP (counts are the Builder's network capture); warehouse or results availability not checked (warehouse-native project); the gate is absent from the client initialize payload while it has no rules (the SDK still evaluates it to false and logs one exposure); presenter shows the support config as `[object Object]` (cosmetic, polish pass); route hold of up to 2 s while a user update runs (live mode only) kept as a bounded exception; entity total is 10 (4 layers, 4 stores, gate, config), not 13.
 - Phase 4 is not started.
+
+## 2026-11-12 — Phase 4 started (planning only)
+
+- Erin, 5:26 PM ET: approved PR #16 (head `5f79bfd`, merged as `b07c391`, planning records only) and said "start phase 4".
+- Planner decision: "start phase 4" is read as authorization to plan and split Phase 4, not as a Go for any console write. The handoff stays IDLE; slices 4A–4E in `PROJECT_PLAN.md` each need a named Go, and publishing or activating anything needs its own approval. Existing console assets are never edited or deleted.
