@@ -337,3 +337,41 @@ describe('local mode', () => {
     expect(vendor.calls).toEqual([]);
   });
 });
+
+describe('preview and the Statsig sink', () => {
+  const build = (active: () => boolean) => {
+    const fake = fakeAdapter();
+    const sent: { name: string; props: Record<string, unknown> }[] = [];
+    const attribution = createAttribution({ storage: memory(), now: () => clock, search: () => '', uuid: () => `sess-${++n}` });
+    let store!: ReturnType<typeof createStore>;
+    const telemetry = createTelemetry({
+      adapter: fake.adapter,
+      attribution,
+      getSnapshot: () => store.getSnapshot(),
+      pageId: () => 'offers',
+      now: () => clock,
+      uuid: () => crypto.randomUUID(),
+      statsig: { name: 'statsig', send: (name, props) => void sent.push({ name, props }), declined: () => 0 },
+      previewActive: active,
+    });
+    store = createStore(memory(), telemetry.hooks);
+    return { fake, sent, telemetry, store };
+  };
+
+  it('sends one Statsig event per valid business event, with the same business event ID', () => {
+    const t = build(() => false);
+    t.telemetry.rateCheckStarted('hero');
+    expect(t.sent).toHaveLength(1);
+    expect(t.sent[0].name).toBe('Rate Check Started');
+    expect(t.sent[0].props.business_event_id).toBe(t.fake.tracks()[0].insertId);
+  });
+
+  it('sends nothing to Statsig or Amplitude, not even identify, while preview is on', () => {
+    const t = build(() => true);
+    t.telemetry.rateCheckStarted('hero');
+    t.store.signIn();
+    expect(t.sent).toEqual([]);
+    expect(t.fake.calls).toEqual([]);
+    expect(t.telemetry.diagnostics().suppressedByPreview).toBeGreaterThan(0);
+  });
+});

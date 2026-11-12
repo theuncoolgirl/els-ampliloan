@@ -1,4 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { DEFAULT_SUPPORT } from '../integrations/pageParameters';
+import { pageParams } from '../telemetry/runtime';
 
 const GLOSSARY: [string, string][] = [
   ['APR', 'Annual percentage rate: the yearly cost of borrowing shown as a percentage. Values here are illustrative.'],
@@ -25,6 +27,10 @@ const TOPICS: [string, string, string][] = [
 
 export function HelpPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const [content, setContent] = useState(DEFAULT_SUPPORT);
+  useEffect(() => {
+    if (open) setContent(pageParams.supportContent());
+  }, [open]);
   useEffect(() => {
     const d = ref.current;
     if (!d) return;
@@ -34,12 +40,12 @@ export function HelpPanel({ open, onClose }: { open: boolean; onClose: () => voi
   return (
     <dialog ref={ref} className="help-panel" aria-labelledby="help-title" onClose={onClose}>
       <div className="help-head">
-        <h2 id="help-title">Help</h2>
+        <h2 id="help-title">{content.heading}</h2>
         <button type="button" onClick={onClose}>
           Close
         </button>
       </div>
-      <p className="muted">Local sample content for this demo.</p>
+      <p className="muted">{content.body}</p>
       <h3>Browse by topic</h3>
       {TOPICS.map(([id, title, body]) => (
         <section key={id} data-topic={id}>
@@ -57,7 +63,7 @@ export function HelpPanel({ open, onClose }: { open: boolean; onClose: () => voi
         ))}
       </dl>
       <h3>Frequently asked questions</h3>
-      {FAQS.map(([q, a]) => (
+      {FAQS.slice(0, content.maxItems).map(([q, a]) => (
         <details key={q}>
           <summary>{q}</summary>
           <p>{a}</p>

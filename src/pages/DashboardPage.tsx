@@ -1,3 +1,4 @@
+import { usePageParams } from '../integrations/useStatsig';
 import { href, navigate } from '../router';
 import {
   LOAN_FIXTURES,
@@ -61,6 +62,7 @@ export function DashboardPage() {
 function ApplicationCard({ app }: { app: Application }) {
   const f = LOAN_FIXTURES[app.loanType];
   const offer = findOffer(app.selectedOfferId);
+  const params = usePageParams('dashboard');
   const tasks = tasksAvailable(app.status);
   const resume = () => {
     telemetry.resumed('dashboard');
@@ -88,7 +90,7 @@ function ApplicationCard({ app }: { app: Application }) {
           })}
         </ol>
       )}
-      {tasks.length > 0 && (
+      {tasks.length > 0 && params.get('show_next_steps').value && (
         <fieldset className="tasks">
           <legend>Your next steps</legend>
           <p className="muted">Simulated, no files are uploaded.</p>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ErrorSummary, errorId, type FieldError } from '../components/Forms';
+import { ErrorSummary, Stepper, errorId, type FieldError } from '../components/Forms';
+import { usePageParams } from '../integrations/useStatsig';
 import { href, navigate } from '../router';
 import { LOAN_FIXTURES, offersFor } from '../state/fixtures';
 import { formatUsd, monthlyPayment } from '../state/model';
@@ -9,6 +10,7 @@ import { telemetry } from '../telemetry/runtime';
 
 export function OffersPage() {
   const { active } = useSnapshot();
+  const params = usePageParams('offers');
   const [errors, setErrors] = useState<FieldError[]>([]);
   const viewable = !!active && active.status === 'draft';
   useNavigationEvent('offers-view', () => {
@@ -41,13 +43,12 @@ export function OffersPage() {
 
   return (
     <section className="page" data-demo="offers-root">
-      <ol className="stepper" aria-label="Progress">
-        <li>Details</li>
-        <li aria-current="step">Step 2 of 3: Offers</li>
-        <li>Review</li>
-      </ol>
+      <Stepper index={2} />
       <h1 tabIndex={-1}>Your sample offers</h1>
       <p className="banner">Illustrative offers from sample data. Not an approval, rate quote, or commitment.</p>
+      {params.get('show_comparison_hint').value && (
+        <p className="comparison-hint" data-demo="comparison-hint">Compare the monthly payment and APR side by side before you choose.</p>
+      )}
       <ErrorSummary errors={errors} />
       <fieldset id="offer-group" className="offers" aria-describedby={errors.length ? errorId('offer-group') : undefined}>
         <legend>Choose an offer for {formatUsd(amount)}</legend>

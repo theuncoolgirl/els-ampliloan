@@ -5,7 +5,7 @@ import { findOffer, type LoanType, type PersonaId, type StepId, STEP_INDEX, type
 import { amountBand, type Application } from '../state/model';
 import type { Snapshot, StoreHooks } from '../state/store';
 import type { AmplitudeAdapter, DeliveryState, Ids } from './adapter';
-import { createDisabledStatsigSink } from './statsigSink';
+import { createDisabledStatsigSink, type EventSink } from './statsigSink';
 import { SCHEMA_VERSION, validateEvent, type EventName } from './events';
 
 export interface LogEntry {
@@ -20,6 +20,7 @@ export interface Diagnostics {
   log: LogEntry[];
   dropped: number;
   statsigDeclined: number;
+  suppressedByPreview: number;
 }
 
 export interface TelemetryDeps {
@@ -29,6 +30,8 @@ export interface TelemetryDeps {
   pageId: () => PageId;
   now: () => number;
   uuid: () => string;
+  statsig?: EventSink;
+  previewActive?: () => boolean;
 }
 
 type Props = Record<string, unknown>;
@@ -37,7 +40,9 @@ const LOG_LIMIT = 20;
 
 export const createTelemetry = (deps: TelemetryDeps) => {
   const { adapter } = deps;
-  const statsig = createDisabledStatsigSink();
+  const statsig = deps.statsig ?? createDisabledStatsigSink();
+  const previewOn = () => deps.previewActive?.() ?? false;
+  let suppressed = 0;
   let lastIds = '';
   let lastSig = '';
   let dropped = 0;
@@ -54,6 +59,7 @@ export const createTelemetry = (deps: TelemetryDeps) => {
 
   const syncProfile = (): Profile => {
     const profile = buildProfile(deps.getSnapshot(), deps.attribution.current(), deps.pageId());
+    if (previewOn()) return profile;
     const idSig = JSON.stringify(profile.ids);
     const sig = idSig + JSON.stringify(profile.traits);
     if (idSig !== lastIds) {
@@ -79,6 +85,11 @@ export const createTelemetry = (deps: TelemetryDeps) => {
   });
 
   const dispatch = (name: EventName, extra: Props, ids?: Ids): string | null => {
+    if (previewOn()) {
+      suppressed += 1;
+      changed();
+      return null;
+    }
     const profile = syncProfile();
     const id = deps.uuid();
     const props: Props = {
@@ -96,7 +107,7 @@ export const createTelemetry = (deps: TelemetryDeps) => {
       changed();
       return null;
     }
-    statsig.decline();
+    statsig.send(name, props);
     const entry: LogEntry = { id, name, state: 'queued' };
     log = [entry, ...log].slice(0, LOG_LIMIT);
     adapter.track(
@@ -170,7 +181,7 @@ export const createTelemetry = (deps: TelemetryDeps) => {
       });
     },
     diagnostics(): Diagnostics {
-      if (!diag) diag = { mode: adapter.mode, initState: adapter.initState(), log, dropped, statsigDeclined: statsig.declined() };
+      if (!diag) diag = { mode: adapter.mode, initState: adapter.initState(), log, dropped, statsigDeclined: statsig.declined(), suppressedByPreview: suppressed };
       return diag;
     },
     subscribe(l: () => void) {

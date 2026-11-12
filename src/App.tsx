@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation } from './router';
 import { Footer, Header, Main, Notice } from './components/Layout';
 import { Hero } from './components/Hero';
+import { HELP_EVENT } from './components/helpBus';
+import { PreviewBanner } from './components/PreviewBanner';
 import { HelpPanel } from './components/HelpPanel';
 import { ApplyPage } from './pages/ApplyPage';
 import { OffersPage } from './pages/OffersPage';
@@ -13,6 +15,15 @@ export function App() {
   const loc = useLocation();
   const [help, setHelp] = useState(false);
   const first = useRef(true);
+
+  useEffect(() => {
+    const open = () => {
+      telemetry.helpRequested('help', 'application');
+      setHelp(true);
+    };
+    window.addEventListener(HELP_EVENT, open);
+    return () => window.removeEventListener(HELP_EVENT, open);
+  }, []);
 
   useEffect(() => {
     if (first.current) {
@@ -52,6 +63,7 @@ export function App() {
       >
         Skip to content
       </a>
+      <PreviewBanner />
       <Header route={loc.path} onHelp={() => { telemetry.helpRequested('header'); setHelp(true); }} />
       <Notice />
       <Main>{page}</Main>
