@@ -111,3 +111,11 @@ Erin, Cursor chat, 1:39 PM ET: "use the profile traits from the brief". This res
 - Erin, 1:53 PM ET: "Approve PR #9 dff8581". Merged with `--match-head-commit`; merge commit `00895c2`. Deployed: run 43284560231 succeeded and the live site serves bundle `index-DGfg97y5.js` (the same filename as the local build of `dff8581`).
 - Trait alignment complete: the only remaining old-value text was the persona table in `docs/METRICS_AND_QA.md`, now rewritten with the brief's trait names and values (`prospect`, `existing_customer`, `business_owner`). `docs/custom-events.yml` was already updated. Persona table mapping: first-time = prospect/first_time/employed; returning mortgage = prospect/experienced/employed; business owner = prospect/experienced/business_owner; existing customer = existing_customer/experienced.
 - Open for Phase 2: Amplitude and Statsig setup items, confirming `VITE_AMPLITUDE_API_KEY` as an Actions secret, and Erin's explicit permission for demo telemetry.
+
+## 2026-11-12 — Phase 2 started (revision 2); telemetry authorized
+
+Erin, Cursor chat, 2:10 PM ET: "Start Phase 2 and real demo telemetry to Amplitude project 905260 is authorized". Erin also confirmed the Amplitude and Statsig keys are repository secrets in GitHub (the Planner's token cannot list Actions secrets, so this is her statement, not an observation). Repository secrets are correct: the Pages `build` job has no `environment:`, so environment secrets would not reach the build.
+- Planner verified project 905260 "AmpliLoan" (org 446257 "EE SE Custom Sandbox") is readable through the Amplitude MCP. Replay, Guides, and Surveys entitlement remain unverified.
+- Authorization scope: real demo events with `traffic_type=live_demo` to project 905260. Builder evidence is limited to 3 scripted journeys with device and session IDs recorded. Not authorized: synthetic population generation, Statsig calls or console changes, Amplitude console entities (guides, surveys, charts, flags, experiments), publication.
+- `pages.yml` change allowed only to pass `VITE_AMPLITUDE_API_KEY` (secret) and `VITE_AMPLITUDE_SERVER_ZONE=US` to the build step. The Statsig key is not passed until Phase 3.
+- Contract note: `docs/custom-events.yml` `implementation_location` paths predate the Phase 1 file names and are advisory.
