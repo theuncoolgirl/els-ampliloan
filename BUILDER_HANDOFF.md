@@ -1,46 +1,36 @@
-# Builder handoff — Phase 0
+# Builder handoff — Phase 0 follow-up
 Status: IDLE
 Phase: 0
-Revision: 2 (closed; reviewed)
-Review: PASS for P0.1, P0.2, P0.3 against Builder head 33e51b2f16b36ddf4e106ed1c6687cad10eaa8b6 (branch `cursor/phase0-shell-360f`, draft PR #4). P0.4 PASS after PR #4 merged and deployed (run 43251258236). Phase 0 is complete. Details in PROJECT_PLAN.md and DECISIONS.md.
+Revision: 3 (closed; reviewed)
+Review: PASS for the revision 3 diff against Builder head 585d99169a6c3fa0459d4b2c43b8e172d5cad7b9 (branch `cursor/pages-path-filter-360f`, draft PR #7). The live part of P0.5 stays pending until Erin approves the merges. Details in DECISIONS.md.
 Owner: Planner
-Builder ID/link: recorded by the Planner in PROJECT_PLAN.md after launch (kept out of this file so a running Builder is never disturbed by a link edit)
-Repository / authorized branch: theuncoolgirl/els-ampliloan. Start from branch `cursor/planner-phase0-start-360f` (it carries this handoff; `main` still holds revision 1). Work on your own branch `cursor/<short-name>-360f`. Never commit to `main`.
+Builder ID/link: see PROJECT_PLAN.md (same Builder as revision 2; resume it, do not replace it)
+Repository / authorized branch: theuncoolgirl/els-ampliloan. Read this handoff from branch `cursor/planner-pages-filter-360f` (`git fetch origin cursor/planner-pages-filter-360f`). Create your own branch `cursor/pages-path-filter-360f` from `origin/main`. Never commit to `main`.
 
 ## Activation
-Erin Shields instructed the Planner in Cursor chat on 2026-11-12 10:22 ET to start one Builder on this handoff with Commit Yes and Merge No, and not to merge to `main` without her named Approve in Slack. Planner verified the repository, tools, and Slack channel and recorded them in PROJECT_PLAN.md. START covers Phase 0 revision 2 only. When you log COMPLETE, BLOCKED, or NEEDS_REVIEW, this revision cannot run again.
+Erin Shields, Cursor chat, 2026-11-12 11:09 ET: limit the Pages deploy to changes under the site files, going forward. Revision 2 is closed and cannot rerun; this revision is a small, separately scoped follow-up. START covers revision 3 only. Phase order is unchanged and Phase 1 has not started.
 
 ## Permissions
-Builder: Commit Yes; Push Yes (your own feature branch only, never `main`); PR Yes (draft only; base is `cursor/planner-phase0-start-360f` until that branch merges); Merge No; Deploy No.
-Planner: Commit Yes; Push Yes (planning branches only); PR Yes; Merge No unless Erin posts a named Approve (below); Deploy No.
-Authorization source: Erin, Cursor chat, 2026-11-12 10:22 ET, "Commit: Yes, Merge: No" and "Do not merge to main without my named Approve in Slack." Push and draft-PR scope is the Planner's minimal reading needed to deliver a reviewable branch; Erin can narrow it in Slack. If a permission you need is missing, stop that action and log BLOCKED.
-Named Approve: a top-level message in #els-ampliloan-build from Slack user U07RNCNMAP6 that mentions `@PLANNER` and names one PR number and head SHA. It applies to that PR and SHA only.
-External-service actions: none. SDK traffic: none. Population generation: none. Slack: Planner only; the Builder never messages Slack or Erin.
+Builder: Commit Yes; Push Yes (your own feature branch only, never `main`); PR Yes (draft only, base `main`); Merge No; Deploy No.
+Planner: Commit Yes; Push Yes (planning branches only); PR Yes; Merge No unless Erin posts a named Approve in Cursor chat for one PR and head SHA; Deploy No.
+Authorization source: Erin, Cursor chat, 2026-11-12 10:22 ET, 11:02 ET (push and PR rights for this and future phases), and 11:09 ET (this change). Recorded in DECISIONS.md. External-service actions: none. SDK traffic: none. Slack is retired; do not message Slack or Erin.
 
 ## Objective
-Create the static AmpliLoan shell and a reviewable GitHub Pages deployment configuration. No SDK installation or business workflow implementation in this phase.
+Stop docs-only and planning-only merges to `main` from redeploying the site, without changing what the workflow builds or deploys. The cause: `.github/workflows/pages.yml` triggers on every push to `main`, so PR #5 (four planning files) redeployed an unchanged build.
 
 ## Read first
-AGENTS.md → BUILDER.md → PROJECT_BRIEF.md → PROJECT_PLAN.md phase 0 → UX.md → this handoff. Consult docs/INTEGRATION_NOTES.md for deployment sources. Preserve existing unrelated files; the repository currently holds planning documents only, so there is no prior package tooling.
-
-## Fixed facts
-- Site URL: https://erinshields.dev/els-ampliloan/ (custom domain with a repository subpath). Vite `base` is `/els-ampliloan/`. Pages source is already GitHub Actions; no workflow exists yet.
-- Product name: AmpliLoan. Amplitude region: US. Statsig environment: SDK default; do not set one in Phase 0.
-- Browser-safe values exist as Cursor secrets named `VITE_AMPLITUDE_API_KEY` and `VITE_STATSIG_CLIENT_KEY`. Do not read, print, log, or commit their values. Phase 0 uses neither.
+AGENTS.md → BUILDER.md → PROJECT_BRIEF.md → this handoff → `.github/workflows/pages.yml` → docs/SETUP.md.
 
 ## Numbered tasks
-1. Verify current branch and working tree without mutation. Log node, npm and OS versions, the repository, existing changes, and whether browser automation (for example Playwright) is installed. If the repository or branch differs from the above, stop and log BLOCKED.
-2. Create a React/TypeScript/Vite static scaffold using npm and a committed lockfile. Provide `dev`, `build`, `preview`, and `typecheck` scripts. No backend or server runtime. Record the exact resolved versions of every direct dependency in the evidence file.
-3. Build a reusable header, main, footer, typography/color tokens, and an original restrained animated home hero. Include a prominent "Check your rate" CTA visible on first screen at 390×844 and 1440×900, and this disclaimer: "Demo with synthetic data. No real loans, rates, or credit checks." Support reduced motion and visible keyboard focus. No borrowed assets.
-4. Implement hash routes `/#/`, `/#/apply`, `/#/offers`, `/#/dashboard`, `/#/presenter`. The home CTA opens apply. Unimplemented routes say they are demo scaffold. Each route change moves focus to the page's `h1`. The presenter route is labeled demo controls. No real borrower features and no tracking.
-5. Add unique `data-demo` anchors: `home-cta`, `application-root`, `offers-root`, `dashboard-root`, `presenter-root`, each only on its own surface. Add no fake forms and no fake completed loans.
-6. Set Vite `base` to `/els-ampliloan/` and make all asset and route references base-aware. Add `.github/workflows/pages.yml`: trigger only on `push` to `main` (no `workflow_dispatch`, no pull-request trigger); permissions `contents: read`, `pages: write`, `id-token: write`; build with `npm ci` and `npm run build`; deploy with GitHub's official Pages actions at current major versions checked against official docs; no secrets. Document trigger and permissions in docs/SETUP.md. Do not enable Pages, dispatch, or deploy. Merging this workflow to `main` will trigger a deploy, which the Planner discloses in the approval request.
-7. Add `.env.example` with names only: `VITE_AMPLITUDE_API_KEY`, `VITE_AMPLITUDE_SERVER_ZONE` (value `US`), `VITE_STATSIG_CLIENT_KEY`, `VITE_STATSIG_ENVIRONMENT` (left empty, meaning SDK default). Mark them public browser configuration; VITE-prefixed build values are public. Update `.gitignore` so `.env`, `.env.local`, and `.env.*.local` are ignored while `.env.example` is tracked. Never include server or management keys. No runtime SDK import.
-8. Run `npm run typecheck` and `npm run build`. Run one focused home-to-apply smoke at 390×844 and 1440×900 covering keyboard entry (Tab to the CTA, Enter), focus on the apply `h1`, and reduced motion. Serve the production build with `npm run preview` under `/els-ampliloan/`, then load and refresh `/els-ampliloan/#/dashboard` directly. Record textual outcomes and console errors. If no browser automation is available, record the smoke as BLOCKED instead of substituting another check. No broad screenshots or full suite.
-9. Append evidence for P0.1–P0.3 to docs/evidence/phase-0.md and PHASE_LOG.md using the BUILDER.md template. P0.4 stays pending approved deployment. Commit in logical steps, push your branch, and open a draft PR with base `cursor/planner-phase0-start-360f`. Log NEEDS_REVIEW with the branch and head SHA, then stop. Do not change Status or issue yourself the next phase.
+1. Verify the repository and working tree without mutation. Fetch `origin/main` and the planning branch. Create `cursor/pages-path-filter-360f` from `origin/main`. Log node and npm versions and whether a workflow linter (for example `actionlint`) is installed.
+2. In `.github/workflows/pages.yml`, add a `paths:` filter under `on.push` next to `branches: [main]`. The list is exactly: `src/**`, `public/**`, `index.html`, `package.json`, `package-lock.json`, `tsconfig*.json`, `vite.config.*`, `.github/workflows/pages.yml`. Do not add `workflow_dispatch`, a pull-request trigger, secrets, or any other change. Keep permissions, concurrency, job steps, and action versions as they are. Add one short comment above the filter saying that docs and planning files do not redeploy.
+3. Validate without deploying. Run a workflow linter if one is installed; otherwise parse the file as YAML and confirm `on.push.branches` is `[main]` and `on.push.paths` matches the list above. Run `npm run typecheck` and `npm run build`; both must still exit 0. Do not run or dispatch the workflow.
+4. Update the "Pages workflow" section of docs/SETUP.md: the trigger is a push to `main` that changes one of the listed paths; docs, planning files, `.env.example`, and `PHASE_LOG.md` do not redeploy; changing a GitHub Actions secret or variable does not trigger a deploy, so a later phase needs a listed-path change to publish it.
+5. Append a "Revision 3" section to docs/evidence/phase-0.md and a NEEDS_REVIEW entry to PHASE_LOG.md using the BUILDER.md template. Record what you ran and the results, not expectations.
+6. Commit in logical steps, push your branch, open a draft PR with base `main`, log the head SHA, and stop. Do not change Status or start Phase 1.
 
 ## Allowed paths
-package.json, package-lock.json, index.html, tsconfig*.json, vite.config.*, src/** for shell only, public/**, .github/workflows/pages.yml, .gitignore, .env.example, docs/SETUP.md, docs/evidence/phase-0.md, PHASE_LOG.md. Exclude agent specs, `PROJECT_BRIEF.md`, the plan, handoff, decisions, event map, vendor SDKs and console entities. Existing unrelated files are not a license to rewrite them.
+`.github/workflows/pages.yml`, `docs/SETUP.md`, `docs/evidence/phase-0.md`, `PHASE_LOG.md`. Exclude every site file, agent spec, `PROJECT_BRIEF.md`, the plan, this handoff, decisions, `docs/` files other than those named, vendor SDKs, and console entities.
 
-## Acceptance and stop behavior
-Use P0.1–P0.4 in PROJECT_PLAN.md verbatim; Builder gathers evidence, Planner verifies. Expected local result is a buildable, navigable shell with zero vendor traffic. A workflow file is not evidence of a deployment. Missing repo, branch, tool, or permission must be logged BLOCKED; continue only independent authorized work. Only the Planner communicates blockers to Erin. A COMPLETE, BLOCKED, or NEEDS_REVIEW revision cannot rerun from a stale START. Await a revised handoff.
+## Acceptance
+P0.5 in PROJECT_PLAN.md. Builder gathers evidence; Planner verifies. Merging this PR changes `pages.yml`, which is in the filter, so it deploys exactly once; the approval request will say so. The live proof that a docs-only merge no longer deploys is the Planner's, after the approved merge, and stays pending until then. A COMPLETE, BLOCKED, or NEEDS_REVIEW revision cannot rerun from a stale START.
