@@ -137,3 +137,17 @@
 - Deviations and known limitations: real-SDK behavior during an in-flight update not verified live; revision 3 cap overrun note stands.
 - Blocker and exact decision/configuration needed, if any: none new (console access still needed for entities).
 - Next: stopped; awaiting Planner review.
+
+## 2026-11-12T21:00Z | Phase 3 | Revision 3.2 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase3-statsig-360f; head SHA in the final report; draft PR #15
+- Objective and implementation summary: create the Statsig entities through the Console API (POST only), then two live journeys (A: full, B: all Statsig hosts blocked).
+- Files changed: docs/STATSIG_INVENTORY.md, docs/evidence/phase-3.md, PHASE_LOG.md (no source changes)
+- Git actions performed; draft PR link if any: commit pushed to the same branch; PR #15 exists.
+- External actions performed (project/entity names or IDs; no secrets): Console API, project `AmpliLoan [WHN]` (363sCqDdACZXt4M88ZqiKa): GET gates?limit=1 (200); POST /gates 201 (`ampliloan_contextual_help`), GET 200; POST /dynamic_configs 201 (`ampliloan_support_content`), GET 200. No other calls. Live journey A 2026-11-12 20:48:41-20:49:10 UTC, stable ID 9fac13c8-6be8-4fc9-898a-3220e35f40a4, user sim_profile_default (Statsig and Amplitude). Journey B 20:49:30-20:49:51 UTC with all Statsig hosts blocked, no vendor responses.
+- Definition-of-done results: gate and config provisioned and verified; 4 layers and 4 parameter stores BLOCKED (POST cannot define parameters; PATCH not authorized). P3.1 PARTIAL (config delivered to the client; gate not in the client payload; no parameter binding). P3.2 PARTIAL (no exposures observed). P3.3 recorded for Planner verification. P3.4 PASS.
+- Checks: not re-run (no source change); build with the console key removed; dist contains 0 occurrences of the full console key.
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-3.md, Revision 3.2.
+- Deviations and known limitations: layers and stores not created; gate absent from the client payload (cause undetermined); config not read in the UI during the journey; reasons `timeout` for gate and non-store reads.
+- Blocker and exact decision/configuration needed, if any: authorize PATCH (or PUT) for the 4 layers and 4 parameter stores so parameters can be defined after the POST, or have a console user add them; check why the gate is not served (status "In Progress").
+- Next: stopped; awaiting Planner review.

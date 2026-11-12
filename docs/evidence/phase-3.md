@@ -115,3 +115,41 @@ Network capture across both browser contexts: 29 requests, all to `127.0.0.1:418
 
 ## Console and data readiness
 Unchanged: BLOCKED (SSO) and NOT VERIFIED.
+
+# Revision 3.2 (Console API entities, live verification)
+Console key handling: read only from the environment inside the API-calling script (kept in `/tmp`, deleted afterwards); never printed or written. Every npm, vite, build, preview, and test command ran with `VITE_STATSIG_CONSOLE_KEY` removed. Proof for the production build: `dist` output (built with the console key removed) contains 0 occurrences of the full key. An 8-character prefix check found 2 matches, both inside the rrweb plugin's file-name strings (`rrweb-plugin-...-record`); that fragment is generic text, and a 9-character or longer prefix matched 0 times. The key is not in `.github/workflows/pages.yml`, `.env.example`, or any source file. Environment presence (yes/no): console key yes, client key yes, Amplitude key yes.
+
+## Console
+- Auth check: `GET /console/v1/gates?limit=1` returned 200.
+- Created with POST only, then re-read with GET, project `AmpliLoan [WHN]`:
+  - `POST /console/v1/gates` 201 at 20:47:54Z, then `GET /console/v1/gates/ampliloan_contextual_help` 200. ID `ampliloan_contextual_help`, ID type `stableID`, type PERMANENT, enabled, `rules: []` (false for everyone), review not required, status "In Progress".
+  - `POST /console/v1/dynamic_configs` 201 at 20:47:55Z, then `GET /console/v1/dynamic_configs/ampliloan_support_content` 200. ID `ampliloan_support_content`, ID type `stableID`, enabled, `rules: []`, `defaultValue` `{"heading":"Help","body":"","max_items":5}`, status "Enabled". No review or pending state was reported.
+- NOT created (BLOCKED): the four layers and four parameter stores. The documented POST bodies are `name`, `description`, `idType`, `targetApps`, `team` for layers, and `name`, `description`, `displayName`, `targetAppIDs`, `tags`, `team` for parameter stores. Neither accepts parameter definitions; parameters are added by update calls (PATCH/PUT), which this revision did not authorize. I did not send undocumented fields and did not create empty shells, because shells could not be completed or removed within my authorization. No other call was made; no PATCH, PUT, or DELETE; no key, experiment, segment, or setting endpoint.
+
+## UI
+Both journeys ran on the production build with defaults visible: home reads "A clearer path to the loan you need" / "Check your rate"; the contextual help hint did not appear (gate read fell back, see SDK).
+
+## SDK
+Journey A (live, keys set, fresh context, keyboard-only), UTC 2026-11-12 20:48:41 to 20:49:10, tagged landing `?utm_source=google&utm_medium=cpc&utm_campaign=spring_rates#/`, full journey to submit and dashboard, presenter diagnostics held 10 s then 15 s flush. Stable ID `9fac13c8-6be8-4fc9-898a-3220e35f40a4` (Statsig `customIDs.stableID`, Amplitude `device_id`), unchanged through sign-in; user `sim_profile_default`.
+- Initialize payload as sent: `user.customIDs.stableID`, 20 `custom` keys (unchanged from revision 3), `userID` only after sign-in, no `privateAttributes`, no `statsigEnvironment`; the app sets no tier and the response reports none. Default tier remains NOT VERIFIED. 8 initialize requests in the journey (trait and identity updates); all 8 got responses from `featureassets.org`.
+- Initialize response: `dynamic_configs` contains `ampliloan_support_content` (hashed key) with value `{"heading":"Help","body":"","max_items":5}`, rule `default`, ID type `stableID`; `feature_gates` and `layer_configs` are empty. So the config is delivered; the gate is not in the client payload (cause not determined; the gate shows status "In Progress" with no rule, possibly not yet served to clients).
+- Values and sources (presenter): `hero_headline`, `cta_label`, `show_reassurance`, `progress_style`: default, `missing_binding` (no store). `ampliloan_contextual_help`, `show_comparison_hint`, `show_next_steps`: default, reason `timeout` (read while the identity or trait update was still pending). `ampliloan_support_content` was not read, because the help panel was not opened in this journey (by design it is read only on open), so its served value was not exercised in the UI.
+- Exposure events: zero `statsig::*_exposure` events. Only 3 `statsig::non_exposed_checks` (store reads of `ampliloan_home` and `ampliloan_application`). Whether repeated renders of the same parameter add exposures: NOT VERIFIED (nothing was exposed).
+- Diagnostics panel: opening it triggered no gate, config, or layer evaluation and no exposure or non-exposed-check event; its own user update and a `statsig::diagnostics` event are not evaluations. At open it showed "Trait update pending: Yes"; 10 seconds later it showed "No" (stale flag is brief).
+- Trait-only change versus values for the same identity: not demonstrable live because no value had come from Statsig for the reads; covered by the fake-client tests from revision 3.1.
+
+## Telemetry
+Statsig business events in journey A: same 13 events as revision 3, exact names, no `value` field, flat string metadata with `business_event_id`, correct identity per event (no `userID` before sign-in; `sim_profile_default` from `Signed In`). `Application Submitted` side by side:
+
+| Field | Statsig (metadata strings) | Amplitude |
+|---|---|---|
+| business_event_id | see Planner log-stream check; same value in both (Amplitude `insert_id` equals it) | same |
+| loan_type, application_id, application_status | `personal`, same ID, `submitted` | same |
+| term_months, requested_amount, elapsed_seconds | strings (e.g. `"36"`, `"18250"`) | numbers |
+| stable ID unit | `customIDs.stableID` 9fac13c8-6be8-4fc9-898a-3220e35f40a4 | `device_id` same |
+| value | none | n/a |
+
+Journey B (blocked hosts, Amplitude key unset), UTC 2026-11-12 20:49:30 to 20:49:51: blocked `featureassets.org`, `prodregistryv2.org`, `beyondwickedmapping.org`, `assetsconfigcdn.org` and every host matching statsig or featuregates. No new Statsig host appeared beyond these four; `cloudflare-dns.com` (not Statsig) was contacted twice for the fallback lookup. Zero responses from any Statsig host and zero Amplitude requests. The home page was usable 2.3 s after load (the 2000 ms bound plus rendering); the presenter showed "Fallback (defaults in use)", init failed, "timed out after 2000 ms; UI continued on defaults", every read as `default (error)` or `timeout`; after Sign out and Simulated sign-in the page still read the shipped copy with all values default, and the stable ID changed at sign-out (51a026d6 to a new ID). While in fallback the presenter keeps showing "Trait update pending: Yes" because the failed update never applies; this is cosmetic.
+
+## Data readiness
+NOT VERIFIED. SDK receipt is not the same as results availability. This project is warehouse-native; no warehouse, metric, exposure, or results check was made. No experiment exists.
