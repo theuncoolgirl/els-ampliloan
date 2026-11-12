@@ -2,10 +2,10 @@
 ## Audience and user-property use
 | Demo persona | Acquisition | Stable profile | Demonstration |
 |---|---|---|---|
-| First-time personal borrower | paid_search | new customer, first_time, employed | Attribution to conversion; reassurance and targeted help |
-| Returning mortgage applicant | email | returning customer, experienced, employed | Saved application/resume; current vs first-touch attribution |
-| Business owner | partner | new customer, experienced, self_employed | Same funnel sliced by small_business; config/help example |
-| Existing customer | direct | existing customer, experienced | Dashboard status/details/tasks and feedback |
+| First-time personal borrower | paid_search | customer_relationship=prospect, borrowing_experience=first_time, employment_type=employed | Attribution to conversion; reassurance and targeted help |
+| Returning mortgage applicant | email | customer_relationship=prospect, borrowing_experience=experienced, employment_type=employed | Saved application/resume; current vs first-touch attribution |
+| Business owner | partner | customer_relationship=prospect, borrowing_experience=experienced, employment_type=business_owner | Same funnel sliced by small_business; config/help example |
+| Existing customer | direct | customer_relationship=existing_customer, borrowing_experience=experienced | Dashboard status/details/tasks and feedback |
 
 No real protected characteristics, credit score, income, name, email, address, bank or document contents. Personas are synthetic fixtures, not real underwriting segments. Loan amount bands represent mock UI values only.
 
