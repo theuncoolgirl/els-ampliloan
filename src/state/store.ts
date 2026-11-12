@@ -32,7 +32,22 @@ export type ActionResult<E extends string = string> = { ok: true } | { ok: false
 
 export type SubmitResult = { ok: true } | { ok: false; code: ErrorCode | 'already_submitted' | 'no_application' };
 
+export type StartEntry = 'application' | 'persona_control';
+
+export interface StoreHooks {
+  applicationStarted?(app: Application, entry: StartEntry): void;
+  offerSelected?(app: Application): void;
+  submitted?(app: Application): void;
+  taskCompleted?(app: Application, taskId: TaskId): void;
+  signedIn?(): void;
+  signedUp?(): void;
+  beforeSignOut?(): void;
+  personaSelected?(id: PersonaId): void;
+  newUserReset?(): void;
+}
+
 export interface Snapshot {
+  persona: PersonaId | null;
   anonymousId: string;
   profileId: string | null;
   intent: LoanType | null;
@@ -48,6 +63,7 @@ const ownerKeyOf = (p: Persisted) => (p.profileId ? `profile:${p.profileId}` : `
 const emptyOwner = (): OwnerData => ({ active: null, history: [] });
 
 const freshState = (): Persisted => ({
+  persona: null,
   schemaVersion: SCHEMA_VERSION,
   anonymousId: newId(),
   profileId: null,
@@ -95,6 +111,11 @@ const isPersisted = (p: unknown): p is Persisted => {
   });
 };
 
+const PROFILE_PERSONAS: Record<string, PersonaId> = {
+  persona_returning_mortgage: 'returning_mortgage',
+  persona_existing_customer: 'existing_customer',
+};
+
 const PERSONA_TS = '2026-11-01T12:00:00.000Z';
 
 const personaApp = (over: Partial<Application> & Pick<Application, 'applicationId' | 'loanType'>): Application => ({
@@ -110,7 +131,7 @@ const personaApp = (over: Partial<Application> & Pick<Application, 'applicationI
   ...over,
 });
 
-export const createStore = (storage: StorageLike) => {
+export const createStore = (storage: StorageLike, hooks: StoreHooks = {}) => {
   let notice: string | null = null;
   let snapshot: Snapshot | null = null;
   const listeners = new Set<() => void>();
@@ -173,6 +194,7 @@ export const createStore = (storage: StorageLike) => {
       anonymousId: p.anonymousId,
       profileId: p.profileId,
       intent: p.intent,
+      persona: p.persona ?? null,
       ownerKey: ownerKeyOf(p),
       ownerLabel: p.profileId ? `Signed in (simulated): ${p.profileId}` : 'Anonymous browser',
       active: o.active,
@@ -216,9 +238,11 @@ export const createStore = (storage: StorageLike) => {
       const p = read();
       const o = owner(p);
       if (o.active) return { ok: false, code: 'exists' };
-      setOwner(p, { ...o, active: blankApp(loanType) });
+      const app = blankApp(loanType);
+      setOwner(p, { ...o, active: app });
       p.intent = null;
       write(p);
+      hooks.applicationStarted?.(app, 'application');
       return { ok: true };
     },
 
@@ -226,9 +250,11 @@ export const createStore = (storage: StorageLike) => {
       if (!LOAN_TYPES.includes(loanType)) return { ok: false, code: 'invalid_loan_type' };
       const p = read();
       const o = retire(owner(p));
-      setOwner(p, { ...o, active: blankApp(loanType) });
+      const app = blankApp(loanType);
+      setOwner(p, { ...o, active: app });
       p.intent = null;
       write(p);
+      hooks.applicationStarted?.(app, 'application');
       return { ok: true };
     },
 
@@ -256,11 +282,16 @@ export const createStore = (storage: StorageLike) => {
     },
 
     selectOffer(offerId: string) {
-      return draftUpdate((a) => {
+      const r = draftUpdate((a) => {
         const o = findOffer(offerId);
         if (!o || o.loanType !== a.loanType) return { ok: false, code: 'missing_offer' };
         return { ...a, selectedOfferId: offerId };
       });
+      if (r.ok) {
+        const a = owner(read()).active;
+        if (a) hooks.offerSelected?.(a);
+      }
+      return r;
     },
 
     submit(input: { consent: boolean }): SubmitResult {
@@ -272,11 +303,10 @@ export const createStore = (storage: StorageLike) => {
       const code = validateReview(a, input.consent);
       if (code) return { ok: false, code };
       const now = new Date().toISOString();
-      setOwner(p, {
-        ...o,
-        active: { ...a, status: 'submitted', submittedAt: a.submittedAt ?? now, updatedAt: now, lastStepId: 'review' },
-      });
+      const submitted: Application = { ...a, status: 'submitted', submittedAt: a.submittedAt ?? now, updatedAt: now, lastStepId: 'review' };
+      setOwner(p, { ...o, active: submitted });
       write(p);
+      hooks.submitted?.(submitted);
       return { ok: true };
     },
 
@@ -297,8 +327,11 @@ export const createStore = (storage: StorageLike) => {
       const o = owner(p);
       if (!o.active) return { ok: false, code: 'no_application' };
       if (!tasksAvailable(o.active.status).includes(taskId)) return { ok: false, code: 'task_unavailable' };
-      setOwner(p, { ...o, active: touch({ ...o.active, tasks: { ...o.active.tasks, [taskId]: done } }) });
+      const wasDone = !!o.active.tasks[taskId];
+      const updated = touch({ ...o.active, tasks: { ...o.active.tasks, [taskId]: done } });
+      setOwner(p, { ...o, active: updated });
       write(p);
+      if (done && !wasDone) hooks.taskCompleted?.(updated, taskId);
       return { ok: true };
     },
 
@@ -307,14 +340,17 @@ export const createStore = (storage: StorageLike) => {
       const o = owner(p);
       if (!o.active) return { ok: false, code: 'no_application' };
       const retired = retire(o);
-      setOwner(p, { ...retired, active: blankApp(o.active.loanType) });
+      const app = blankApp(o.active.loanType);
+      setOwner(p, { ...retired, active: app });
       write(p);
+      hooks.applicationStarted?.(app, 'persona_control');
       return { ok: true };
     },
 
     startAsNewDemoUser() {
       storage.removeItem(STORAGE_KEY);
       write(freshState());
+      hooks.newUserReset?.();
     },
 
     signIn(profileId?: string) {
@@ -322,7 +358,9 @@ export const createStore = (storage: StorageLike) => {
       const id = profileId ?? p.lastProfileId ?? 'sim_profile_default';
       p.profileId = id;
       p.lastProfileId = id;
+      p.persona = PROFILE_PERSONAS[id] ?? null;
       write(p);
+      hooks.signedIn?.();
     },
 
     signUp() {
@@ -335,12 +373,15 @@ export const createStore = (storage: StorageLike) => {
       p.owners[`profile:${id}`] = anon;
       delete p.owners[anonKey];
       write(p);
+      hooks.signedUp?.();
     },
 
     signOut() {
+      hooks.beforeSignOut?.();
       const p = read();
       p.profileId = null;
       p.anonymousId = newId();
+      p.persona = null;
       write(p);
     },
 
@@ -356,6 +397,7 @@ export const createStore = (storage: StorageLike) => {
           p.anonymousId = newId();
         }
         p.intent = intent;
+        p.persona = id;
       };
       switch (id) {
         case 'first_time_personal':
@@ -399,6 +441,8 @@ export const createStore = (storage: StorageLike) => {
           break;
       }
       write(p);
+      hooks.personaSelected?.(id);
+      if (p.profileId) hooks.signedIn?.();
     },
   };
 };
