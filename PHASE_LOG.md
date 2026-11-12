@@ -165,3 +165,17 @@
 - Deviations and known limitations: the route-hold fix (src/App.tsx, in its own commit) is not verified live because the journey cap is 1; one more journey is needed to confirm offers and dashboard values. The param store update uses the documented `POST /param_stores/{name}` (no PATCH or PUT exists for stores). Gate not served to clients.
 - Blocker and exact decision/configuration needed, if any: authorize one more live journey to verify the route-hold fix, or drop that commit.
 - Next: stopped; awaiting Planner review.
+
+## 2026-11-12T21:05Z | Phase 3 | Revision 3.4 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase3-statsig-360f; head SHA in the final report; draft PR #15
+- Objective and implementation summary: one live confirmation journey; no console changes; route-hold commit kept.
+- Files changed: docs/evidence/phase-3.md, docs/STATSIG_INVENTORY.md, PHASE_LOG.md
+- Git actions performed; draft PR link if any: commit pushed to the same branch; PR #15 exists.
+- External actions performed (project/entity names or IDs; no secrets): no Console API calls. One live journey 20:59:23-20:59:55 UTC, stable ID 3c847d39-d178-4d73-bc19-f598fd78f8c2, session 39297cf5-47e2-4191-8f78-66f1eb6e81b7, user sim_profile_default.
+- Definition-of-done results: P3.1 PASS (six parameters, gate, config all source statsig, no fallbacks). P3.2 PASS (exposures by type recorded; none from diagnostics or unused parameters; gate exposure logged despite gate absent from payload).
+- Checks: typecheck exit 0; build exit 0; npm test exit 0 (127 passed).
+- Readiness (UI / SDK / console / telemetry / data): see docs/evidence/phase-3.md, Revision 3.4.
+- Deviations and known limitations: submit transition 796 ms (350 ms is simulated delay); route hold not isolated per transition; hold not tested in preview mode live; gate still not in the client payload; default tier NOT VERIFIED; warehouse not checked.
+- Blocker and exact decision/configuration needed, if any: none.
+- Next: stopped; awaiting Planner review.

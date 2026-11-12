@@ -185,3 +185,27 @@ Home showed "A clearer path to the loan you need" and "Check your rate" from Sta
 
 ## Data readiness
 NOT VERIFIED. SDK receipt is not results availability. This project is warehouse-native; no warehouse, metric, exposure, or results check was made. No experiment exists.
+
+# Revision 3.4
+
+No Console API calls; every command ran with the console key removed. Client keys present: `VITE_STATSIG_CLIENT_KEY` yes, `VITE_AMPLITUDE_API_KEY` yes. Checks: typecheck exit 0, build exit 0, npm test exit 0 (127 passed). The route-hold commit was kept.
+
+## SDK
+One live journey (cap 1), production build, keyboard-only, UTC 2026-11-12 20:59:23 to 20:59:55: tagged landing, personal loan, details step, typed amount 18250, offers, select, review, save, resume, simulated sign-in, help panel, consent, submit, dashboard, presenter diagnostics 10 s, 15 s flush. Stable ID / Amplitude `device_id` 3c847d39-d178-4d73-bc19-f598fd78f8c2 (unchanged at sign-in; `userID` `sim_profile_default` only after sign-in), Statsig session 39297cf5-47e2-4191-8f78-66f1eb6e81b7, Amplitude session 1794517164142. 8 initialize requests (all 200, `featureassets.org`), 8 event posts (`prodregistryv2.org`); no other Statsig host.
+- Values and sources (presenter, all source `statsig`, none fell back, no setup failures): `hero_headline` "A clearer path to the loan you need", `cta_label` "Check your rate", `show_reassurance` false, `progress_style` "steps", `show_comparison_hint` false, `show_next_steps` true, `ampliloan_contextual_help` false, `ampliloan_support_content` read at help-panel open (value shown as `[object Object]`, cosmetic; panel heading "Help"). The two earlier defaults and the gate are fixed.
+- Initialize payload: 4 `layer_configs`, 4 `param_stores`, 1 `dynamic_configs`; `feature_gates` is still empty. The gate nonetheless evaluated `false` with a logged `statsig::gate_exposure` (reason `NetworkNotModified:Unrecognized`, rule empty), i.e. the SDK checked an entity it does not hold in the payload and logged an exposure for the default false result.
+- Exposure events by type: `layer_exposure` 11 (`hero_headline` 1, `cta_label` 1, `show_reassurance` 3, `progress_style` 4, `show_comparison_hint` 1, `show_next_steps` 1), `gate_exposure` 1, `config_exposure` 1, plus 6 `non_exposed_checks` and 7 `statsig::diagnostics`. Repeated `show_reassurance` and `progress_style` exposures come from separate navigations (details, review, resume, and the new identity after sign-in), not from repeated renders within one navigation. Unused parameters added none; opening presenter diagnostics (first and second snapshot) added only `statsig::diagnostics`, no exposure.
+- Route transitions (ms, from action to next page ready; includes keyboard and render time): home to type 45, type to details 109, details to offers 197, offers to review 42, review to apply 13, resume to review 12, review to presenter 20, presenter to review 19, confirm to dashboard 192, dashboard to presenter 188. Submit to confirmation 796, of which 350 is the simulated submit delay in `ApplyPage`; the remainder (about 450) includes the trait update for the submitted status and so any hold. Nothing else exceeded 200. The only value near 500 is the submit transition, whose non-simulated part is under 500 ms.
+- Trait update pending showed "No" at diagnostics open and after 10 s.
+
+## UI
+Home, details, offers, review, help panel, dashboard rendered normally with the default copy; no visible variation exists because layers serve defaults. No blank flash was seen in the captured timings.
+
+## Telemetry
+`Application Submitted` business_event_id fa193ada-aa12-4d22-9f8b-71d7f8e8dbbc is in both the Statsig log batch and the Amplitude payload (`device_id` equals the stable ID). Confirmation of ingestion is for the Planner.
+
+## Console
+Not used in this revision.
+
+## Data readiness
+NOT VERIFIED. SDK receipt is not results availability. Warehouse-native project; no warehouse, metric, or results check; no experiment exists.
