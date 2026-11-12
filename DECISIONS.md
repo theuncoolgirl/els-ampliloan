@@ -57,6 +57,15 @@ Erin, Cursor chat, 10:45 ET: "Let's not use Slack going forward, I'll post appro
 - Merge, deploy, and external-service rules are unchanged.
 - The `@PLANNER` mention token and processed-message log are no longer used.
 
+## 2026-11-12 — Limit Pages deploys to site files
+
+Erin, Cursor chat, 11:09 ET: "yes, let's make that update going forward re limiting deploy to changes under the site files". Trigger: PR #5 (planning files only, merge commit `797e26f`) started [run 43254524706](https://github.com/theuncoolgirl/els-ampliloan/actions/runs/43254524706) because `pages.yml` runs on every push to `main`. The Planner had told Erin that PR would not deploy; that statement was wrong. The redeploy built the same code and succeeded.
+
+- Handoff Phase 0 revision 3 (Builder, same agent) adds a `paths:` filter to `pages.yml`. The Planner does not edit deployment workflows, per `PLANNER.md`.
+- Merging that PR changes `pages.yml`, which is in the filter, so it deploys once. The approval request must say so.
+- Changing a GitHub Actions secret or variable does not trigger a deploy; a later phase needs a listed-path change to publish it. No `workflow_dispatch` was added.
+- Approval log gap: Erin's chat approval of PR #5 head `535c716` (11:03 ET, merge commit `797e26f`) is recorded here. It deployed unintentionally for the reason above.
+
 ## 2026-11-12 — Git rights confirmed for Phase 0 and later phases
 
 Erin, Cursor chat, 11:02 ET: "yes push and PR rights are okay for this and future phases". This confirms the Planner's earlier reading of "Commit: Yes, Merge: No".

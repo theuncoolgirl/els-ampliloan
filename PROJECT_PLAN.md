@@ -43,6 +43,11 @@ Shared UI acceptance, applied to the changed surface in each focused smoke: 390�
 | P0.3 | Builder previews production build at configured base and directly loads/refreshed hash dashboard URL | Assets and shell render without 404; route/base URLs and console results recorded |
 | P0.4 | Planner after separately approved merge/deploy observes Actions and fresh live home/apply visit | Real deployment run + URL recorded, fresh visit works. Pending until authorized; local P0.1–3 can pass without this |
 
+**Phase 0 · revision 3 · limit Pages deploys to site files** (maintenance follow-up; Phase 0 stays complete, Phase 1 not started). Erin, 11:09 ET: stop docs-only merges from redeploying. Builder adds a `paths:` filter to `pages.yml` (`src/**`, `public/**`, `index.html`, `package.json`, `package-lock.json`, `tsconfig*.json`, `vite.config.*`, and the workflow file itself), documents it in docs/SETUP.md, and logs evidence. Allowed: `.github/workflows/pages.yml`, `docs/SETUP.md`, `docs/evidence/phase-0.md`, `PHASE_LOG.md`. The Planner does not edit deployment workflows.
+| ID | Verifier / steps | Expected result / evidence |
+|---|---|---|
+| P0.5 | Builder validates the workflow and runs typecheck and build; Planner inspects the diff; after Erin's approved merge the Planner merges one docs-only change | Diff touches only the four allowed paths and only adds the `paths:` filter and a comment; YAML parses with `on.push.branches=[main]` and the listed paths; typecheck and build exit 0. Live: merging the workflow PR creates exactly one run, and a later docs-only merge creates none. Live part pending approved merges |
+
 ## Phase 1 · revision 1 · shared journey and dashboard
 **Objective:** functional synthetic borrower experience. Depends on P0 completion, or explicit Planner decision to permit local P1 while deployment remains blocked; do not mark P0 complete in that case.
 **Allowed:** src pages/components/state/fixtures/styles, focused flow tests, docs/evidence/phase-1.md, PHASE_LOG.md. Exclude vendor SDKs, tracking map changes, Git workflow changes.
