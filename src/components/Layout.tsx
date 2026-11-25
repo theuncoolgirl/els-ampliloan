@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { href, type RoutePath } from '../router';
 import { useSnapshot, store } from '../state/useStore';
 
@@ -9,36 +9,7 @@ const NAV: { path: RoutePath; label: string }[] = [
   { path: '/dashboard', label: 'Dashboard' },
 ];
 
-const PAGE_LINKS: [string, string][] = [
-  ['landing-rates', 'Rates'],
-  ['landing-how', 'How it works'],
-  ['landing-faq', 'FAQ'],
-];
-
-const scrollTo = (id: string) => {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
-};
-
-function useHeroOutOfView(enabled: boolean) {
-  const [out, setOut] = useState(false);
-  useEffect(() => {
-    if (!enabled) {
-      setOut(false);
-      return;
-    }
-    const target = document.querySelector('[data-demo="home-cta"]');
-    if (!target || typeof IntersectionObserver === 'undefined') return;
-    const io = new IntersectionObserver(([e]) => setOut(!e.isIntersecting && e.boundingClientRect.top < 0));
-    io.observe(target);
-    return () => io.disconnect();
-  }, [enabled]);
-  return out;
-}
-
 export function Header({ route, onHelp }: { route: RoutePath; onHelp: () => void }) {
-  const showCta = useHeroOutOfView(route === '/');
   return (
     <header className="site-header">
       <a className="brand" href={href('/')}>
@@ -54,26 +25,11 @@ export function Header({ route, onHelp }: { route: RoutePath; onHelp: () => void
               </a>
             </li>
           ))}
-          {route === '/' &&
-            PAGE_LINKS.map(([id, label]) => (
-              <li key={id} className="page-links">
-                <button type="button" className="link-button" onClick={() => scrollTo(id)}>
-                  {label}
-                </button>
-              </li>
-            ))}
           <li>
             <button type="button" className="link-button" data-demo="help-entry" onClick={onHelp}>
               Help
             </button>
           </li>
-          {route === '/' && showCta && (
-            <li>
-              <a className="button primary header-cta visible" href={href('/apply')}>
-                Check your rate
-              </a>
-            </li>
-          )}
         </ul>
       </nav>
     </header>
