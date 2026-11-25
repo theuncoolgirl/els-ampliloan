@@ -220,3 +220,17 @@
 - Deviations and known limitations: experiment was POSTed before its metrics existed due to a script ordering slip and then updated with one PATCH (not listed in the handoff); guardrail stored in secondaryMetrics; `Application Validation Failed` event not yet seen by the project; rollup window unset.
 - Blocker and exact decision/configuration needed, if any: separate Erin approval to start; Planner decision on the metric rollup window.
 - Next: stopped; awaiting Planner review.
+
+## 2026-11-12T23:59Z | Phase 4 | Revision 4F.1 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase4f-polish-360f from origin/main; head SHA in the final report
+- Objective and implementation summary: site polish per DESIGN_BRIEF: landing page, header, estimator, FAQ, Apply rail, Offers, Dashboard, help slide-over, footer, meta, six placeholder images.
+- Files changed: src/styles.css, src/App.tsx, src/components/*, src/pages/{Apply,Offers,Dashboard}Page.tsx, index.html, public/images (6 new), docs/evidence/phase-4f.md and screenshots, docs/phase-4f/images/SOURCES.md, PHASE_LOG.md, BUILDER_HANDOFF.md
+- Git actions performed; draft PR link if any: branch pushed; draft PR to main per final report.
+- External actions performed (project/entity names or IDs; no secrets): none.
+- Definition-of-done results: see docs/evidence/phase-4f.md (tests 127 pass, build pass, event sequences and diagnostics identical to main, responsive/reduced-motion/keyboard checked).
+- Checks: no console-key trace by pattern; key value not read.
+- Readiness (UI / SDK / console / telemetry / data): UI verified rendered locally; SDK, console, telemetry, data not re-verified live.
+- Deviations and known limitations: placeholder images instead of stock; SOURCES.md outside allowed paths; no live Statsig check.
+- Blocker and exact decision/configuration needed, if any: none.
+- Next: stopped; awaiting Planner review.

@@ -20,6 +20,8 @@ import {
 import { store, useSnapshot } from '../state/useStore';
 import { usePageParams } from '../integrations/useStatsig';
 import { requestHelp } from '../components/helpBus';
+import { Rail } from '../components/Rail';
+import { img } from '../components/assets';
 import { useNavigationEvent } from '../telemetry/navigation';
 import { telemetry, pageParams } from '../telemetry/runtime';
 
@@ -75,11 +77,12 @@ function Chooser({
   };
   return (
     <section className="page" data-demo="application-root">
+      <div className="apply-main">
       <h1 tabIndex={-1}>Check your rate</h1>
       <p className="muted">Pick the kind of loan you are exploring. The steps are the same for every type.</p>
       <ErrorSummary errors={errors} />
       <form onSubmit={(e) => { e.preventDefault(); go(); }}>
-        <fieldset id="loan-type" aria-describedby={errors.length ? errorId('loan-type') : undefined}>
+        <fieldset id="loan-type" className="loan-choices" aria-describedby={errors.length ? errorId('loan-type') : undefined}>
           <legend>Loan type</legend>
           {LOAN_TYPES.map((t) => (
             <label key={t} className="choice">
@@ -98,6 +101,7 @@ function Chooser({
           {onCancel && <button type="button" onClick={onCancel}>Cancel</button>}
         </div>
       </form>
+      </div>
     </section>
   );
 }
@@ -111,6 +115,7 @@ function ResumeGate({ app, onNew }: { app: Application; onNew: () => void }) {
   };
   return (
     <section className="page" data-demo="application-root">
+      <div className="apply-main">
       <h1 tabIndex={-1}>Resume your application</h1>
       <p>
         You have a saved {LOAN_FIXTURES[app.loanType].label.toLowerCase()} draft (reference {shortReference(app.applicationId)}).
@@ -126,6 +131,7 @@ function ResumeGate({ app, onNew }: { app: Application; onNew: () => void }) {
           <button type="button" onClick={() => setConfirming(false)}>Keep my draft</button>
         </div>
       )}
+      </div>
     </section>
   );
 }
@@ -163,8 +169,11 @@ function DetailsStep({ app }: { app: Application }) {
 
   return (
     <section className="page" data-demo="application-root">
+      <div className="apply-shell">
+      <div className="apply-main">
       <Stepper index={1} />
       <div data-demo="application-step" data-step-id="loan_details">
+        <img className="apply-header-img" src={img('apply-header.webp')} alt="" width="600" height="200" />
         <h1 tabIndex={-1}>{f.headline}</h1>
         <p className="muted">{f.helper}</p>
         {params.get('show_reassurance').value && <p className="reassurance" data-demo="reassurance">{REASSURANCE}</p>}
@@ -217,8 +226,11 @@ function DetailsStep({ app }: { app: Application }) {
             <button type="button" onClick={() => { if (save('loan_details').ok) { setSaved(true); telemetry.saved('loan_details'); } }}>Save draft</button>
             <button type="submit" className="primary">Next</button>
           </div>
-          <p role="status" className="muted">{saved ? 'Draft saved on this browser.' : ''}</p>
+          <p role="status" className="saved-note">{saved ? 'Draft saved on this browser.' : ''}</p>
         </form>
+      </div>
+      </div>
+      <Rail app={app} />
       </div>
     </section>
   );
@@ -257,6 +269,8 @@ function ReviewStep({ app }: { app: Application }) {
 
   return (
     <section className="page" data-demo="application-root">
+      <div className="apply-shell">
+      <div className="apply-main">
       <Stepper index={3} />
       <div data-demo="application-step" data-step-id="review">
         <h1 tabIndex={-1}>Review and submit</h1>
@@ -299,8 +313,11 @@ function ReviewStep({ app }: { app: Application }) {
               {busy ? 'Submitting' : 'Submit'}
             </button>
           </div>
-          <p role="status" className="muted">{saved ? 'Draft saved on this browser.' : ''}</p>
+          <p role="status" className="saved-note">{saved ? 'Draft saved on this browser.' : ''}</p>
         </form>
+      </div>
+      </div>
+      <Rail app={app} />
       </div>
     </section>
   );
@@ -310,6 +327,10 @@ function Confirmation({ app, onNew }: { app: Application; onNew: () => void }) {
   const offer = findOffer(app.selectedOfferId);
   return (
     <section className="page" data-demo="application-root">
+      <div className="apply-main success-hero">
+      <span className="success-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5 9-10" /></svg>
+      </span>
       <h1 tabIndex={-1}>Application submitted</h1>
       <p>
         Reference <strong>{shortReference(app.applicationId)}</strong>. Status: {STATUS_LABELS[app.status]}.
@@ -322,6 +343,7 @@ function Confirmation({ app, onNew }: { app: Application; onNew: () => void }) {
       <div className="actions">
         <a className="button primary" href={href('/dashboard')}>Go to your dashboard</a>
         <button type="button" onClick={onNew}>Start a new application</button>
+      </div>
       </div>
     </section>
   );
