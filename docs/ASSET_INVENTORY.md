@@ -33,9 +33,9 @@ Created 2026-11-12 23:04:44-55Z (entities), 23:13Z (metrics, experiment). Consol
 | Parameter store | ampliloan_application | 3BNzAoluZw18gDrl7wAUHG | | Bound | same |
 | Parameter store | ampliloan_offers | 3CwtSBdqA5pWY8mhj727p7 | | Bound | same |
 | Parameter store | ampliloan_dashboard | 3EIFykZ3LVvIyES8xd5eWS | | Bound | same |
-| Gate | ampliloan_contextual_help | ampliloan_contextual_help | Contextual help for first-time borrowers; default false | One rule `first_time_borrowers` (ID 3H1GVhuDB1LYeb6bsFCS3R: `borrowing_experience` any of `first_time`, 100%); description still says "No rules" | same |
+| Gate | ampliloan_contextual_help | ampliloan_contextual_help | Contextual help for first-time borrowers; default false | One rule `first_time_borrowers` (ID 3H1GVhuDB1LYeb6bsFCS3R: `borrowing_experience` any of `first_time`, 100%); description corrected in the console (Planner read, Nov 25) | same |
 | Dynamic config | ampliloan_support_content | ampliloan_support_content | Help panel heading, body, max_items | Default `{heading:"Help", body:"", max_items:5}`, no rules | same |
-| Metric | ampliloan_application_submitted_users | ampliloan_application_submitted_users::event_user | Experiment primary | Defined; daily rollup | same (rev 4C.3) |
+| Metric | ampliloan_application_submitted_users | ampliloan_application_submitted_users::event_user | Experiment primary | Defined; custom 1-day window (0 to 1) written in 4C.4, not confirmed by read-back | same (rev 4C.3) |
 | Metric | ampliloan_application_saved_users | ...::event_user | Secondary | Defined | same |
 | Metric | ampliloan_offer_selected_users | ...::event_user | Secondary | Defined | same |
 | Metric | ampliloan_validation_failed_count | ampliloan_validation_failed_count::event_count_custom | Guardrail, decrease | Defined; needs an `Application Validation Failed` event | same |
@@ -51,5 +51,5 @@ SUPERSEDED and untouched. Has the first copies of the gate, config, layers and s
 3. `docs/SETUP.md` (Statsig section) still says entities are "all `not provisioned`" and, in the Amplitude section, "no Statsig key exists". Superseded by the workflow, which passes `VITE_STATSIG_CLIENT_KEY`.
 4. `AMPLITUDE_ASSETS.md` says `Application Task Completed` has not been received. `STATSIG_INVENTORY.md` says `Application Validation Failed` had not been received by the Cloud project on 2026-11-12. Erin's Nov 25 checks may have changed either; not re-read.
 5. `docs/METRICS_AND_QA.md` recommends filtering Statsig metrics by `traffic_type=live_demo`; the metric records above list no such filter.
-6. The gate description in the console still says "No rules" although a rule exists (`STATSIG_INVENTORY.md`).
+6. RESOLVED: the gate description was corrected in the console (Planner read, Nov 25 2026); the old "No rules" text in `STATSIG_INVENTORY.md` is now updated.
 7. Code comment/wording in `STATSIG_INVENTORY.md` refers to "simulated tasks"; the borrower UI no longer uses that wording.

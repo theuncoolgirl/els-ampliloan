@@ -304,3 +304,17 @@
 - Deviations and known limitations: console UI labels in the integration steps come from the Planner's reading, not checked by the Builder; the Stable ID equals Device ID check is recorded as open, not verified; docs/STATSIG_INVENTORY.md and docs/ASSET_INVENTORY.md still say the gate description reads "No rules" (outside this handoff's file list).
 - Blocker and exact decision/configuration needed, if any: none.
 - Next: stopped; awaiting Planner review.
+
+## 2026-11-25T17:30Z | Phase 4C | Revision 4C.4 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase4c4-windows-360f from origin/main 3e2f4de; head SHA in the final report and PR
+- Objective and implementation summary: one-time console write of 1-day custom rollup windows to three Statsig Cloud unit-count metrics; docs corrected.
+- Files changed: docs/evidence/phase-4c4.md, docs/STATSIG_INVENTORY.md, docs/ASSET_INVENTORY.md, docs/VERIFICATION.md, docs/CONSOLE_SETUP.md, PHASE_LOG.md, BUILDER_HANDOFF.md
+- Git actions performed; draft PR link if any: committed, pushed, draft PR to main per final report.
+- External actions performed (project/entity names or IDs; no secrets): project 6oe5DaLQIx5XnKfBrG0JnT: POST /metrics/{id} x3 (201) for the three unit-count metrics; GETs; one GET /metrics/list 400. No experiment write.
+- Definition-of-done results: writes accepted PASS; read-back of rollup fields NOT POSSIBLE (API does not return them); experiment defaultRollupWindow already -1 (PATCH skipped); experiment status setup, no start time, groups/allocation/layer/metrics unchanged PASS; validation_failed_count untouched PASS.
+- Checks: no build; key never written or printed (a masked prefix appears in API creatorName output but is not recorded).
+- Readiness (UI / SDK / console / telemetry / data): console write accepted but unconfirmed by read-back.
+- Deviations and known limitations: skipped the no-op experiment PATCH; windows unverifiable via API.
+- Blocker and exact decision/configuration needed, if any: Erin to confirm the window in the console.
+- Next: stopped; write grant spent; awaiting Planner review.
