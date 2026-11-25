@@ -1,43 +1,40 @@
-# Builder handoff — Phase 4F (site polish)
-Status: IDLE
-Phase: 4F, visual and content polish of the demo site
-Revision: 4F.1
+# Builder handoff — Phase 4F revision 4F.2 (remove demo wording)
+Status: START
+Phase: 4F, copy-only revision
+Revision: 4F.2
 
-Authority: Erin, Cursor chat, 6:54 PM ET Nov 12, 2026: "update the aesthetics of the site right now." Record in `DECISIONS.md` already done.
-
-## Read first
-`docs/phase-4f/DESIGN_BRIEF.md` (page-by-page spec and acceptance criteria) and `docs/phase-4f/IMAGE_PROMPTS.md`. Where this handoff and the brief differ, this handoff wins. Erin's requested scope now includes Apply, Offers, Dashboard, and the Help panel (no new Help route). `public/images/hero.webp` is already supplied by Erin (generated, 1402x1122, 5:4, ~34 KB); use it as is and do not replace it. Eleven images are supplied in `public/images/` and listed in `docs/phase-4f/images/SUPPLIED.md`; never overwrite or re-source them. Only the six images not supplied get placeholders. Placeholder rules (Erin, Nov 25 8:22 AM ET): download free-license stock or illustration images (Unsplash, Pexels, or similar licenses that allow free use without attribution requirements you cannot meet) to `public/images/` using the file names and aspect ratios in `IMAGE_PROMPTS.md`; crop to the ratio and export WebP at 1x size, under 150 KB each. No hotlinking and no third-party requests at runtime. Record every source URL, author, and license in `docs/phase-4f/images/SOURCES.md`. If downloads are blocked, generate original SVG placeholders at the same ratios instead. Keep file names stable so Erin's generated images can replace them with no code change. No people-identifying or brand-marked images.
-
-## Goal
-Make the site feel like a credible, marketing-oriented lending brand without changing behavior. Home becomes a real landing page; the rest of the journey gets matching visual polish.
+Authority: Erin, Cursor chat, 8:58 AM ET Nov 25, 2026: "Remove references to the fact that it's a demo site on all pages except for the demo controls page." Recorded in `DECISIONS.md`.
 
 ## Permissions
-Builder Commit Yes; Push Yes (own feature branch `cursor/phase4f-polish-360f` only, never `main`); PR Yes (draft); Merge No; Deploy No. No console or platform writes. Do not read, print, or use `STATSIG_CONSOLE_API_KEY`; keep it out of every build command and prove the final build contains no trace of it.
+Builder Commit Yes; Push Yes (own branch `cursor/phase4f-copy-360f` only, never `main`); PR Yes (draft); Merge No; Deploy No. No console or platform writes; do not use `STATSIG_CONSOLE_API_KEY`.
 
-## Tasks
-1. Landing page (home route): hero, "how it works" (3 steps), loan types (personal, mortgage, small business, all entering the same single flow), trust and reassurance band (illustrative copy only), rates/example-offer teaser clearly labeled illustrative, FAQ, footer. Keep the primary CTA visible on first desktop and mobile screens.
-2. Visual system: tokens in `src/styles.css` (color palette, type scale, spacing, radii, shadows), responsive layout, restrained motion with a `prefers-reduced-motion` alternative. Original AmpliLoan branding; no copied assets, logos, or layouts.
-3. Apply a consistent polish pass to Apply, Offers, and Dashboard (spacing, cards, buttons, form fields, empty and success states). Presenter page stays functional and visually separate from borrower pages.
-4. Accessibility: contrast, focus states, labels, keyboard use, semantic headings.
-5. Copy: realistic mock amounts; no implication of real approval, funding, or credit checks; no implementation jargon on borrower pages.
+## Task
+Copy-only change. On every borrower-facing surface (landing, Apply, Offers, Dashboard, Help panel, header, footer, page titles and meta in `index.html`, alt text), remove wording that says or implies the site is a demo, demonstration, synthetic, mock, placeholder, "no one will reply", "no real loans/credit checks", "sample data", or "(demo)". Leave the Presenter page (`/presenter`, "Demo controls"), diagnostics, tests of those, and internal identifiers (`demo_persona`, `traffic_type`, `data-demo` attributes, `startAsNewDemoUser`, variable names) untouched.
 
-## Must not change (protected)
-- The journey, routes, state machine, persistence, and loan types (`personal`, `mortgage`, `small_business`); one application journey.
-- Event names, event properties, and the places events fire; `loan_type` on loan events; `Application Submitted` stays the final event.
-- Amplitude and Statsig initialization, identity, replay, masking, and attribution code.
-- Statsig bindings: parameter reads in `src/integrations/pageParameters.ts` (`hero_headline`, `cta_label`, `show_reassurance`, `progress_style`, `show_comparison_hint`, `show_next_steps`), the gate `ampliloan_contextual_help`, and the dynamic config. Hero headline and CTA label must still render from the parameters with the existing fallbacks. The reassurance element controlled by `show_reassurance` must still exist and stay off by default; do not add static reassurance text on the Apply page that would contaminate the experiment.
-- Existing stable guide target IDs and test hooks; add new ones only for new landing sections and list them.
-- New landing-page content must not fire new business events. If you think one is needed, list it in the result for the Planner.
+Known places (not exhaustive; search `src/` and `index.html` for demo, demonstration, synthetic, sample, mock, placeholder, "no real"):
+- Hero: disclaimer line; Landing: stat strip "In this demo", estimator hint and "(demo)" text and "demo APR" wording, trust band heading ("A demo you can explore with confidence") and items ("Synthetic data only"), FAQ answers ("Is this a real loan?", credit-check answer, "sample data"), final CTA subline, "apply to this demo only".
+- Apply: the reassurance text (`REASSURANCE`) and the submit consent checkbox label.
+- Offers: "Demo data, not a real offer" and "sample data" banner.
+- Dashboard: "Sample result" status text.
+- Help panel: "Is this a real application?" / "Are the offers real?" answers, "This site is a demonstration", the contact placeholder line, "sample offer" wording.
+- Footer: "Demo with synthetic data..." and "AmpliLoan demo" copyright, and the "Demo controls" link label (rename to a neutral label such as "Presenter"; keep the link and route).
 
-## Allowed paths
-`src/components/`, `src/pages/`, `src/App.tsx` (layout wiring only), `src/styles.css`, `public/` (original assets only), `index.html` (title and meta only), `docs/evidence/phase-4f.md`, `PHASE_LOG.md`, `public/images/`.
+## Replacement rules
+- Keep one neutral standard disclosure, not a demo admission, in the footer and on Offers: "Rates, amounts, and offers shown are illustrative and are not an approval, quote, or commitment to lend." Keep "illustrative"/"estimated" on figures where it prevents misreading them as binding.
+- Replace the Apply reassurance text with copy that makes no demo claim, for example "Your answers are saved on this device as you go." This is the experiment treatment element: keep the element, its gating (`show_reassurance`, off by default), and its position unchanged; change only the words.
+- Replace the consent checkbox label with, for example, "I confirm these details are correct and I'm ready to submit." The checkbox, its id, validation (`missing_consent`), error text behavior, and event sequence must not change.
+- FAQ and Help: rewrite the "real loan / real application / real offers" answers into accurate non-demo wording about estimates, such as "Your options are estimates based on what you tell us. Final terms would depend on a full review." Do not claim real approvals, funding, or credit checks happening.
+- Remove or reword the fictional customer quote caption so it does not say "fictional"; if it cannot be reworded without claiming a real customer, remove the quote block.
+- Update `<title>` and meta text accordingly.
 
-## Verification (record each separately in the result)
-- `npm run build` and any existing lint or tests pass; production build contains no console key trace.
-- Run the app locally; walk personal, mortgage, and small-business journeys end to end and confirm unchanged behavior and unchanged event sequence (compare with a pre-change capture from `main`).
-- UI at 375, 768, and 1280 px widths; reduced-motion on; keyboard-only pass of the home page and Apply step 1.
-- State plainly what was inspected in a rendered page versus read from code. Do not claim live service behavior from mock data.
-- Confirm parameter diagnostics still read `source: statsig` or fallback exactly as before.
+## Must not change
+Journey, routes, state, events and their properties, Amplitude and Statsig code, parameter bindings and fallbacks (`hero_headline`, `cta_label` fallback values keep their current text), gates, guide target IDs, and the Presenter page text.
+
+## Verification (record separately)
+- `npm test` and `npm run build` pass; update any test that asserts removed wording, and say which.
+- Run `rg -i "demo|demonstration|synthetic|mock|placeholder" src index.html` and list every remaining hit with its reason (presenter, diagnostics, identifiers, tests only). No hit may be user-visible outside `/presenter`.
+- Walk the personal, mortgage, and small-business journeys; event sequence unchanged from `main`.
+- Render check of home, Apply step 1 and the submit step, Offers, Dashboard, Help panel, at 375 and 1280 px. State what was rendered versus read from code.
 
 ## Result
-Write `docs/evidence/phase-4f.md` (files changed, new IDs, screenshots saved under `docs/evidence/` if captured, deviations, open questions). Open a draft PR to `main`, then set this file to `Status: IDLE` in the same branch. Stop and wait for the Planner.
+`docs/evidence/phase-4f2.md`, `PHASE_LOG.md` entry, draft PR to `main`, set this file to `Status: IDLE` on your branch, stop. No deploy.
