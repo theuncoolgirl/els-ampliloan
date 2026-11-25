@@ -1,5 +1,5 @@
 # Builder handoff — Phase 4D (demo script and console setup docs)
-Status: START
+Status: IDLE
 Phase: 4D, docs only
 Revision: 4D.1
 

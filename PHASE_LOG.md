@@ -276,3 +276,17 @@
 - Deviations and known limitations: focus ring styled in CSS but not visually confirmed; /presenter overflows at 375 px (pre-existing, untouched).
 - Blocker and exact decision/configuration needed, if any: none.
 - Next: stopped; awaiting Planner review.
+
+## 2026-11-25T16:00Z | Phase 4D | Revision 4D.1 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase4d-docs-360f from origin/main bcdd6ca; head SHA in the final report and PR
+- Objective and implementation summary: docs only: demo talk track, console setup, asset inventory, verification steps.
+- Files changed: docs/DEMO_SCRIPT.md, docs/CONSOLE_SETUP.md, docs/ASSET_INVENTORY.md, docs/VERIFICATION.md, PHASE_LOG.md, BUILDER_HANDOFF.md (no src, no workflows)
+- Git actions performed; draft PR link if any: committed, pushed, draft PR to main per final report.
+- External actions performed (project/entity names or IDs; no secrets): none. Read-only web search of Statsig and Amplitude docs for the integration options (excerpts only).
+- Definition-of-done results: four deliverables written; every not-built or not-started item marked; integration options all marked "not configured".
+- Checks: none run (docs only); nothing re-verified in a console or on the live site.
+- Readiness (UI / SDK / console / telemetry / data): not assessed; documents restate recorded results.
+- Deviations and known limitations: asset inventory is a separate file; seven document disagreements flagged in docs/ASSET_INVENTORY.md; the og:image host (github.io vs erinshields.dev) looks wrong and is flagged, not fixed; Amplitude doc page for cohort sync not fetched in full.
+- Blocker and exact decision/configuration needed, if any: none.
+- Next: stopped; awaiting Planner review.
