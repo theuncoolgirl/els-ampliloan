@@ -47,9 +47,9 @@ export function OffersPage() {
   return (
     <section className="page" data-demo="offers-root">
       <Stepper index={2} />
-      <h1 tabIndex={-1}>Your sample offers</h1>
-      <p className="muted">Based on the details you shared. Demo data, not a real offer.</p>
-      <p className="banner">Illustrative offers from sample data. Not an approval, rate quote, or commitment.</p>
+      <h1 tabIndex={-1}>Your offers</h1>
+      <p className="muted">Based on the details you shared.</p>
+      <p className="banner">Rates, amounts, and offers shown are illustrative and are not an approval, quote, or commitment to lend.</p>
       {params.get('show_comparison_hint').value && (
         <p className="comparison-hint" data-demo="comparison-hint">Compare the monthly payment and APR side by side before you choose.</p>
       )}
@@ -101,11 +101,10 @@ export function OffersPage() {
         </ol>
         <details>
           <summary>How we calculated this</summary>
-          <p className="muted">Payments use the amount you entered, each option&rsquo;s illustrative APR, and its term. They are estimates from sample data, not quotes.</p>
+          <p className="muted">Payments use the amount you entered, each option&rsquo;s illustrative APR, and its term. They are estimates, not quotes.</p>
         </details>
       </aside>
       </div>
-      <p className="hint">Illustrative disclosure: nothing on this page is an approval, a rate quote, or a commitment to lend.</p>
     </section>
   );
 }

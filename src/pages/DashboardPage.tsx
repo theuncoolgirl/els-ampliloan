@@ -26,7 +26,7 @@ const NEXT_ACTION: Record<Status, string> = {
   draft: 'Resume your application',
   submitted: 'Your application was received. Review the status below.',
   under_review: 'Your application is under review. Complete the simulated tasks below.',
-  decision_ready: 'Sample result: an illustrative offer is ready to review.',
+  decision_ready: 'Result ready: an illustrative offer is ready to review.',
 };
 
 export function DashboardPage() {

@@ -7,23 +7,23 @@ const GLOSSARY: [string, string][] = [
   ['APR', 'Annual percentage rate: the yearly cost of borrowing shown as a percentage. Values here are illustrative.'],
   ['Term', 'How many months you would take to repay the loan.'],
   ['Principal', 'The amount you borrow, before interest.'],
-  ['Monthly payment', 'An estimate based on the amount, APR, and term in the sample offer.'],
+  ['Monthly payment', 'An estimate based on the amount, APR, and term in the offer.'],
   ['Fixed rate', 'A rate that stays the same for the whole term.'],
 ];
 
 const FAQS: [string, string][] = [
-  ['Is this a real application?', 'No. Everything here is a demo with synthetic data.'],
+  ['Is this a formal application?', 'Your answers help us show estimated options. Final terms would depend on a full review.'],
   ['Will you check my credit?', 'No. There are no credit checks.'],
-  ['Are the offers real?', 'No. Offers come from sample data and are not approvals, quotes, or commitments.'],
+  ['Are the offers final?', 'Offers are estimates and are not approvals, quotes, or commitments to lend.'],
   ['Can I finish later?', 'Yes. Your draft is saved in this browser. Choose Resume your application.'],
   ['Do I upload documents?', 'No. Next steps are simulated and no files are uploaded.'],
 ];
 
 const TOPICS: [string, string, string][] = [
   ['application', 'The application', 'Choose a loan type, enter an amount and purpose, pick an offer, then review and submit.'],
-  ['offers', 'Offers', 'Compare three sample offers by term, APR, and estimated monthly payment.'],
-  ['status', 'Status', 'After you submit, status moves from submitted to under review to a sample result. In this demo a presenter advances it.'],
-  ['general', 'General', 'This site is a demonstration. Nothing here is financial advice.'],
+  ['offers', 'Offers', 'Compare three offers by term, APR, and estimated monthly payment.'],
+  ['status', 'Status', 'After you submit, status moves from submitted to under review to a result.'],
+  ['general', 'General', 'Nothing here is financial advice.'],
 ];
 
 export function HelpPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -92,8 +92,8 @@ export function HelpPanel({ open, onClose }: { open: boolean; onClose: () => voi
           </details>
         ))}
         <div className="contact-card">
-          <h3>Contact us</h3>
-          <p className="muted" style={{ margin: 0 }}>Placeholder for the demo. There is no live support and no one will reply.</p>
+          <h3>Need more help?</h3>
+          <p className="muted" style={{ margin: 0 }}>Questions about your application? Check the status on your dashboard.</p>
         </div>
       </div>
     </dialog>

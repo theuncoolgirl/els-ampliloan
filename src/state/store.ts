@@ -149,7 +149,7 @@ export const createStore = (storage: StorageLike, hooks: StoreHooks = {}) => {
     } catch {
       /* fall through to discard */
     }
-    notice = 'Saved demo data could not be read, so it was cleared and a fresh demo started.';
+    notice = 'Saved data could not be read, so it was cleared and you can start fresh.';
     const fresh = freshState();
     storage.setItem(STORAGE_KEY, JSON.stringify(fresh));
     return fresh;

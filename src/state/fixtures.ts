@@ -117,5 +117,5 @@ export const STATUS_LABELS: Record<Status, string> = {
   draft: 'Draft',
   submitted: 'Submitted',
   under_review: 'Under review',
-  decision_ready: 'Sample result ready',
+  decision_ready: 'Result ready',
 };

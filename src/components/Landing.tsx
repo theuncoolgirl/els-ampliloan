@@ -11,7 +11,7 @@ const STATS: [string, string][] = [
   ['$1k to $75k', 'Illustrative range'],
   ['About 2 min', 'To see options'],
   ['Fixed payments', 'Same amount every month'],
-  ['No prepayment fees', 'In this demo'],
+  ['No prepayment fees', 'On every option'],
 ];
 
 const STEPS: [string, string, string][] = [
@@ -36,15 +36,15 @@ const WHY: [string, string, ReactNode][] = [
 ];
 
 const TRUST: [string, string][] = [
-  ['Your information stays private in this demo', 'Details you enter stay in your browser.'],
-  ['Synthetic data only', 'Nothing here is a real application, offer, or decision.'],
+  ['Your information stays private', 'Details you enter stay in your browser.'],
+  ['Estimates, clearly labeled', 'Figures are illustrative, not an approval or decision.'],
   ['Secure by design', 'No documents are uploaded and no accounts are opened.'],
 ];
 
 const FAQ: [string, string][] = [
-  ['Is this a real loan?', 'No. AmpliLoan is a demonstration with synthetic data. Nothing here is a real application, offer, approval, or funding.'],
-  ['Will checking my options affect my credit?', 'No. This demo does not run credit checks of any kind.'],
-  ['How long does it take?', 'About two minutes to see illustrative options. Everything runs on sample data.'],
+  ['Is this a real loan?', 'Your options are estimates based on what you tell us. Final terms would depend on a full review, and nothing here is an approval or commitment to lend.'],
+  ['Will checking my options affect my credit?', 'Seeing your illustrative options here does not include a credit check.'],
+  ['How long does it take?', 'About two minutes to see illustrative options. You can change your answers at any time.'],
   ['How are offers shown?', 'You see three illustrative offers with a term, an APR, and an estimated monthly payment. They are not quotes.'],
   ['Can I save and come back?', 'Yes. Save your draft and choose Resume your application. It is stored in this browser.'],
   ['Which loan types can I explore?', 'Personal, mortgage, and small business loans, all through the same simple journey.'],
@@ -80,13 +80,13 @@ function Estimator() {
             </label>
           ))}
         </fieldset>
-        <p className="hint">Illustrative only. Uses a fixed demo APR of {DEMO_APR}%. Not a quote or an offer, and no credit check.</p>
+        <p className="hint">Illustrative only. Uses a fixed {DEMO_APR}% APR. Not a quote or an offer.</p>
       </div>
       <div className="estimate" role="status" aria-live="polite">
         <span className="tag">Illustrative</span>
         <span>Estimated monthly payment</span>
         <span className="big">{formatUsd(pay, true)}</span>
-        <p>{formatUsd(amount)} over {term} months at {DEMO_APR}% APR (demo).</p>
+        <p>{formatUsd(amount)} over {term} months at {DEMO_APR}% APR.</p>
       </div>
     </div>
   );
@@ -102,7 +102,7 @@ export function Landing() {
             <li key={a}><strong>{a}</strong><span>{b}</span></li>
           ))}
         </ul>
-        <p className="hint">Ranges and features are illustrative and apply to this demo only.</p>
+        <p className="hint">Ranges and features are illustrative.</p>
       </div>
 
       <Section id="landing-how">
@@ -173,8 +173,8 @@ export function Landing() {
         <div className="container">
           <div className="section-head">
             <span className="eyebrow" style={{ color: 'var(--c-mint)' }}>Trust</span>
-            <h2 id="landing-trust-title">A demo you can explore with confidence</h2>
-            <p>Everything on this site is illustrative.</p>
+            <h2 id="landing-trust-title">Explore with confidence</h2>
+            <p>Every figure is labeled as an estimate.</p>
           </div>
           <ul className="grid cols-3" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
             {TRUST.map(([title, body]) => (
@@ -183,7 +183,7 @@ export function Landing() {
           </ul>
           <figure className="quote">
             <blockquote style={{ margin: 0 }}><p>&ldquo;Seeing every option laid out clearly made the decision feel easy.&rdquo;</p></blockquote>
-            <figcaption>Illustrative quote, fictional customer.</figcaption>
+            <figcaption>Illustrative quote.</figcaption>
           </figure>
         </div>
       </section>
@@ -206,7 +206,7 @@ export function Landing() {
       <section id="landing-final-cta" data-demo="landing-final-cta" className="cta-band" aria-labelledby="landing-final-title" style={{ backgroundImage: `url(${img('cta-band.webp')})` }}>
         <div className="container">
           <h2 id="landing-final-title">Ready to see your illustrative options?</h2>
-          <p>Takes about two minutes. Demo only, with no real credit check.</p>
+          <p>Takes about two minutes. Figures are illustrative.</p>
           <Cta dark />
         </div>
       </section>

@@ -30,7 +30,7 @@ const amountMessage = (t: LoanType) => {
   return `Enter an amount between ${formatUsd(f.amountMin)} and ${formatUsd(f.amountMax)}.`;
 };
 
-const REASSURANCE = 'Your answers are saved on this device as you go. This is a demo with synthetic data.';
+const REASSURANCE = 'Your answers are saved on this device as you go.';
 
 export function ApplyPage({ step }: { step: string | null }) {
   const { active, intent } = useSnapshot();
@@ -200,7 +200,7 @@ function DetailsStep({ app }: { app: Application }) {
               aria-describedby={`amount-hint${err('requested-amount') ? ` ${errorId('requested-amount')}` : ''}`}
             />
             <p id="amount-hint" className="hint">
-              Sample range {formatUsd(f.amountMin)} to {formatUsd(f.amountMax)}.
+              Range {formatUsd(f.amountMin)} to {formatUsd(f.amountMax)}.
               {parsed !== null && parsed > 0 && <> Amount band: {BAND_LABELS[amountBand(parsed)]}.</>}
             </p>
             {err('requested-amount') && <p className="field-error" id={errorId('requested-amount')}>{err('requested-amount')!.message}</p>}
@@ -302,7 +302,7 @@ function ReviewStep({ app }: { app: Application }) {
                 onChange={(e) => setConsent(e.target.checked)}
                 aria-describedby={errors.some((e) => e.field === 'consent') ? errorId('consent') : undefined}
               />
-              <span>I understand this is a demo with synthetic data.</span>
+              <span>I confirm these details are correct and I'm ready to submit.</span>
             </label>
             {errors.some((e) => e.field === 'consent') && <p className="field-error" id={errorId('consent')}>Confirm to submit.</p>}
           </div>
@@ -337,7 +337,7 @@ function Confirmation({ app, onNew }: { app: Application; onNew: () => void }) {
       </p>
       {offer && app.requestedAmount !== null && (
         <p className="muted">
-          Sample offer: {offer.label}, about {formatUsd(monthlyPayment(app.requestedAmount, offer.apr, offer.termMonths), true)} per month (illustrative).
+          Selected offer: {offer.label}, about {formatUsd(monthlyPayment(app.requestedAmount, offer.apr, offer.termMonths), true)} per month (illustrative).
         </p>
       )}
       <div className="actions">
