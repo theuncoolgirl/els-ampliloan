@@ -1,5 +1,5 @@
 # Builder handoff — Phase 4C revision 4C.4 (rollup windows, console write)
-Status: START
+Status: IDLE
 Phase: 4C, Statsig Cloud console write (windows only)
 Revision: 4C.4
 

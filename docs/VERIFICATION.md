@@ -37,7 +37,7 @@ If values show `default (no_key)` the build has no Statsig client key (local mod
 - Statsig MCP: as of Nov 25 10:16 AM ET the Planner's Statsig connection points to `AmpliLoan [Cloud]` (ID `6oe5DaLQIx5XnKfBrG0JnT`). The Planner independently read the draft experiment (status `setup`, not started, layer `ampliloan_application_layer`, 50/50) and the gate (rule `first_time_borrowers`, description corrected). The Cloud project's console URL is on the staging host.
 - By then 12 of 16 curated event names had reached Statsig. Not yet seen: Application Saved, Application Resumed, Application Task Completed, Sign Up Completed, Signed In.
 - Old project `363sCqDdACZXt4M88ZqiKa` is superseded and untouched.
-- Metric rollup window undecided; the Planner will state the API default at experiment finalization.
+- Metric rollup window: a 1-day custom window was written to the three unit-count metrics in 4C.4; the API does not return the field, so confirm it in the console.
 - The gate description in the console was corrected (Planner read, Nov 25); `docs/STATSIG_INVENTORY.md` still says it says "No rules".
 - Statsig Cloud metrics have daily rollups; multi-day funnels need validation and do not match Amplitude funnels.
 - Guides and Surveys (4B) and the synthetic runner (4E) are not built. The experiment is not started. Amplitude as Statsig's analytics engine is not configured.

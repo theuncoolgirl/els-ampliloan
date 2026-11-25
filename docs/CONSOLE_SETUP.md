@@ -39,7 +39,7 @@ Org 446257 (US), project 905260. Dashboard `AmpliLoan - Demo overview` (`do8wdk8
 Status today: `setup`, never started. Do not start it as a side effect of any other work.
 Start:
 1. Erin gives a separate, named approval for starting `ampliloan_application_reassurance_v1`.
-2. Before starting, decide and record the metric rollup window (the Planner will state the API default at finalization) and confirm the metric unit is Stable ID, matching the experiment.
+2. Confirm the 1-day metric window (written in 4C.4, unconfirmed by API read-back) in the console and confirm the metric unit is Stable ID, matching the experiment.
 3. In the Statsig console open the experiment and start it (button names not verified here).
 4. Verify with a fresh Stable ID that the Apply details step shows or hides the reassurance line, and that the Presenter shows the source as `statsig`.
 Stop:
