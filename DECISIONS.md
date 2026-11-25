@@ -286,3 +286,6 @@ Erin, Cursor chat, 3:44 PM ET: added the Statsig Console API key as the Cursor s
 
 ## 2026-11-25 — Rollup window status after 4C.4 (PR #44 merged)
 - Erin approved and merged PR #44 (fe36d3b). Console API accepted the custom 0 to 1 day window on three metrics (201), but the API cannot read it back and Erin found no rollup window setting in the Cloud console. Treat the metric windows as unverified and possibly inert in Cloud; the experiment readout is cumulative (`-1`). Do not describe a 1 day window as applied or verified in any demo material.
+
+## 2026-11-25 — Amplitude-Statsig work paused
+- Erin, 1:26 PM ET: the Amplitude connection needs troubleshooting with the internal team; skip it for now. The variant-to-Amplitude user property handoff is on hold with it (Planner reading; confirm with Erin when to resume). Experiment results stay in Statsig, which does not depend on the connection. Bot runner (4E) design continues without Amplitude variant segmentation.
