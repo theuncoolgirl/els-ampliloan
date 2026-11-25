@@ -6,7 +6,7 @@ Revision: 4F.1
 Authority: Erin, Cursor chat, 6:54 PM ET Nov 12, 2026: "update the aesthetics of the site right now." Record in `DECISIONS.md` already done.
 
 ## Read first
-`docs/phase-4f/DESIGN_BRIEF.md` (page-by-page spec and acceptance criteria) and `docs/phase-4f/IMAGE_PROMPTS.md`. Where this handoff and the brief differ, this handoff wins. Erin's requested scope now includes Apply, Offers, Dashboard, and the Help panel (no new Help route). Use placeholders at the listed aspect ratios until real images are dropped into `public/images/`.
+`docs/phase-4f/DESIGN_BRIEF.md` (page-by-page spec and acceptance criteria) and `docs/phase-4f/IMAGE_PROMPTS.md`. Where this handoff and the brief differ, this handoff wins. Erin's requested scope now includes Apply, Offers, Dashboard, and the Help panel (no new Help route). Placeholder images (Erin, Nov 25 8:22 AM ET): download free-license stock or illustration images (Unsplash, Pexels, or similar licenses that allow free use without attribution requirements you cannot meet) to `public/images/` using the file names and aspect ratios in `IMAGE_PROMPTS.md`; crop to the ratio and export WebP at 1x size, under 150 KB each. No hotlinking and no third-party requests at runtime. Record every source URL, author, and license in `docs/phase-4f/images/SOURCES.md`. If downloads are blocked, generate original SVG placeholders at the same ratios instead. Keep file names stable so Erin's generated images can replace them with no code change. No people-identifying or brand-marked images.
 
 ## Goal
 Make the site feel like a credible, marketing-oriented lending brand without changing behavior. Home becomes a real landing page; the rest of the journey gets matching visual polish.
