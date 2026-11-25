@@ -18,7 +18,7 @@ Branch `cursor/phase4f-dashboard-fix-360f` off `origin/main` (e4f215c), draft PR
 | Header overflow | no header item outside the viewport in any case; page-level horizontal overflow none except `/presenter` at 375 px (see below) | rendered |
 | Event sequence, one journey (Help from header, save draft, submit, advance status twice, task checkbox, reset) | identical to a clean-worktree `main` build, IDs normalized | rendered local mode |
 | `helpRequested('header')` | still fires: "Help Requested" appears in both sequences from the header Help button | rendered diagnostics |
-| `rg -i "simulat\|demo\|synthetic\|sample" src/components src/pages index.html` excluding `data-demo` and `PresenterPage.tsx` | 0 hits | pushed tree scan |
+| `rg -i "simulat\|demo\|synthetic\|sample" src/components src/pages index.html` excluding `data-demo` and `PresenterPage.tsx` | 0 user-visible hits; only the `DEMO_APR` variable name in `Landing.tsx` (4 lines) remains | working tree equals pushed source commit |
 | Dashboard rendered text contains "simulat" | no | rendered |
 
 Header link labels, all of `["AmpliLoan","Home","Apply","Offers","Dashboard","Help"]`, sticky position everywhere:
