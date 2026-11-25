@@ -19,7 +19,7 @@ export function Hero() {
           <a className="cta" href={href('/apply')} data-demo="home-cta" onClick={() => guardNavigatingClick(() => telemetry.rateCheckStarted('hero'))}>
             {cta}
           </a>
-          <p className="disclaimer">Demo only. No real credit check, loans, or rates.</p>
+          <p className="disclaimer">Illustrative options only. Not an approval, quote, or commitment to lend.</p>
         </div>
         <div className="hero-art">
           <img className="hero-glow" src={img('hero-card-glow.webp')} alt="" width="640" height="640" />

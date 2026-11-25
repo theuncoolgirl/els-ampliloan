@@ -102,14 +102,14 @@ export function Footer() {
     <footer className="site-footer">
       <div className="container">
         <a className="brand" href={href('/')}>AmpliLoan</a>
-        <p>Demo with synthetic data. No real loans, rates, or credit checks. Amounts, rates, and offers shown are illustrative only.</p>
+        <p>Rates, amounts, and offers shown are illustrative and are not an approval, quote, or commitment to lend.</p>
         <nav className="footer-links" aria-label="Footer">
           <a href={href('/apply')}>Apply</a>
           <a href={href('/offers')}>Offers</a>
           <a href={href('/dashboard')}>Dashboard</a>
-          <a href={href('/presenter')}>Demo controls</a>
+          <a href={href('/presenter')}>Presenter</a>
         </nav>
-        <p>&copy; 2026 AmpliLoan demo.</p>
+        <p>&copy; 2026 AmpliLoan.</p>
       </div>
     </footer>
   );
