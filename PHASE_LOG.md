@@ -262,3 +262,17 @@
 - Deviations and known limitations: main-vs-branch event comparison not repeated after re-apply; 4F.2 evidence text earlier overstated the first push.
 - Blocker and exact decision/configuration needed, if any: none. Presenter footer link kept per Planner.
 - Next: stopped; awaiting Planner review.
+
+## 2026-11-25T15:10Z | Phase 4F | Revision 4F.3 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase4f-dashboard-fix-360f from origin/main e4f215c; head SHA in the final report and PR
+- Objective and implementation summary: Dashboard card/timeline/earlier-applications formatting, "simulated" wording removed, header identical on every route with in-page links moved into the landing page.
+- Files changed: src/components/{Layout,Landing,HelpPanel}.tsx, src/pages/DashboardPage.tsx, src/styles.css, docs/evidence/phase-4f3.md and screenshots, PHASE_LOG.md, BUILDER_HANDOFF.md
+- Git actions performed; draft PR link if any: source committed before baseline build (no stash); pushed; draft PR to main.
+- External actions performed (project/entity names or IDs; no secrets): none.
+- Definition-of-done results: see docs/evidence/phase-4f3.md (tests 127 pass, build pass, header labels identical in 18 cases, events identical to main, rg clean).
+- Checks: npm test, npm run build, rendered Chrome at 375/1280 across all dashboard states.
+- Readiness (UI / SDK / console / telemetry / data): UI rendered locally; others unchanged.
+- Deviations and known limitations: focus ring styled in CSS but not visually confirmed; /presenter overflows at 375 px (pre-existing, untouched).
+- Blocker and exact decision/configuration needed, if any: none.
+- Next: stopped; awaiting Planner review.

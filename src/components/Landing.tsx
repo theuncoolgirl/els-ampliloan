@@ -92,10 +92,27 @@ function Estimator() {
   );
 }
 
+const PAGE_LINKS: [string, string][] = [
+  ['landing-rates', 'Rates'],
+  ['landing-how', 'How it works'],
+  ['landing-faq', 'FAQ'],
+];
+
+const scrollToSection = (id: string) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+};
+
 export function Landing() {
   return (
     <>
       <Hero />
+      <nav className="container page-jump" aria-label="On this page">
+        {PAGE_LINKS.map(([id, label]) => (
+          <button key={id} type="button" className="link-button" onClick={() => scrollToSection(id)}>{label}</button>
+        ))}
+      </nav>
       <div className="container strip" data-demo="landing-stats" id="landing-stats">
         <ul className="stats">
           {STATS.map(([a, b]) => (

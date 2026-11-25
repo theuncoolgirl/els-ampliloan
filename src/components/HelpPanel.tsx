@@ -16,7 +16,7 @@ const FAQS: [string, string][] = [
   ['Will you check my credit?', 'No. There are no credit checks.'],
   ['Are the offers final?', 'Offers are estimates and are not approvals, quotes, or commitments to lend.'],
   ['Can I finish later?', 'Yes. Your draft is saved in this browser. Choose Resume your application.'],
-  ['Do I upload documents?', 'No. Next steps are simulated and no files are uploaded.'],
+  ['Do I upload documents?', 'No. Documents are not needed here. Mark your next steps off as you go.'],
 ];
 
 const TOPICS: [string, string, string][] = [

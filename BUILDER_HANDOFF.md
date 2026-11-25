@@ -1,5 +1,5 @@
 # Builder handoff — Phase 4F revision 4F.3 (Dashboard formatting fix and consistent header)
-Status: START
+Status: IDLE
 Phase: 4F, formatting and copy fix
 Revision: 4F.3
 

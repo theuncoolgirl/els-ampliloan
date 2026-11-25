@@ -25,7 +25,7 @@ import { img } from '../components/assets';
 const NEXT_ACTION: Record<Status, string> = {
   draft: 'Resume your application',
   submitted: 'Your application was received. Review the status below.',
-  under_review: 'Your application is under review. Complete the simulated tasks below.',
+  under_review: 'Your application is under review. Complete the next steps below.',
   decision_ready: 'Result ready: an illustrative offer is ready to review.',
 };
 
@@ -45,17 +45,19 @@ export function DashboardPage() {
         </div>
       )}
       {history.length > 0 && (
-        <>
+        <div className="card card-history">
           <h2>Earlier applications</h2>
           <ul className="history">
             {history.map((a) => (
               <li key={a.applicationId}>
-                {LOAN_FIXTURES[a.loanType].label}, reference {shortReference(a.applicationId)}, {STATUS_LABELS[a.status]}
-                {a.requestedAmount !== null && <>, {formatUsd(a.requestedAmount)}</>}
+                <strong>{LOAN_FIXTURES[a.loanType].label}</strong>
+                <span className="muted">Reference {shortReference(a.applicationId)}</span>
+                <span className={`badge badge-${a.status}`}>{STATUS_LABELS[a.status]}</span>
+                {a.requestedAmount !== null && <span className="history-amount">{formatUsd(a.requestedAmount)}</span>}
               </li>
             ))}
           </ul>
-        </>
+        </div>
       )}
     </section>
   );
@@ -104,22 +106,22 @@ function ApplicationCard({ app }: { app: Application }) {
         </ol>
       )}
     </div>
-    <div>
+    <div className="dash-side">
       {tasks.length > 0 && params.get('show_next_steps').value && (
-        <fieldset className="tasks">
-          <legend>Your next steps</legend>
-          <p className="muted">Simulated, no files are uploaded.</p>
+        <div className="card tasks" role="group" aria-labelledby="next-steps-title">
+          <h2 id="next-steps-title">Your next steps</h2>
+          <p className="muted">Mark these off as you go. No documents are needed here.</p>
           {tasks.map((t) => (
             <label key={t} className="choice">
               <input data-amp-mask type="checkbox" checked={!!app.tasks[t]} onChange={(e) => store.completeTask(t, e.target.checked)} />
               <span>{TASK_LABELS[t]}</span>
             </label>
           ))}
-        </fieldset>
+        </div>
       )}
     </div>
     </div>
-    <div className="card" style={{ marginTop: 'var(--space-3)' }}>
+    <div className="card card-details">
       <details onToggle={(e) => { if ((e.currentTarget as HTMLDetailsElement).open) telemetry.detailsViewed(); }}>
         <summary>Loan details</summary>
         <dl className="summary">
