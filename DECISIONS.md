@@ -267,3 +267,6 @@ Erin, Cursor chat, 3:44 PM ET: added the Statsig Console API key as the Cursor s
 
 ## 2026-11-25 — Phase 4F revision 4F.2: remove demo wording
 - Erin, Cursor chat, 8:58 AM ET: remove references to the site being a demo on every page except the demo controls page. This supersedes the earlier UX rule that offer copy be clearly illustrative about being a demo; the Planner kept a neutral "illustrative, not an approval, quote, or commitment" disclosure and told Erin why. Journey, consent step, events, and the experiment surface are unchanged apart from wording.
+
+## 2026-11-25 — Footer Presenter link and consistent header
+- Erin, Cursor chat, 9:10 AM ET: keep the Presenter link in the public footer. Make the top navigation identical on every page (items were disappearing on Apply). Planner decision to achieve this: header carries only Home, Apply, Offers, Dashboard, Help on all routes; landing-only anchors move into the landing page; conditional header CTA removed. Added to the 4F.3 handoff.

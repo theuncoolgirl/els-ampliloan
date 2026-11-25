@@ -1,4 +1,4 @@
-# Builder handoff — Phase 4F revision 4F.3 (Dashboard formatting fix)
+# Builder handoff — Phase 4F revision 4F.3 (Dashboard formatting fix and consistent header)
 Status: START
 Phase: 4F, formatting and copy fix
 Revision: 4F.3
@@ -16,6 +16,14 @@ Builder Commit Yes; Push Yes (own branch `cursor/phase4f-dashboard-fix-360f` onl
 5. Timeline: only the first step is distinguished. Completed steps should show a filled mint circle with a white check; the current step a violet ring; future steps a muted ring; connector line mint between completed steps. Keep the `aria-current` and `aria-label` behavior.
 6. Equal visual rhythm: same card padding, radius, and gap between the summary cards, the two-column row, Loan details and Earlier applications; align the top of the two columns.
 7. Check the other states for the same problems: draft (Resume button), under review, result ready, no application yet (empty state with the supplied `dashboard-empty.webp` if the empty state exists), and mobile 375 px.
+
+## Second request: consistent top navigation (Erin, 9:10 AM ET)
+Erin: the top navigation must stay consistent across the site; options disappear on Apply, for example. Cause: `Header` in `src/components/Layout.tsx` shows the in-page links (Rates, How it works, FAQ) and the "Check your rate" button only when `route === '/'`.
+- The header must render the identical set of items on every route, including `/apply`, `/offers`, `/dashboard`, `/presenter`: brand, Home, Apply, Offers, Dashboard, Help, in the same order, same styling, same sticky behavior, with only `aria-current` and the active underline differing.
+- Remove the home-only items from the header (Rates, How it works, FAQ, and the conditional header CTA). Keep those in-page anchors available inside the landing page itself as a small in-page link row below the hero or at the top of the sections (landing only, not in the header), and keep the hero CTA and final CTA band. Keep all existing `data-demo` hooks (`help-entry`, `home-cta`). Remove `useHeroOutOfView` if it becomes unused.
+- Mobile: the same items at 375 px, using the same layout on every route (wrap or horizontal scroll; no item may disappear, and nothing may overflow the viewport). Help opens the same panel from every route.
+- The footer keeps the "Presenter" link on every page (Erin: keep presenter link in the footer).
+- Verify by rendering the header at 375 and 1280 px on /, /apply (each step), /offers, /dashboard, /presenter and comparing the list of link labels programmatically; paste the comparison in the evidence file. No event may change: confirm `helpRequested('header')` still fires from Help.
 
 ## Must not change
 Journey, events, store logic, parameter bindings and gating (`show_next_steps`), `data-demo` attributes, stable IDs, copy outside the strings listed above.
