@@ -234,3 +234,17 @@
 - Deviations and known limitations: placeholder images instead of stock; SOURCES.md outside allowed paths; no live Statsig check.
 - Blocker and exact decision/configuration needed, if any: none.
 - Next: stopped; awaiting Planner review.
+
+## 2026-11-25T14:30Z | Phase 4F | Revision 4F.2 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase4f-copy-360f from origin/main; head SHA in the final report
+- Objective and implementation summary: removed demo/synthetic/sample wording from all borrower-facing copy; neutral illustrative disclosure; Presenter page untouched.
+- Files changed: index.html, src/components/{Hero,Landing,HelpPanel,Layout}.tsx, src/pages/{Apply,Offers,Dashboard}Page.tsx, src/state/{fixtures,store}.ts, docs/evidence/phase-4f2.md and screenshots, PHASE_LOG.md, BUILDER_HANDOFF.md
+- Git actions performed; draft PR link if any: branch pushed; draft PR to main per final report.
+- External actions performed (project/entity names or IDs; no secrets): none.
+- Definition-of-done results: see docs/evidence/phase-4f2.md (tests 127 pass, build pass, event sequences identical for 3 loan types, rendered scan 0 hits, remaining rg hits listed).
+- Checks: npm test, npm run build, rendered Chrome walkthrough at 375/1280.
+- Readiness (UI / SDK / console / telemetry / data): UI rendered locally; others unchanged and not re-verified.
+- Deviations and known limitations: two non-listed user-visible strings reworded (fixtures, store notice); meta tags verified from code only.
+- Blocker and exact decision/configuration needed, if any: none.
+- Next: stopped; awaiting Planner review.

@@ -1,5 +1,5 @@
 # Builder handoff — Phase 4F revision 4F.2 (remove demo wording)
-Status: START
+Status: IDLE
 Phase: 4F, copy-only revision
 Revision: 4F.2
 
