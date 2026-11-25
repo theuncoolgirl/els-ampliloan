@@ -25,15 +25,20 @@ Branch `cursor/phase4f-copy-360f`, draft PR to `main`. Copy-only. No deploy, no 
 
 Not rendered: the `index.html` meta tags (read from code), the corrupt-storage notice (read from code), the offers empty/error states.
 
-## `rg -i "demo|demonstration|synthetic|mock|placeholder" src index.html` remaining hits (excluding `data-demo` attributes)
-- `PresenterPage.tsx` (Demo controls, demo user): presenter page, by instruction.
-- `presenter/Diagnostics.tsx` ("Live demo"), `presenter/preview.ts` (comment), `presenter/PreviewControls.tsx` (`placeholder` attribute): presenter only.
-- `state/store.ts` `startAsNewDemoUser`, `identity/traits.ts` (`demo_persona`, `live_demo`), `telemetry/telemetry.ts` and `telemetry/events.ts` (`live_demo`, `synthetic_population`, `demo_signin/up/out`): internal identifiers and event values.
-- `Landing.tsx` `DEMO_APR`: variable name only.
-- `HelpPanel.tsx` `placeholder="Search help topics"`: input placeholder attribute (a normal UI hint, not demo wording).
-- Tests: `statsig.test.ts`, `store.test.ts`, `telemetry.test.ts` (`vi.mock`, identifiers).
-No hit is user-visible outside `/presenter`.
+## Correction (follow-up on PR #34)
+The first push (8af2d2b) contained only docs. My source edits had been lost: a `git stash` I ran while setting up a baseline worktree swept them away and I then dropped the stash. The evidence above had been produced from those edits before the loss. I re-applied the identical edits and pushed them in `0662694` (`src/` and `index.html` now appear in `git diff --stat origin/main HEAD`). Re-run after the re-apply: `npm test` 127 pass, `npm run build` pass, and a fresh rendered scan of home, Apply step 1, help panel, offers, submit step, confirmation and dashboard for all three loan types found 0 demo-style words, 0 page errors, and 11 business events in each journey. The side-by-side event comparison with `main` was not repeated after the re-apply (it was done on the same copy-only edits earlier); the re-run only confirmed the event count.
+
+## Remaining hits in pushed branch contents
+Scanned with `git grep -inE "demo|demonstration|synthetic|mock|placeholder" origin/cursor/phase4f-copy-360f -- src index.html` (excluding `data-demo` attributes), at head `0662694`:
+- `src/pages/PresenterPage.tsx` (7): presenter page, by instruction.
+- `src/presenter/Diagnostics.tsx` (1), `preview.ts` (1, comment), `PreviewControls.tsx` (1, `placeholder` attribute): presenter only.
+- `src/state/store.ts` (1): `startAsNewDemoUser` identifier.
+- `src/identity/traits.ts` (2), `src/telemetry/telemetry.ts` (4), `src/telemetry/events.ts` (2): identifiers and event values (`demo_persona`, `live_demo`, `synthetic_population`, `demo_signin/up/out`).
+- `src/components/Landing.tsx` (4): `DEMO_APR` variable name only.
+- `src/components/HelpPanel.tsx` (1): `placeholder="Search help topics"` input attribute.
+- Tests (`statsig.test.ts` 2, `store.test.ts` 1, `telemetry.test.ts` 4): `vi.mock` and identifiers.
+`index.html` has no hits. A separate search for "no real", "fictional" and "sample" matched only `amplitude.ts` (`sampleRate`) and a telemetry test. No hit is user-visible outside `/presenter`.
 
 ## Deviations and questions
 - `fixtures.ts` and `store.ts` strings were outside the Known places list but were user-visible, so they were reworded.
-- `Illustrative`/`estimate` wording remains on figures by design. Open: should the Presenter link remain visible in the public footer?
+- `Illustrative`/`estimate` wording remains on figures by design. Presenter footer link: kept for now; the Planner will ask Erin.

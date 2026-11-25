@@ -248,3 +248,17 @@
 - Deviations and known limitations: two non-listed user-visible strings reworded (fixtures, store notice); meta tags verified from code only.
 - Blocker and exact decision/configuration needed, if any: none.
 - Next: stopped; awaiting Planner review.
+
+## 2026-11-25T14:50Z | Phase 4F | Revision 4F.2 (correction) | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase4f-copy-360f; source commit 0662694 (docs-only first push was 8af2d2b); this log's commit follows it, see PR #34 head.
+- Objective and implementation summary: the 4F.2 source edits were lost before the first commit (my own `git stash` plus drop during baseline setup). Re-applied identically, committed and pushed; `git diff --stat origin/main HEAD` now includes src/ and index.html.
+- Files changed: index.html, src/components/{Hero,Landing,HelpPanel,Layout}.tsx, src/pages/{Apply,Offers,Dashboard}Page.tsx, src/state/{fixtures,store}.ts, docs/evidence/phase-4f2.md, PHASE_LOG.md
+- Git actions performed; draft PR link if any: pushed to the PR #34 branch.
+- External actions performed (project/entity names or IDs; no secrets): none.
+- Definition-of-done results: npm test 127 pass; build pass; rendered scan 0 hits across 3 journeys; rg scan of pushed contents listed in docs/evidence/phase-4f2.md.
+- Checks: git grep against origin/cursor/phase4f-copy-360f.
+- Readiness (UI / SDK / console / telemetry / data): UI rendered locally; others unchanged.
+- Deviations and known limitations: main-vs-branch event comparison not repeated after re-apply; 4F.2 evidence text earlier overstated the first push.
+- Blocker and exact decision/configuration needed, if any: none. Presenter footer link kept per Planner.
+- Next: stopped; awaiting Planner review.
