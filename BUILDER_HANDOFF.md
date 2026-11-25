@@ -1,35 +1,33 @@
-# Builder handoff — Phase 4F revision 4F.3 (Dashboard formatting fix and consistent header)
-Status: IDLE
-Phase: 4F, formatting and copy fix
-Revision: 4F.3
+# Builder handoff — Phase 4D (demo script and console setup docs)
+Status: START
+Phase: 4D, docs only
+Revision: 4D.1
 
-Authority: Erin, Cursor chat, 9:09 AM ET Nov 25, 2026, with a screenshot of the live Dashboard: "The formatting is weird on this page, please correct."
+Authority: Erin, Cursor chat, Nov 25 2026: continue to 4D after verification (10:08 AM ET). Docs only: no product code, no console or platform writes, no deploy.
 
 ## Permissions
-Builder Commit Yes; Push Yes (own branch `cursor/phase4f-dashboard-fix-360f` only); PR Yes (draft); Merge No; Deploy No. No console writes. Commit every source change before building baselines, and never `git stash` or drop work: before reporting, run `git diff --stat origin/main HEAD` on the pushed branch and confirm `src/` files are included.
+Builder Commit Yes; Push Yes (own branch `cursor/phase4d-docs-360f` only); PR Yes (draft); Merge No; Deploy No. Do not read, print, or use any secret value. Read docs, code, and the live public site only. Do not run live journeys.
 
-## Problems seen (Dashboard, submitted state, desktop)
-1. "Your next steps" is a bare `fieldset` with a legend sitting on its border and a lavender fill. It does not match the other cards. Make it a normal `card` with an `h2` heading ("Your next steps") and keep the checkboxes, labels, `show_next_steps` gating, and `completeTask` behavior unchanged (a visually hidden `fieldset`/`legend` or `role="group"` with `aria-labelledby` is fine for accessibility).
-2. Copy leak: "Simulated, no files are uploaded." Replace with neutral text such as "Mark these off as you go. No documents are needed here." Also remove "simulated" from the `under_review` status text in `DashboardPage.tsx` ("Complete the simulated tasks below" becomes "Complete the next steps below") and from the Help panel answer "Do I upload documents?" (rewrite without "simulated").
-3. "Loan details" card: the `<details>` fills the whole card edge to edge, with a thick oversized focus outline hugging the card, and the card itself has no padding around the summary. Give the card normal padding, make the summary row look like the FAQ summaries (consistent padding, +/− marker), and use a normal 3 px focus ring with a small offset that stays inside the card's rounded shape.
-4. "Earlier applications" is a bare heading and bullet list floating under the cards. Put it in a card with the same heading style, with each earlier application as a row (loan type, reference, status badge, amount), no bullets.
-5. Timeline: only the first step is distinguished. Completed steps should show a filled mint circle with a white check; the current step a violet ring; future steps a muted ring; connector line mint between completed steps. Keep the `aria-current` and `aria-label` behavior.
-6. Equal visual rhythm: same card padding, radius, and gap between the summary cards, the two-column row, Loan details and Earlier applications; align the top of the two columns.
-7. Check the other states for the same problems: draft (Resume button), under review, result ready, no application yet (empty state with the supplied `dashboard-empty.webp` if the empty state exists), and mobile 375 px.
+## Deliverables
+1. `docs/DEMO_SCRIPT.md`: a talk track for a presenter, with timing, exact clicks, what appears on screen, and what to say. Story per the brief: a campaign brings in a borrower, they hit friction, Amplitude shows where and for whom conversion drops, Replay and feedback explain why, targeted help (Statsig gate) and a Statsig-controlled improvement (experiment) follow. Cover personal, mortgage, and small business using the one journey. Use the personas and Presenter controls as built. Mark clearly which parts are live today and which are not yet built or not yet started (experiment not started, Guides and Surveys not provisioned, no synthetic runner).
+2. `docs/CONSOLE_SETUP.md`: exact setup steps and configuration names, no secret values. Sections: keys and where each lives (names only: `VITE_AMPLITUDE_API_KEY`, `VITE_AMPLITUDE_SERVER_ZONE`, `VITE_STATSIG_CLIENT_KEY`, `STATSIG_CONSOLE_API_KEY`; client versus console), GitHub Actions secrets and the Pages deploy, Statsig Cloud entity map (project `AmpliLoan [Cloud]` ID `6oe5DaLQIx5XnKfBrG0JnT`; layers, stores, parameters and defaults, gate and rule, config, metrics, experiment), Amplitude assets (project, dashboard, charts, cohorts, from `docs/AMPLITUDE_ASSETS.md`), how to start and stop the experiment (separate named approval by Erin required; after stopping, verify a fresh Stable ID gets layer defaults), and the Amplitude and Statsig integration options (below).
+3. Asset inventory table (one file or a section): every Amplitude and Statsig entity with ID, name, purpose, status, where it is documented. Reconcile with `docs/AMPLITUDE_ASSETS.md` and `docs/STATSIG_INVENTORY.md`; flag any disagreement instead of silently picking one.
+4. `docs/VERIFICATION.md`: step-by-step checks Erin ran or can repeat, with the exact UI expected. Include these verified facts and steps:
+   - Presenter URL `#/presenter` (page titled "Demo controls"). Check Preview is Off.
+   - Persona order matters: click "Start as a new demo user" first (it wipes persona and identity), confirm, then "Apply persona", then walk the journey. Applying the persona first and then starting a new user discards the persona. Same when switching personas mid-demo.
+   - Gate check: with persona First-time personal borrower, the Apply details step shows a "Need help with this step?" link under the helper sentence, and the Presenter shows `ampliloan_contextual_help = true statsig`. Other personas do not get it.
+   - "Statsig values read this session" is in memory per browser tab; a second tab starts empty. Application state and Stable ID are shared across tabs. A cross-tab monitor was considered and declined for now (Erin, 9:47 AM ET).
+   - Statsig console checks: live event stream shows business events; exposures for the gate appear; the four built-in metrics (`mau_28d`, `new_mau_28d`, `l14`, `l28`) populate immediately and are not ours; our four `ampliloan_*` metrics roll up daily and need a full journey including one `Application Validation Failed` (blank required field on details).
+   - Results recorded by Erin on Nov 25 2026: parameters served by Statsig, setup failures none, gate true for first-time persona, events and exposures visible in the Statsig console, Cloud entities and metrics present.
+5. Limitations section: Statsig MCP used by the Planner is bound to the old warehouse-native project (Erin is investigating re-pointing it; the Cloud project console URL is on the staging host); old project `363sCqDdACZXt4M88ZqiKa` is superseded and untouched; metric rollup window undecided (Planner will state the API default at experiment finalization); gate description in the console still says "No rules"; Statsig Cloud metrics have daily rollups; Guides and Surveys (4B) and the synthetic runner (4E) not built.
 
-## Second request: consistent top navigation (Erin, 9:10 AM ET)
-Erin: the top navigation must stay consistent across the site; options disappear on Apply, for example. Cause: `Header` in `src/components/Layout.tsx` shows the in-page links (Rates, How it works, FAQ) and the "Check your rate" button only when `route === '/'`.
-- The header must render the identical set of items on every route, including `/apply`, `/offers`, `/dashboard`, `/presenter`: brand, Home, Apply, Offers, Dashboard, Help, in the same order, same styling, same sticky behavior, with only `aria-current` and the active underline differing.
-- Remove the home-only items from the header (Rates, How it works, FAQ, and the conditional header CTA). Keep those in-page anchors available inside the landing page itself as a small in-page link row below the hero or at the top of the sections (landing only, not in the header), and keep the hero CTA and final CTA band. Keep all existing `data-demo` hooks (`help-entry`, `home-cta`). Remove `useHeroOutOfView` if it becomes unused.
-- Mobile: the same items at 375 px, using the same layout on every route (wrap or horizontal scroll; no item may disappear, and nothing may overflow the viewport). Help opens the same panel from every route.
-- The footer keeps the "Presenter" link on every page (Erin: keep presenter link in the footer).
-- Verify by rendering the header at 375 and 1280 px on /, /apply (each step), /offers, /dashboard, /presenter and comparing the list of link labels programmatically; paste the comparison in the evidence file. No event may change: confirm `helpRequested('header')` still fires from Help.
+## Amplitude as Statsig's analytics engine (Erin chose yes, 9:33 AM ET)
+Document these options with prerequisites, from Statsig and Amplitude docs (re-check the cited pages and cite URLs): Amplitude events as a metric source (Amplitude to Statsig, Cloud, early access); Amplitude cohort sync (generally available; needs a Statsig Console API key added in Amplitude; syncs user IDs as ID List segments); Amplitude Native (Statsig exposures and custom events to Amplitude; early access; needs org link and enablement); legacy event streaming (do not use). Include the two cautions: Native forwarding of Statsig custom events would duplicate events the app already sends to Amplitude directly, so do not enable it for custom events; cohort sync matches user IDs while the gate and experiment use Stable ID, so cohort targeting needs a user-ID-based gate or attribute. Mark every step as Erin's console work, not done, with current status "not configured".
 
-## Must not change
-Journey, events, store logic, parameter bindings and gating (`show_next_steps`), `data-demo` attributes, stable IDs, copy outside the strings listed above.
-
-## Verification
-`npm test`, `npm run build`; rendered screenshots at 375 and 1280 px for each Dashboard state you can reach (say which you could not reach); `rg -i "simulat|demo|synthetic|sample" src/components src/pages index.html` outside the Presenter page returns no user-visible hits; event sequence unchanged for one journey (compare with a `main` build made from a clean worktree, not by stashing).
+## Rules
+- Plain, accurate statements. Mark anything not verified. Never describe mock behavior as verified service behavior. No secret values.
+- Use today's site wording (no demo or synthetic wording appears on borrower pages; the Presenter page is the only place that says "Demo controls").
+- Do not touch `src/`, workflows, or any file outside `docs/`, `BUILDER_HANDOFF.md`, `PHASE_LOG.md`.
 
 ## Result
-`docs/evidence/phase-4f3.md`, `PHASE_LOG.md` entry, draft PR to `main`, set this file to `Status: IDLE` on your branch, stop. No deploy.
+Draft PR to `main`, `PHASE_LOG.md` entry, set this file to `Status: IDLE` on your branch, list in the PR body anything you could not verify, and stop. Before reporting, run `git diff --stat origin/main HEAD` on the pushed branch and confirm all four docs are included. Never use `git stash`.
