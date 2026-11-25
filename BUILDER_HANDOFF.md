@@ -5,6 +5,9 @@ Revision: 4F.1
 
 Authority: Erin, Cursor chat, 6:54 PM ET Nov 12, 2026: "update the aesthetics of the site right now." Record in `DECISIONS.md` already done.
 
+## Read first
+`docs/phase-4f/DESIGN_BRIEF.md` (page-by-page spec and acceptance criteria) and `docs/phase-4f/IMAGE_PROMPTS.md`. Where this handoff and the brief differ, this handoff wins. Erin's requested scope now includes Apply, Offers, Dashboard, and the Help panel (no new Help route). Use placeholders at the listed aspect ratios until real images are dropped into `public/images/`.
+
 ## Goal
 Make the site feel like a credible, marketing-oriented lending brand without changing behavior. Home becomes a real landing page; the rest of the journey gets matching visual polish.
 
@@ -27,7 +30,7 @@ Builder Commit Yes; Push Yes (own feature branch `cursor/phase4f-polish-360f` on
 - New landing-page content must not fire new business events. If you think one is needed, list it in the result for the Planner.
 
 ## Allowed paths
-`src/components/`, `src/pages/`, `src/App.tsx` (layout wiring only), `src/styles.css`, `public/` (original assets only), `index.html` (title and meta only), `docs/evidence/phase-4f.md`, `PHASE_LOG.md`.
+`src/components/`, `src/pages/`, `src/App.tsx` (layout wiring only), `src/styles.css`, `public/` (original assets only), `index.html` (title and meta only), `docs/evidence/phase-4f.md`, `PHASE_LOG.md`, `public/images/`.
 
 ## Verification (record each separately in the result)
 - `npm run build` and any existing lint or tests pass; production build contains no console key trace.
