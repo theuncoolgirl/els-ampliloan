@@ -1,5 +1,5 @@
 # Builder handoff — Phase 4F revision 4F.4 (og:image host and integration doc update)
-Status: START
+Status: IDLE
 Phase: 4F, small fix plus docs
 Revision: 4F.4
 

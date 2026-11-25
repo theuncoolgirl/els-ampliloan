@@ -34,13 +34,14 @@ If values show `default (no_key)` the build has no Statsig client key (local mod
 - Cloud entities and metrics present.
 
 ## 6. Limitations
-- The Statsig MCP the Planner uses is bound to the old warehouse-native project; Erin is investigating re-pointing it. The Cloud project's console URL is on the staging host.
+- Statsig MCP: as of Nov 25 10:16 AM ET the Planner's Statsig connection points to `AmpliLoan [Cloud]` (ID `6oe5DaLQIx5XnKfBrG0JnT`). The Planner independently read the draft experiment (status `setup`, not started, layer `ampliloan_application_layer`, 50/50) and the gate (rule `first_time_borrowers`, description corrected). The Cloud project's console URL is on the staging host.
+- By then 12 of 16 curated event names had reached Statsig. Not yet seen: Application Saved, Application Resumed, Application Task Completed, Sign Up Completed, Signed In.
 - Old project `363sCqDdACZXt4M88ZqiKa` is superseded and untouched.
 - Metric rollup window undecided; the Planner will state the API default at experiment finalization.
-- The gate description in the console still says "No rules".
+- The gate description in the console was corrected (Planner read, Nov 25); `docs/STATSIG_INVENTORY.md` still says it says "No rules".
 - Statsig Cloud metrics have daily rollups; multi-day funnels need validation and do not match Amplitude funnels.
 - Guides and Surveys (4B) and the synthetic runner (4E) are not built. The experiment is not started. Amplitude as Statsig's analytics engine is not configured.
 - Replay: upload requests were observed (`docs/evidence/phase-2.md`); playback and masking are not recorded as verified in the repo.
-- The `og:image` URL in `index.html` points to `https://theuncoolgirl.github.io/els-ampliloan/images/og-image.png`, while the site is served at `https://erinshields.dev/els-ampliloan/`. Possibly wrong host; not changed here (docs-only phase) and not verified against the live site.
+- `og:image` host: FIXED in revision 4F.4 (`index.html` now uses `https://erinshields.dev/els-ampliloan/images/og-image.png`, plus `og:url` and `twitter:image`). It takes effect on the live site only after a deploy, which Erin grants per merge; not checked on the live site.
 - Documents in `docs/` disagree in places; see "Disagreements" in `docs/ASSET_INVENTORY.md`.
 - Not checked for this phase: the live public site, any console, any live journey.
