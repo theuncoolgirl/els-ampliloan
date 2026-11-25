@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { DEFAULT_SUPPORT } from '../integrations/pageParameters';
 import { pageParams } from '../telemetry/runtime';
+import { img } from './assets';
 
 const GLOSSARY: [string, string][] = [
   ['APR', 'Annual percentage rate: the yearly cost of borrowing shown as a percentage. Values here are illustrative.'],
@@ -39,36 +40,62 @@ export function HelpPanel({ open, onClose }: { open: boolean; onClose: () => voi
   }, [open]);
   return (
     <dialog ref={ref} className="help-panel" aria-labelledby="help-title" onClose={onClose}>
-      <div className="help-head">
-        <h2 id="help-title">{content.heading}</h2>
-        <button type="button" onClick={onClose}>
-          Close
-        </button>
-      </div>
-      {content.body !== '' && <p className="muted">{content.body}</p>}
-      <h3>Browse by topic</h3>
-      {TOPICS.map(([id, title, body]) => (
-        <section key={id} data-topic={id}>
-          <h4>{title}</h4>
-          <p>{body}</p>
-        </section>
-      ))}
-      <h3>Glossary</h3>
-      <dl>
-        {GLOSSARY.map(([t, d]) => (
-          <div key={t}>
-            <dt>{t}</dt>
-            <dd>{d}</dd>
+      <div className="help-inner">
+        <div className="help-head-wrap">
+          <div className="help-head">
+            <h2 id="help-title">{content.heading}</h2>
+            <button type="button" onClick={onClose}>
+              Close
+            </button>
           </div>
+          <img className="help-art" src={img('help-header.webp')} alt="" width="420" height="236" />
+        </div>
+        {content.body !== '' && <p className="muted">{content.body}</p>}
+        <label className="sr-only" htmlFor="help-search">Search help topics</label>
+        <input id="help-search" className="help-search" type="search" placeholder="Search help topics" autoComplete="off" />
+        <ul className="chips" aria-label="Quick topics">
+          {TOPICS.map(([id, title]) => (
+            <li key={id}>
+              <a
+                href={`#topic-${id}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.querySelector(`[data-topic="${id}"]`)?.scrollIntoView({ block: 'start' });
+                }}
+              >
+                {title}
+              </a>
+            </li>
+          ))}
+        </ul>
+        <h3>Browse by topic</h3>
+        {TOPICS.map(([id, title, body]) => (
+          <section key={id} data-topic={id}>
+            <h4>{title}</h4>
+            <p>{body}</p>
+          </section>
         ))}
-      </dl>
-      <h3>Frequently asked questions</h3>
-      {FAQS.slice(0, content.maxItems).map(([q, a]) => (
-        <details key={q}>
-          <summary>{q}</summary>
-          <p>{a}</p>
-        </details>
-      ))}
+        <h3>Glossary</h3>
+        <dl>
+          {GLOSSARY.map(([t, d]) => (
+            <div key={t}>
+              <dt>{t}</dt>
+              <dd>{d}</dd>
+            </div>
+          ))}
+        </dl>
+        <h3>Frequently asked questions</h3>
+        {FAQS.slice(0, content.maxItems).map(([q, a]) => (
+          <details key={q}>
+            <summary>{q}</summary>
+            <p>{a}</p>
+          </details>
+        ))}
+        <div className="contact-card">
+          <h3>Contact us</h3>
+          <p className="muted" style={{ margin: 0 }}>Placeholder for the demo. There is no live support and no one will reply.</p>
+        </div>
+      </div>
     </dialog>
   );
 }

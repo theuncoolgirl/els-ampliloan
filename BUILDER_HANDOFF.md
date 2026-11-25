@@ -1,5 +1,5 @@
 # Builder handoff — Phase 4F (site polish)
-Status: START
+Status: IDLE
 Phase: 4F, visual and content polish of the demo site
 Revision: 4F.1
 

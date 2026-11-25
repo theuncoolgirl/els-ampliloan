@@ -20,6 +20,7 @@ import {
 import { store, useSnapshot } from '../state/useStore';
 import { guardNavigatingClick, useNavigationEvent } from '../telemetry/navigation';
 import { telemetry } from '../telemetry/runtime';
+import { img } from '../components/assets';
 
 const NEXT_ACTION: Record<Status, string> = {
   draft: 'Resume your application',
@@ -33,13 +34,14 @@ export function DashboardPage() {
   useNavigationEvent('status-view', () => telemetry.statusViewed(), !!active);
   return (
     <section className="page" data-demo="dashboard-root">
-      <h1 tabIndex={-1}>Dashboard</h1>
       {active ? (
         <ApplicationCard app={active} />
       ) : (
-        <div className="card">
-          <p>You have no application yet.</p>
-          <a className="button primary" href={href('/apply')} onClick={() => guardNavigatingClick(() => telemetry.rateCheckStarted('dashboard'))}>Check your rate</a>
+        <div className="card empty-state">
+          <img src={img('dashboard-empty.webp')} alt="No applications yet" width="480" height="360" />
+          <h1 tabIndex={-1}>Dashboard</h1>
+          <p>You have no application yet. Start your first application to see it here.</p>
+          <a className="button primary" href={href('/apply')} onClick={() => guardNavigatingClick(() => telemetry.rateCheckStarted('dashboard'))}>Start your first application</a>
         </div>
       )}
       {history.length > 0 && (
@@ -70,11 +72,22 @@ function ApplicationCard({ app }: { app: Application }) {
     else navigate('/apply', app.lastStepId === 'review' ? 'review' : 'details');
   };
   return (
+    <>
+      <div className="dash-top">
+        <h1 tabIndex={-1}>Your dashboard</h1>
+        <p style={{ margin: 0 }}>
+          Status: <span className={`badge badge-${app.status}`} data-demo="dashboard-status">{STATUS_LABELS[app.status]}</span>
+        </p>
+      </div>
+      <div className="summary-cards" data-demo="dashboard-summary">
+        <div className="card"><span className="label">Loan</span><strong>{f.label}</strong></div>
+        <div className="card"><span className="label">Amount</span><strong>{app.requestedAmount !== null ? formatUsd(app.requestedAmount) : 'Not set'}</strong></div>
+        <div className="card"><span className="label">Term</span><strong>{offer ? `${offer.termMonths} months` : 'Not chosen'}</strong></div>
+        <div className="card"><span className="label">Est. payment (illustrative)</span><strong>{offer && app.requestedAmount !== null ? formatUsd(monthlyPayment(app.requestedAmount, offer.apr, offer.termMonths), true) : 'Not available'}</strong></div>
+      </div>
+    <div className="dash-grid">
     <div className="card">
       <h2>{f.label}</h2>
-      <p>
-        Status: <span className={`badge badge-${app.status}`} data-demo="dashboard-status">{STATUS_LABELS[app.status]}</span>
-      </p>
       <p>{NEXT_ACTION[app.status]}</p>
       {app.status === 'draft' ? (
         <button type="button" className="primary" onClick={resume}>Resume your application</button>
@@ -90,6 +103,8 @@ function ApplicationCard({ app }: { app: Application }) {
           })}
         </ol>
       )}
+    </div>
+    <div>
       {tasks.length > 0 && params.get('show_next_steps').value && (
         <fieldset className="tasks">
           <legend>Your next steps</legend>
@@ -102,6 +117,9 @@ function ApplicationCard({ app }: { app: Application }) {
           ))}
         </fieldset>
       )}
+    </div>
+    </div>
+    <div className="card" style={{ marginTop: 'var(--space-3)' }}>
       <details onToggle={(e) => { if ((e.currentTarget as HTMLDetailsElement).open) telemetry.detailsViewed(); }}>
         <summary>Loan details</summary>
         <dl className="summary">
@@ -130,5 +148,6 @@ function ApplicationCard({ app }: { app: Application }) {
         </dl>
       </details>
     </div>
+    </>
   );
 }

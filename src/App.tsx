@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from './router';
 import { Footer, Header, Main, Notice } from './components/Layout';
-import { Hero } from './components/Hero';
+import { Landing } from './components/Landing';
 import { HELP_EVENT } from './components/helpBus';
 import { PreviewBanner } from './components/PreviewBanner';
 import { HelpPanel } from './components/HelpPanel';
@@ -61,7 +61,7 @@ export function App() {
       page = <PresenterPage />;
       break;
     default:
-      page = <Hero />;
+      page = <Landing />;
   }
 
   return (
