@@ -290,3 +290,17 @@
 - Deviations and known limitations: asset inventory is a separate file; seven document disagreements flagged in docs/ASSET_INVENTORY.md; the og:image host (github.io vs erinshields.dev) looks wrong and is flagged, not fixed; Amplitude doc page for cohort sync not fetched in full.
 - Blocker and exact decision/configuration needed, if any: none.
 - Next: stopped; awaiting Planner review.
+
+## 2026-11-25T16:40Z | Phase 4F | Revision 4F.4 | NEEDS_REVIEW
+- Builder ID/link: single Builder cloud agent (same as earlier phases)
+- Branch and head SHA (or no commit): cursor/phase4f-og-fix-360f from origin/main f58a9ba; head SHA in the final report and PR
+- Objective and implementation summary: og:image moved to erinshields.dev, og:url and twitter:image added; integration steps in CONSOLE_SETUP.md replaced with the Planner's full-page reading; VERIFICATION.md updated (og fixed, MCP now on Cloud, 12 of 16 events seen).
+- Files changed: index.html, docs/CONSOLE_SETUP.md, docs/VERIFICATION.md, PHASE_LOG.md, BUILDER_HANDOFF.md
+- Git actions performed; draft PR link if any: committed, pushed, draft PR to main per final report.
+- External actions performed (project/entity names or IDs; no secrets): none.
+- Definition-of-done results: npm run build pass; dist/index.html has the erinshields.dev og:url, og:image and twitter:image; `rg theuncoolgirl.github.io index.html src dist` returns nothing. The only other absolute github.io URL found before the fix was in docs/VERIFICATION.md prose (now rewritten).
+- Checks: npm run build, rg.
+- Readiness (UI / SDK / console / telemetry / data): unchanged; live site not checked, takes effect only after a deploy Erin grants.
+- Deviations and known limitations: console UI labels in the integration steps come from the Planner's reading, not checked by the Builder; the Stable ID equals Device ID check is recorded as open, not verified; docs/STATSIG_INVENTORY.md and docs/ASSET_INVENTORY.md still say the gate description reads "No rules" (outside this handoff's file list).
+- Blocker and exact decision/configuration needed, if any: none.
+- Next: stopped; awaiting Planner review.

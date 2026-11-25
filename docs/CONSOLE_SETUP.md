@@ -47,17 +47,45 @@ Stop:
 2. In a browser with a fresh Stable ID (Presenter: Start as a new demo user), open Apply and check the Presenter diagnostics show the layer defaults: `show_reassurance = false`, `progress_style = "steps"`.
 3. Record the result in `PHASE_LOG.md`.
 
-## 6. Amplitude with Statsig: options (all Erin's console work; none done)
-Current status of every option: **not configured**. Sources, re-read 2026-11-12 to 2026-11-25 through the search tool (excerpts, not full pages): Statsig docs index https://docs.statsig.com/integrations/data-connectors/amplitude, metric source https://docs.statsig.com/integrations/data-connectors/amplitude/metric-source, cohort sync https://docs.statsig.com/integrations/data-connectors/amplitude/cohort-sync, legacy https://docs.statsig.com/integrations/data-connectors/amplitude/legacy, Amplitude's page on forwarded events https://amplitude.com/docs/data/statsig-forwarded-events.
-| Option | Direction, status | Prerequisites | Steps (Erin) |
-|---|---|---|---|
-| Amplitude events as a metric source | Amplitude to Statsig, Cloud, early access | Statsig org linked to the Amplitude org; US Amplitude project (project 905260 is US); Statsig Cloud project; access enabled by the Statsig or Amplitude account team | In Statsig: Data > Metric Sources > Create, pick the Amplitude project, Confirm; open the source, Create Metric against an Amplitude event with an aggregation. One source per Amplitude project. Computed once a day in UTC-offset daily buckets. Device ID maps to Stable ID, User ID to User ID |
-| Amplitude cohort sync | Amplitude to Statsig, generally available | A saved Amplitude cohort; admin on the Statsig project to create a Console API key | Statsig: Project Settings > Keys & Environments > Generate New Key > Console. In Amplitude add Statsig as a cohort destination, paste the key, sync a cohort (for example `ioj44xe2`). Cohort appears in Statsig Segments as an ID List within about 15 minutes of a sync. Never paste the key anywhere else |
-| Amplitude Native | Statsig to Amplitude, early access, Cloud and Warehouse Native | Org link; US project; enablement from the account team | Link orgs from a Statsig org-admin account whose email is also an Amplitude admin; enable Native for project 905260. Forwarded events cannot be removed from Amplitude later and there is no backfill |
-| Legacy event streaming | Both directions, legacy | API keys | Do not use. Enabling it together with Native duplicates exposures |
-Cautions:
-1. Native forwards Statsig custom events as well as exposures. This app already sends the same business events to Amplitude directly, so enabling Native forwarding of custom events would duplicate them. Do not enable it for custom events; if Native is used, limit it to exposures.
-2. Cohort sync matches user IDs. The gate and experiment here use Stable ID. A synced cohort can only target a user-ID-based gate or an attribute; it will not match an anonymous visitor. Pick a user-ID-based gate or pass an attribute before relying on it.
+## 6. Amplitude with Statsig: integration steps (all Erin's console work; none done)
+Current status of every option: **not configured**. Source pages (full text read by the Planner on Nov 25 2026): overview https://docs.statsig.com/integrations/data-connectors/amplitude, metric source https://docs.statsig.com/integrations/data-connectors/amplitude/metric-source, cohort sync https://docs.statsig.com/integrations/data-connectors/amplitude/cohort-sync. UI labels below come from those pages and were not re-checked in a console by the Builder.
+
+### Overview (https://docs.statsig.com/integrations/data-connectors/amplitude)
+- Five integrations: Amplitude Native (Statsig to Amplitude), Amplitude events as a metric source (Amplitude to Statsig, Cloud), Amplitude Experiment, Amplitude cohort sync (generally available), and Amplitude event streaming (legacy).
+- Amplitude Native, the metric source and Amplitude Experiment are early access and not enabled for every account. Ask the Statsig or Amplitude account team for access.
+- Only US-hosted Amplitude projects support Native and the metric source. AmpliLoan uses the US zone (project 905260).
+- Enabling Native and legacy event streaming for the same Amplitude project duplicates exposures in Amplitude.
+
+### Org link (needed for the metric source and Native)
+1. In Amplitude, find the org ID: the number after `/org/` in a settings URL.
+2. In Statsig go to Settings > Manage Account > Info > Organization tab > Amplitude Linked Organization, enter the ID and save. The Statsig org admin's email must also be an Amplitude org admin.
+3. Then on the Project tab > Amplitude Linked Projects: pick the Amplitude project for each Statsig environment and mark one Primary.
+4. Warning: forwarded events cannot be removed from Amplitude and there is no backfill. Link a test project first if one exists.
+
+### Metric source (https://docs.statsig.com/integrations/data-connectors/amplitude/metric-source)
+1. Prerequisites: org link, US data center, Statsig Cloud project (`AmpliLoan [Cloud]`).
+2. Statsig: Data > Metric Sources > Create > pick the Amplitude project (one source per project) > Confirm.
+3. The source maps Amplitude User ID to Statsig User ID and Device ID to Stable ID. Add other ID types with Add ID Type.
+4. Create Metric from the source: give a name, then define it against an Amplitude event with an aggregation (Count, Sum, Mean, Unit Count, Ratio) and optional filters.
+5. Computed in a daily batch; days are bucketed in the organization's UTC offset.
+6. OPEN CHECK before relying on experiment results from this source: confirm the Stable ID the app sends to Statsig equals the Amplitude Device ID, using the repo's identity mapping docs (`docs/INTEGRATION_NOTES.md`, `src/identity/`). Not verified.
+
+### Cohort sync (https://docs.statsig.com/integrations/data-connectors/amplitude/cohort-sync)
+1. Statsig Project Settings > Keys & Environments > Generate New Key > type Console.
+2. In Amplitude add Statsig (Cohort Sync) as a cohort destination, paste the Console key, and sync a saved cohort. Existing AmpliLoan cohorts: `ioj44xe2`, `bnuw8dwc`, `14yez3z5`.
+3. The cohort appears under Segments in Statsig as an ID List within about 15 minutes of a sync.
+4. The IDs synced are Amplitude user IDs. The gate and experiment here use Stable ID, so a cohort-targeted gate needs an idType User ID gate (or a user attribute) and only reaches signed-in users.
+5. Never write the key value in the repo or chat.
+
+### Amplitude Native (https://docs.statsig.com/integrations/data-connectors/amplitude)
+- Forwards exposures (`statsig::gate_exposure`, `statsig::experiment_exposure`, `statsig::config_exposure`, `statsig::layer_exposure`) and Statsig custom events. Only the first exposure per identity per config per UTC day is forwarded.
+- The app already sends its business events to Amplitude directly, so forwarding Statsig custom events would duplicate them. Do not enable Native for custom events. If it cannot be limited to exposures, do not enable it.
+
+### Legacy event streaming
+Do not use.
+
+### Recommended order
+1. Account-team enablement. 2. Org link. 3. Metric source. 4. Optional cohort sync. 5. Native only if exposures-only is possible.
 
 ## 7. Known limitations
 See `docs/VERIFICATION.md` section 6.
